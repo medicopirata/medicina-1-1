@@ -3,290 +3,256 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Menú Principal - Anatomía y Embriología</title>
+    <title>Índice - Histología y Embriología 1</title>
     <style>
         :root {
-            --bg-color: #f0f2f5;
-            --text-color: #2c3e50;
-            --carmen-color: #c0392b; /* Rojo */
-            --prada-color: #2980b9;  /* Azul */
-            --quiz-color: #27ae60;   /* Verde */
-            --exam-color: #e67e22;   /* Naranja (Sep 2020) */
-            --exam21-color: #8e44ad; /* Morado (Feb 2021) */
-            --exam19-color: #16a085; /* Turquesa (Jun 2019) */
-            --notebook-color: #34495e; /* Azul Oscuro (Notebook Anatomía) */
-            --embrio-color: #8e44ad;   /* Morado (Notebook Embriología) */
-            --white: #ffffff;
+            --primary: #2c3e50;
+            --accent: #3498db;
+            --embrio: #27ae60;
+            --histo: #e67e22;
+            --notebook: #9b59b6; 
+            --kahoot: #46178f; /* Nuevo color para los Kahoots */
+            --bg: #f4f7f6;
+            --card-bg: #ffffff;
+            --text: #333;
         }
 
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: var(--bg-color);
-            color: var(--text-color);
             margin: 0;
+            padding: 0;
+            background-color: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
             display: flex;
             flex-direction: column;
             align-items: center;
-            min-height: 100vh;
-            padding: 20px;
         }
 
-        h1 {
-            font-size: 2.5rem;
-            margin-bottom: 30px;
-            color: #34495e;
-            text-transform: uppercase;
-            letter-spacing: 2px;
-            text-align: center;
-        }
-
-        /* Separador de secciones */
-        .section-header {
+        header {
+            background: var(--primary);
+            color: white;
             width: 100%;
+            padding: 40px 20px;
+            text-align: center;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+            margin-bottom: 40px;
+        }
+
+        h1 { margin: 0; font-size: 2.5em; font-weight: 300; letter-spacing: 1px; }
+        h2 { margin: 10px 0 0 0; font-size: 1.2em; opacity: 0.8; font-weight: 400; }
+        
+        /* Section Title Style */
+        .section-title {
+            width: 90%;
             max-width: 1000px;
-            text-align: left;
+            margin: 20px 0 10px 0;
+            font-size: 1.5em;
+            color: var(--primary);
             border-bottom: 2px solid #ddd;
-            margin: 40px 0 20px 0;
             padding-bottom: 10px;
-            color: var(--text-color);
-            font-size: 1.5rem;
-            font-weight: 300;
         }
 
         .container {
-            display: flex;
-            flex-wrap: wrap;
+            max-width: 1000px;
+            width: 90%;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
             gap: 30px;
-            justify-content: center;
-            max-width: 1200px;
-            width: 100%;
+            padding-bottom: 50px;
         }
 
-        /* Estilos de las Tarjetas */
         .card {
-            background: var(--white);
-            border-radius: 20px;
-            width: 300px; 
-            padding: 40px 20px;
-            text-align: center;
+            background: var(--card-bg);
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
             text-decoration: none;
             color: inherit;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.1);
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-            border-top: 10px solid transparent;
             display: flex;
             flex-direction: column;
-            justify-content: center;
-            align-items: center;
+            border: 1px solid rgba(0,0,0,0.05);
+            position: relative;
         }
 
         .card:hover {
-            transform: translateY(-10px);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.15);
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0,0,0,0.1);
         }
 
-        /* Colores por tarjeta */
-        .card-carmen { border-top-color: var(--carmen-color); }
-        .card-carmen h2 { color: var(--carmen-color); }
-        .card-carmen:hover .icon { background-color: var(--carmen-color); color: white; }
+        .card-header {
+            height: 8px;
+            width: 100%;
+        }
 
-        .card-prada { border-top-color: var(--prada-color); }
-        .card-prada h2 { color: var(--prada-color); }
-        .card-prada:hover .icon { background-color: var(--prada-color); color: white; }
-
-        .card-quiz { border-top-color: var(--quiz-color); }
-        .card-quiz h2 { color: var(--quiz-color); }
-        .card-quiz:hover .icon { background-color: var(--quiz-color); color: white; }
-
-        .card-exam { border-top-color: var(--exam-color); }
-        .card-exam h2 { color: var(--exam-color); }
-        .card-exam:hover .icon { background-color: var(--exam-color); color: white; }
-
-        .card-exam21 { border-top-color: var(--exam21-color); }
-        .card-exam21 h2 { color: var(--exam21-color); }
-        .card-exam21:hover .icon { background-color: var(--exam21-color); color: white; }
-
-        .card-exam19 { border-top-color: var(--exam19-color); }
-        .card-exam19 h2 { color: var(--exam19-color); }
-        .card-exam19:hover .icon { background-color: var(--exam19-color); color: white; }
-
-        .card-notebook { border-top-color: var(--notebook-color); }
-        .card-notebook h2 { color: var(--notebook-color); }
-        .card-notebook:hover .icon { background-color: var(--notebook-color); color: white; }
-
-        .card-embrio { border-top-color: var(--embrio-color); }
-        .card-embrio h2 { color: var(--embrio-color); }
-        .card-embrio:hover .icon { background-color: var(--embrio-color); color: white; }
+        .card-body {
+            padding: 30px;
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
 
         .icon {
+            font-size: 3em;
+            margin-bottom: 20px;
+            background: #f8f9fa;
             width: 80px;
             height: 80px;
-            border-radius: 50%;
-            background-color: #f0f2f5;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 2rem;
-            margin-bottom: 20px;
-            transition: background-color 0.3s, color 0.3s;
-            font-weight: bold;
+            border-radius: 50%;
         }
 
-        h2 {
-            margin: 0 0 10px 0;
-            font-size: 1.6rem;
+        .card-title {
+            font-size: 1.4em;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--primary);
         }
 
-        p {
+        .card-desc {
+            font-size: 0.95em;
             color: #7f8c8d;
-            font-size: 0.95rem;
-            margin: 0;
-            line-height: 1.4;
+            line-height: 1.5;
+            margin-bottom: 20px;
         }
 
-        .btn-text {
-            margin-top: 25px;
-            display: inline-block;
-            padding: 10px 20px;
-            border-radius: 25px;
-            background-color: #ecf0f1;
-            font-weight: bold;
-            font-size: 0.85rem;
-            transition: background 0.3s;
+        .tag {
+            background: #eee;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.8em;
+            font-weight: 600;
+            color: #555;
+            margin-top: auto;
         }
 
-        .card:hover .btn-text {
-            background-color: #bdc3c7;
-        }
+        /* Estilos Específicos */
+        .card-teoria .card-header { background: var(--accent); }
+        .card-teoria .icon { color: var(--accent); }
+        
+        .card-embrio .card-header { background: var(--embrio); }
+        .card-embrio .icon { color: var(--embrio); }
+
+        .card-histo .card-header { background: var(--histo); }
+        .card-histo .icon { color: var(--histo); }
+
+        .card-notebook .card-header { background: var(--notebook); }
+        .card-notebook .icon { color: var(--notebook); }
+
+        .card-kahoot .card-header { background: var(--kahoot); }
+        .card-kahoot .icon { color: var(--kahoot); }
 
         footer {
-            margin-top: 50px;
+            margin-top: auto;
+            padding: 20px;
             color: #95a5a6;
-            font-size: 0.85rem;
+            font-size: 0.9em;
             text-align: center;
-            max-width: 600px;
-            padding-bottom: 30px;
         }
+
     </style>
 </head>
 <body>
 
-    <h1>Banco de Preguntas - Anatomía I</h1>
+    <header>
+        <h1>Histología y Embriología 1</h1>
+        <h2>Panel de Entrenamiento y Repaso</h2>
+    </header>
 
+    <div class="section-title">Material General</div>
     <div class="container">
         
-        <a href="indice carmen.html" class="card card-carmen">
-            <div class="icon">C</div>
-            <h2>Carmen</h2>
-            <p>Contenidos teóricos y temas del 1 al 12.</p>
-            <div class="btn-text">Entrar ➜</div>
+        <a href="embrio daypo pro.html" class="card card-teoria">
+            <div class="card-header"></div>
+            <div class="card-body">
+                <div class="icon">📝</div>
+                <div class="card-title">Teoría Completa</div>
+                <div class="card-desc">
+                    Banco de preguntas teórico. Incluye Embriología General, Histología Epitelial, Tejidos y exámenes anteriores.
+                </div>
+                <div class="tag">215 Preguntas</div>
+            </div>
         </a>
 
-        <a href="indice prada.html" class="card card-prada">
-            <div class="icon">P</div>
-            <h2>Prada</h2>
-            <p>Contenidos teóricos y temas del 13 al 34.</p>
-            <div class="btn-text">Entrar ➜</div>
+        <a href="imagenes embrio.html" class="card card-embrio">
+            <div class="card-header"></div>
+            <div class="card-body">
+                <div class="icon">👶</div>
+                <div class="card-title">Visual: Embriología</div>
+                <div class="card-desc">
+                    Identificación de estructuras embrionarias, placenta, vellosidades y epitelios asociados al desarrollo.
+                </div>
+                <div class="tag">51 Imágenes</div>
+            </div>
         </a>
 
-        <a href="indice plataforma anatomia2.html" class="card card-quiz">
-            <div class="icon">Q</div>
-            <h2>Cuestionarios</h2>
-            <p>Acceso a todos los Quizz de autoevaluación (Parciales y Finales).</p>
-            <div class="btn-text">Ir a los Tests ➜</div>
-        </a>
-
-        <a href="examen 2020.html" class="card card-exam">
-            <div class="icon">E</div>
-            <h2>Sep 2020</h2>
-            <p>Examen de Esplacnología (50 preguntas, con corrección).</p>
-            <div class="btn-text">Realizar Examen ➜</div>
-        </a>
-
-        <a href="examen 21.html" class="card card-exam21">
-            <div class="icon">F</div>
-            <h2>Feb 2021</h2>
-            <p>Examen de Tronco y Esplancnología (135 preguntas).</p>
-            <div class="btn-text">Realizar Examen ➜</div>
-        </a>
-
-        <a href="examen 19.html" class="card card-exam19">
-            <div class="icon">J</div>
-            <h2>Jun 2019</h2>
-            <p>Examen de Anatomía I (126 preguntas).</p>
-            <div class="btn-text">Realizar Examen ➜</div>
+        <a href="imagenes histo.html" class="card card-histo">
+            <div class="card-header"></div>
+            <div class="card-body">
+                <div class="icon">🔬</div>
+                <div class="card-title">Visual: Histología</div>
+                <div class="card-desc">
+                    Reconocimiento de tejidos al microscopio: Cartílago, Hueso, Sangre, Tejido Adiposo y Conectivo.
+                </div>
+                <div class="tag">74 Imágenes</div>
+            </div>
         </a>
 
     </div>
 
-    <h2 class="section-header" style="color: var(--notebook-color);">Test Notebook Anatomía (Por Temas)</h2>
+    <div class="section-title">Test Notebook (Por Temas)</div>
     <div class="container">
         
-        <a href="anatomia 2 notebook 1.html" class="card card-notebook">
-            <div class="icon">N1</div>
-            <h2>Embriología</h2>
-            <p>Embriología y Desarrollo de la Columna (50 preguntas).</p>
-            <div class="btn-text">Practicar ➜</div>
+        <a href="test note embrio 1.html" class="card card-notebook">
+            <div class="card-header"></div>
+            <div class="card-body">
+                <div class="icon">📓</div>
+                <div class="card-title">Embriología I</div>
+                <div class="card-desc">
+                    Generalidades, Gametogénesis, Fecundación y Primera Semana del Desarrollo.
+                </div>
+                <div class="tag">100 Preguntas</div>
+            </div>
         </a>
 
-        <a href="anatomia 2 notebook 2.html" class="card card-notebook">
-            <div class="icon">N2</div>
-            <h2>Osteología</h2>
-            <p>Osteología, Pelvis y Neuroanatomía (50 preguntas).</p>
-            <div class="btn-text">Practicar ➜</div>
-        </a>
-
-        <a href="anatomia 2 notebook 3.html" class="card card-notebook">
-            <div class="icon">N3</div>
-            <h2>Vasos y Tórax</h2>
-            <p>Vascularización, Inervación y Tórax (60 preguntas).</p>
-            <div class="btn-text">Practicar ➜</div>
-        </a>
-
-        <a href="anatomia 2 notebook 4.html" class="card card-notebook">
-            <div class="icon">N4</div>
-            <h2>Pared Torácica</h2>
-            <p>Costillas, Esternón y Mecánica Torácica (70 preguntas).</p>
-            <div class="btn-text">Practicar ➜</div>
-        </a>
-
-        <a href="anatomia 2 notebook 5.html" class="card card-notebook">
-            <div class="icon">N5</div>
-            <h2>Retroperitoneo</h2>
-            <p>Fascia, Cuello, Psoas y Retroperitoneo (70 preguntas).</p>
-            <div class="btn-text">Practicar ➜</div>
-        </a>
-
-        <a href="anatomia 2 notebook 6.html" class="card card-notebook">
-            <div class="icon">N6</div>
-            <h2>Diafragma</h2>
-            <p>Diafragma, Abdomen y Repaso General (70 preguntas).</p>
-            <div class="btn-text">Practicar ➜</div>
-        </a>
-
-        <a href="anatomia notebook 7.html" class="card card-notebook">
-            <div class="icon">N7</div>
-            <h2>Pared y Suelo</h2>
-            <p>Pared Abdominal, Conducto Inguinal y Suelo Pélvico (70 preguntas).</p>
-            <div class="btn-text">Practicar ➜</div>
+        <a href="embriologia notebook 3.html" class="card card-notebook">
+            <div class="card-header"></div>
+            <div class="card-body">
+                <div class="icon">📓</div>
+                <div class="card-title">Embriología III</div>
+                <div class="card-desc">
+                    Semanas 3-4: Gastrulación, Notocorda, Plegamiento, Placenta y Desarrollo de Membranas.
+                </div>
+                <div class="tag">100 Preguntas</div>
+            </div>
         </a>
 
     </div>
 
-    <h2 class="section-header" style="color: var(--embrio-color);">Test Notebook Embriología (Semanas)</h2>
+    <div class="section-title">Kahoots de Clase</div>
     <div class="container">
         
-        <a href="embriologia notebook 3.html" class="card card-embrio">
-            <div class="icon">E3</div>
-            <h2>Semanas 3-4</h2>
-            <p>Gastrulación, Notocorda, Plegamiento y Anexos (100 preguntas).</p>
-            <div class="btn-text">Practicar ➜</div>
+        <a href="embrio semana 1 kahoot.html" class="card card-kahoot">
+            <div class="card-header"></div>
+            <div class="card-body">
+                <div class="icon">🎮</div>
+                <div class="card-title">Kahoots de clase Embriologia</div>
+                <div class="card-desc">
+                    Cuestionario interactivo con corrección instantánea y seguimiento de respuestas marcadas o falladas.
+                </div>
+                <div class="tag">Cuestionarios Dinámicos</div>
+            </div>
         </a>
 
     </div>
 
     <footer>
-        U Cádiz - Facultad de Medicina.<br>
+        Asegúrate de que todos los archivos HTML y las carpetas de imágenes estén en el mismo directorio.
     </footer>
 
 </body>
