@@ -122,6 +122,31 @@
 
         .disabled { opacity: 0.6; cursor: not-allowed; background-color: #f9f9f9; }
         .disabled:hover { transform: none; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+
+        /* --- CLASE PARA EL LINK EXCLUSIVO (91143) --- */
+        .small-link {
+            background-color: #fff8e1;
+            border: 2px dashed #ffc107;
+            border-radius: 15px;
+            padding: 20px;
+            text-align: center;
+            text-decoration: none;
+            color: #d35400;
+            font-weight: bold;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.02);
+        }
+        
+        .small-link:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+            background-color: #ffecb3;
+            border-color: #ff9800;
+        }
     </style>
 </head>
 <body>
@@ -154,7 +179,7 @@
             '<div cl', 'ass="course-sec', 'tion">',
             '<div cl', 'ass="course-ti', 'tle" sty', 'le="border-co', 'lor: var(--curso1-color); color: var(--curso1-color);">',
             'Pri', 'mero</div>',
-            '<div cl', 'ass="seme', 'ster-grid">',
+            '<div cl', 'ass="seme', 'ster-grid" id="grid-primero">',
             '<a hre', 'f="index p', 'rimero primer c', 'uatrimestre.ht', 'ml" cla', 'ss="semester-ca', 'rd">',
             '<div cl', 'ass="ic', 'on">&#128218;</div>',
             '<h3 sty', 'le="color: var(--curso1-color)">1er C', 'uatrimestre</h3>',
@@ -186,6 +211,7 @@
             // Verifica si el input coincide con alguna de las contraseñas del Array
             if (_k.includes(input)) {
                 sessionStorage.setItem("_auth_tkn_882", "1");
+                sessionStorage.setItem("_auth_pass", input); // Guardamos la contraseña usada para validaciones posteriores
                 unlockContent();
             } else {
                 errorMsg.style.display = "block";
@@ -200,6 +226,19 @@
             if (!document.getElementById("main-content")) {
                 const payload = _c.join('');
                 document.body.insertAdjacentHTML('beforeend', payload);
+                
+                // CONDICIÓN ESPECIAL: Mostrar el enlace de Quizzes SOLO si la clave es 91143
+                if (sessionStorage.getItem("_auth_pass") === "91143") {
+                    const gridPrimero = document.getElementById("grid-primero");
+                    const hiddenLinkHtml = `
+                        <a href="indice rellenar.html" class="small-link">
+                            <span style="font-size: 2rem; margin-bottom: 5px;">&#129504;</span>
+                            Quizzes de Repaso
+                            <span style="font-size: 0.85rem; color: #8e44ad; margin-top: 5px; font-weight: normal;">Anatomía y Embriología</span>
+                        </a>
+                    `;
+                    gridPrimero.insertAdjacentHTML('beforeend', hiddenLinkHtml);
+                }
             }
         }
 
