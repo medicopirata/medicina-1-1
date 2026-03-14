@@ -1,0 +1,382 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz Anatómico: Vértebras y Sacro</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 10px;
+            background-color: #f0f4f8;
+            text-align: center;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .instructions {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 16px;
+        }
+        .controls {
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 10px;
+            z-index: 100;
+            border-bottom: 2px solid #eee;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+        .btn-verify {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-verify:hover { background-color: #45a049; }
+        .btn-retry {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-retry:hover { background-color: #1e88e5; }
+        .score-display {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+        }
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 1100px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        .img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .dropdown {
+            position: absolute;
+            width: 10%; 
+            height: 1.2%; /* Altura pequeña porque la imagen es muy alargada */
+            font-size: 9px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #444;
+            border-radius: 2px;
+            padding: 0 1px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+        .dropdown:focus {
+            z-index: 50;
+            border-color: #2196F3;
+            outline: none;
+            width: 15%; /* Se expande al hacer clic para leer mejor */
+        }
+        .correct {
+            background-color: #c8e6c9 !important;
+            border: 1px solid #2e7d32 !important;
+            color: #1b5e20;
+        }
+        .incorrect {
+            background-color: #ffcdd2 !important;
+            border: 1px solid #c62828 !important;
+            color: #b71c1c;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Quiz Anatómico: Complejo Vertebral</h1>
+        <p class="instructions">Selecciona la estructura anatómica correcta en cada menú desplegable correspondiente a las líneas de la lámina.</p>
+        
+        <div class="controls">
+            <button class="btn-verify" onclick="verificarRespuestas()">Verificar Respuestas</button>
+            <button class="btn-retry" onclick="reiniciarTest()">Volver a Intentar</button>
+            <div id="score" class="score-display"></div>
+        </div>
+
+        <div class="img-wrapper">
+            <img src="vertebras1.png" alt="Anatomía de las Vértebras">
+            
+            <select class="dropdown" style="top: 4%; left: 15%;" data-correct="Cuerpo"></select>
+            <select class="dropdown" style="top: 2%; left: 23%;" data-correct="Apófisis articular superior"></select>
+            <select class="dropdown" style="top: 4%; left: 30%;" data-correct="Apófisis costiforme"></select>
+            <select class="dropdown" style="top: 6%; left: 30%;" data-correct="Lámina"></select>
+            <select class="dropdown" style="top: 8%; left: 33%;" data-correct="Apófisis espinosa"></select>
+            <select class="dropdown" style="top: 12%; left: 24%;" data-correct="Apófisis articular inferior"></select>
+            <select class="dropdown" style="top: 11%; left: 15%;" data-correct="Pedículo"></select>
+
+            <select class="dropdown" style="top: 2%; left: 46%;" data-correct="Cuerpo vertebral"></select>
+            <select class="dropdown" style="top: 7%; left: 39%;" data-correct="Apófisis articular superior"></select>
+            <select class="dropdown" style="top: 6%; left: 53%;" data-correct="Pedículo"></select>
+            <select class="dropdown" style="top: 7%; left: 54%;" data-correct="Apófisis costiforme"></select>
+            <select class="dropdown" style="top: 10%; left: 53%;" data-correct="Agujero vertebral"></select>
+            <select class="dropdown" style="top: 13%; left: 49%;" data-correct="Apófisis espinosa"></select>
+            <select class="dropdown" style="top: 11%; left: 42%;" data-correct="Lámina"></select>
+
+            <select class="dropdown" style="top: 2%; left: 69%;" data-correct="Apófisis articular superior"></select>
+            <select class="dropdown" style="top: 3%; left: 71%;" data-correct="Apófisis transversa"></select>
+            <select class="dropdown" style="top: 3%; left: 65%;" data-correct="Pedículo"></select>
+            <select class="dropdown" style="top: 4%; left: 61%;" data-correct="Cuerpo vertebral"></select>
+            <select class="dropdown" style="top: 6%; left: 72%;" data-correct="Apófisis espinosa"></select>
+            <select class="dropdown" style="top: 9%; left: 69%;" data-correct="Lámina"></select>
+            <select class="dropdown" style="top: 11%; left: 69%;" data-correct="Apófisis articular inferior"></select>
+            <select class="dropdown" style="top: 10%; left: 63%;" data-correct="Agujero vertebral"></select>
+
+            <select class="dropdown" style="top: 17%; left: 23%;" data-correct="Tubérculo anterior"></select>
+            <select class="dropdown" style="top: 19%; left: 17%;" data-correct="Fosita del diente"></select>
+            <select class="dropdown" style="top: 21%; left: 13%;" data-correct="Cara articular superior"></select>
+            <select class="dropdown" style="top: 19%; left: 27%;" data-correct="Arco anterior"></select>
+            <select class="dropdown" style="top: 26%; left: 18%;" data-correct="Arco posterior"></select>
+            <select class="dropdown" style="top: 25%; left: 28%;" data-correct="Surco de la arteria vertebral"></select>
+            <select class="dropdown" style="top: 28%; left: 23%;" data-correct="Tubérculo posterior"></select>
+
+            <select class="dropdown" style="top: 17%; left: 44%;" data-correct="Tubérculo anterior"></select>
+            <select class="dropdown" style="top: 18%; left: 48%;" data-correct="Arco anterior"></select>
+            <select class="dropdown" style="top: 20%; left: 52%;" data-correct="Cara articular inferior"></select>
+            <select class="dropdown" style="top: 22%; left: 54%;" data-correct="Agujero transverso"></select>
+            <select class="dropdown" style="top: 26%; left: 49%;" data-correct="Tubérculo posterior"></select>
+            <select class="dropdown" style="top: 26%; left: 41%;" data-correct="Arco posterior"></select>
+
+            <select class="dropdown" style="top: 16%; left: 73%;" data-correct="Apófisis articulares superiores"></select>
+            <select class="dropdown" style="top: 18%; left: 65%;" data-correct="Fosita costal de la apófisis transversa"></select>
+            <select class="dropdown" style="top: 19%; left: 76%;" data-correct="Fosita costal superior"></select>
+            <select class="dropdown" style="top: 20%; left: 80%;" data-correct="Cuerpo vertebral"></select>
+            <select class="dropdown" style="top: 23%; left: 61%;" data-correct="Apófisis espinosa"></select>
+            <select class="dropdown" style="top: 25%; left: 75%;" data-correct="Pedículo"></select>
+            <select class="dropdown" style="top: 26%; left: 79%;" data-correct="Fosita costal inferior"></select>
+            <select class="dropdown" style="top: 27%; left: 72%;" data-correct="Apófisis articulares inferiores"></select>
+
+            <select class="dropdown" style="top: 31%; left: 23%;" data-correct="Vértice del diente"></select>
+            <select class="dropdown" style="top: 34%; left: 13%;" data-correct="Diente del axis"></select>
+            <select class="dropdown" style="top: 34%; left: 26%;" data-correct="Cara articular anterior"></select>
+            <select class="dropdown" style="top: 36%; left: 27%;" data-correct="Cara articular superior"></select>
+            <select class="dropdown" style="top: 40%; left: 15%;" data-correct="Cara articular inferior"></select>
+            <select class="dropdown" style="top: 41%; left: 26%;" data-correct="Cuerpo del axis"></select>
+
+            <select class="dropdown" style="top: 34%; left: 42%;" data-correct="Diente del axis"></select>
+            <select class="dropdown" style="top: 33%; left: 54%;" data-correct="Cara articular anterior"></select>
+            <select class="dropdown" style="top: 36%; left: 54%;" data-correct="Cara articular superior"></select>
+            <select class="dropdown" style="top: 38%; left: 54%;" data-correct="Agujero transverso"></select>
+            <select class="dropdown" style="top: 41%; left: 49%;" data-correct="Cara articular inferior"></select>
+            <select class="dropdown" style="top: 41%; left: 40%;" data-correct="Lámina"></select>
+            <select class="dropdown" style="top: 36%; left: 35%;" data-correct="Apófisis espinosa"></select>
+
+            <select class="dropdown" style="top: 31%; left: 70%;" data-correct="Cuerpo vertebral"></select>
+            <select class="dropdown" style="top: 32%; left: 66%;" data-correct="Agujero transverso"></select>
+            <select class="dropdown" style="top: 32%; left: 73%;" data-correct="Apófisis unciforme"></select>
+            <select class="dropdown" style="top: 34%; left: 64%;" data-correct="Tubérculo anterior"></select>
+            <select class="dropdown" style="top: 34%; left: 76%;" data-correct="Surco del nervio espinal"></select>
+            <select class="dropdown" style="top: 35%; left: 62%;" data-correct="Tubérculo posterior"></select>
+            <select class="dropdown" style="top: 36%; left: 77%;" data-correct="Pedículo"></select>
+            <select class="dropdown" style="top: 37%; left: 62%;" data-correct="Apófisis articular inferior"></select>
+            <select class="dropdown" style="top: 38%; left: 75%;" data-correct="Lámina"></select>
+            <select class="dropdown" style="top: 39%; left: 65%;" data-correct="Apófisis articular superior"></select>
+            <select class="dropdown" style="top: 41%; left: 73%;" data-correct="Apófisis espinosa"></select>
+
+            <select class="dropdown" style="top: 47%; left: 24%;" data-correct="Apófisis articular superior"></select>
+            <select class="dropdown" style="top: 53%; left: 15%;" data-correct="Cápsula articular"></select>
+            <select class="dropdown" style="top: 56%; left: 18%;" data-correct="Ligamento interespinoso"></select>
+            <select class="dropdown" style="top: 54%; left: 27%;" data-correct="Ligamento amarillo"></select>
+            <select class="dropdown" style="top: 50%; left: 29%;" data-correct="Ligamento intertransversario"></select>
+            <select class="dropdown" style="top: 48%; left: 28%;" data-correct="Apófisis articular inferior"></select>
+
+            <select class="dropdown" style="top: 48%; left: 35%;" data-correct="Ligamento longitudinal anterior"></select>
+            <select class="dropdown" style="top: 47%; left: 40%;" data-correct="Agujero intervertebral"></select>
+            <select class="dropdown" style="top: 46%; left: 45%;" data-correct="Apófisis articular superior"></select>
+            <select class="dropdown" style="top: 48%; left: 51%;" data-correct="Fosita costal de la apófisis transversa"></select>
+            <select class="dropdown" style="top: 50%; left: 49%;" data-correct="Ligamento intertransversario"></select>
+            <select class="dropdown" style="top: 51%; left: 50%;" data-correct="Ligamento interespinoso"></select>
+            <select class="dropdown" style="top: 57%; left: 47%;" data-correct="Ligamento supraespinoso"></select>
+            <select class="dropdown" style="top: 56%; left: 43%;" data-correct="Articulación interapofisaria"></select>
+            <select class="dropdown" style="top: 56%; left: 36%;" data-correct="Fosita costal superior"></select>
+            <select class="dropdown" style="top: 54%; left: 35%;" data-correct="Disco intervertebral"></select>
+
+            <select class="dropdown" style="top: 47%; left: 72%;" data-correct="Ligamento longitudinal anterior"></select>
+            <select class="dropdown" style="top: 48%; left: 75%;" data-correct="Membrana atlantooccipital anterior"></select>
+            <select class="dropdown" style="top: 50%; left: 63%;" data-correct="Cara articular superior"></select>
+            <select class="dropdown" style="top: 49%; left: 69%;" data-correct="Diente"></select>
+            <select class="dropdown" style="top: 49%; left: 81%;" data-correct="Fosita del diente"></select>
+            <select class="dropdown" style="top: 50%; left: 85%;" data-correct="Rama vertical del ligamento cruciforme"></select>
+            <select class="dropdown" style="top: 54%; left: 64%;" data-correct="Ligamento transverso"></select>
+            <select class="dropdown" style="top: 56%; left: 69%;" data-correct="Membrana atlantooccipital posterior"></select>
+            <select class="dropdown" style="top: 56%; left: 81%;" data-correct="Arteria vertebral"></select>
+
+            <select class="dropdown" style="top: 61%; left: 20%;" data-correct="Fosita costal de la apófisis transversa"></select>
+            <select class="dropdown" style="top: 68%; left: 16%;" data-correct="Disco intervertebral"></select>
+            <select class="dropdown" style="top: 61%; left: 29%;" data-correct="Ligamento longitudinal anterior"></select>
+            <select class="dropdown" style="top: 63%; left: 56%;" data-correct="Pedículos"></select>
+            <select class="dropdown" style="top: 66%; left: 56%;" data-correct="Disco intervertebral"></select>
+            <select class="dropdown" style="top: 69%; left: 56%;" data-correct="Ligamento longitudinal posterior"></select>
+            <select class="dropdown" style="top: 77%; left: 26%;" data-correct="Apófisis articular superior"></select>
+            <select class="dropdown" style="top: 79%; left: 31%;" data-correct="Pedículo"></select>
+            <select class="dropdown" style="top: 80%; left: 33%;" data-correct="Apófisis transversa"></select>
+            <select class="dropdown" style="top: 83%; left: 32%;" data-correct="Apófisis articular inferior"></select>
+            <select class="dropdown" style="top: 87%; left: 33%;" data-correct="Ligamento amarillo"></select>
+            <select class="dropdown" style="top: 87%; left: 19%;" data-correct="Lámina"></select>
+
+            <select class="dropdown" style="top: 79%; left: 48%;" data-correct="Promontorio"></select>
+            <select class="dropdown" style="top: 80%; left: 55%;" data-correct="Ala del sacro"></select>
+            <select class="dropdown" style="top: 84%; left: 55%;" data-correct="Agujeros sacros pélvicos"></select>
+            <select class="dropdown" style="top: 86%; left: 55%;" data-correct="Inserción del m. piramidal"></select>
+            <select class="dropdown" style="top: 89%; left: 55%;" data-correct="Líneas transversales"></select>
+            <select class="dropdown" style="top: 91%; left: 50%;" data-correct="Vértice del sacro"></select>
+
+            <select class="dropdown" style="top: 79%; left: 71%;" data-correct="Apófisis articular superior"></select>
+            <select class="dropdown" style="top: 80%; left: 65%;" data-correct="Cara auricular"></select>
+            <select class="dropdown" style="top: 80%; left: 75%;" data-correct="Conducto sacro"></select>
+            <select class="dropdown" style="top: 79%; left: 80%;" data-correct="Cresta sacra media"></select>
+            <select class="dropdown" style="top: 84%; left: 81%;" data-correct="Agujeros sacros posteriores"></select>
+            <select class="dropdown" style="top: 88%; left: 81%;" data-correct="Cresta sacra lateral"></select>
+            <select class="dropdown" style="top: 85%; left: 65%;" data-correct="Cresta sacra intermedia"></select>
+            <select class="dropdown" style="top: 90%; left: 65%;" data-correct="Asta del sacro"></select>
+            <select class="dropdown" style="top: 91%; left: 71%;" data-correct="Hiato del sacro"></select>
+            <select class="dropdown" style="top: 90%; left: 75%;" data-correct="Vértice del sacro"></select>
+        </div>
+    </div>
+
+    <script>
+        // Lista alfabética unificada con todas las etiquetas literales de la lámina
+        const opciones = [
+            "Agujero intervertebral",
+            "Agujero transverso",
+            "Agujero vertebral",
+            "Agujeros sacros posteriores",
+            "Agujeros sacros pélvicos",
+            "Ala del sacro",
+            "Apófisis articular inferior",
+            "Apófisis articular superior",
+            "Apófisis articulares inferiores",
+            "Apófisis articulares superiores",
+            "Apófisis costiforme",
+            "Apófisis espinosa",
+            "Apófisis transversa",
+            "Apófisis unciforme",
+            "Arco anterior",
+            "Arco posterior",
+            "Arteria vertebral",
+            "Articulación interapofisaria",
+            "Asta del sacro",
+            "Cara articular anterior",
+            "Cara articular inferior",
+            "Cara articular superior",
+            "Cara auricular",
+            "Conducto sacro",
+            "Cresta sacra intermedia",
+            "Cresta sacra lateral",
+            "Cresta sacra media",
+            "Cuerpo",
+            "Cuerpo del axis",
+            "Cuerpo vertebral",
+            "Cápsula articular",
+            "Diente",
+            "Diente del axis",
+            "Disco intervertebral",
+            "Fosita costal de la apófisis transversa",
+            "Fosita costal inferior",
+            "Fosita costal superior",
+            "Fosita del diente",
+            "Hiato del sacro",
+            "Inserción del m. piramidal",
+            "Ligamento amarillo",
+            "Ligamento interespinoso",
+            "Ligamento intertransversario",
+            "Ligamento longitudinal anterior",
+            "Ligamento longitudinal posterior",
+            "Ligamento supraespinoso",
+            "Ligamento transverso",
+            "Lámina",
+            "Líneas transversales",
+            "Membrana atlantooccipital anterior",
+            "Membrana atlantooccipital posterior",
+            "Pedículo",
+            "Pedículos",
+            "Promontorio",
+            "Rama vertical del ligamento cruciforme",
+            "Surco de la arteria vertebral",
+            "Surco del nervio espinal",
+            "Tubérculo anterior",
+            "Tubérculo posterior",
+            "Vértice del diente",
+            "Vértice del sacro"
+        ];
+
+        window.onload = function() {
+            const selects = document.querySelectorAll('.dropdown');
+            
+            selects.forEach(select => {
+                let defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "--- Selecciona ---";
+                select.appendChild(defaultOption);
+
+                opciones.forEach(opcion => {
+                    let opt = document.createElement('option');
+                    opt.value = opcion;
+                    opt.text = opcion;
+                    select.appendChild(opt);
+                });
+            });
+        };
+
+        function verificarRespuestas() {
+            const selects = document.querySelectorAll('.dropdown');
+            let correctas = 0;
+            let total = selects.length;
+
+            selects.forEach(select => {
+                let respuestaUsuario = select.value;
+                let respuestaCorrecta = select.getAttribute('data-correct');
+
+                select.classList.remove('correct', 'incorrect');
+
+                if (respuestaUsuario === respuestaCorrecta) {
+                    select.classList.add('correct');
+                    correctas++;
+                } else if (respuestaUsuario !== "") {
+                    select.classList.add('incorrect');
+                } else {
+                    select.classList.add('incorrect');
+                }
+            });
+
+            const scoreDiv = document.getElementById('score');
+            scoreDiv.innerHTML = `Has acertado ${correctas} de ${total} estructuras.`;
+            
+            if (correctas === total) {
+                scoreDiv.style.color = "#2e7d32";
+            } else {
+                scoreDiv.style.color = "#c62828";
+            }
+        }
+
+        function reiniciarTest() {
+            const selects = document.querySelectorAll('.dropdown');
+            selects.forEach(select => {
+                select.value = "";
+                select.classList.remove('correct', 'incorrect');
+            });
+            document.getElementById('score').innerHTML = "";
+        }
+    </script>
+</body>
+</html>

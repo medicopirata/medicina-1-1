@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Esquema Arterial del Tronco</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .instructions {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 16px;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        .btn-verify {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-verify:hover {
+            background-color: #45a049;
+        }
+        .btn-retry {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-retry:hover {
+            background-color: #1e88e5;
+        }
+        .score-display {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #333;
+        }
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        .img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .dropdown {
+            position: absolute;
+            width: 25%; 
+            height: 2.2%;
+            font-size: 11px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #666;
+            border-radius: 3px;
+            padding: 0 2px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+        .dropdown:focus {
+            z-index: 10;
+            border-color: #2196F3;
+            outline: none;
+        }
+        .correct {
+            background-color: #c8e6c9 !important;
+            border: 2px solid #2e7d32 !important;
+            color: #1b5e20;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #ffcdd2 !important;
+            border: 2px solid #c62828 !important;
+            color: #b71c1c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Quiz: Esquema Arterial del Tronco</h1>
+        <p class="instructions">Selecciona la estructura anatómica correcta en cada menú desplegable al final de las líneas indicadoras.</p>
+        
+        <div class="controls">
+            <button class="btn-verify" onclick="verificarRespuestas()">Verificar Respuestas</button>
+            <button class="btn-retry" onclick="reiniciarTest()">Volver a Intentar</button>
+            <div id="score" class="score-display"></div>
+        </div>
+
+        <div class="img-wrapper">
+            <img src="esquema_arterial.png" alt="Esquema Arterial">
+            
+            <select class="dropdown" style="top: 1%; left: 38%; width: 15%;" data-correct="Tráquea"></select>
+            <select class="dropdown" style="top: 4%; left: 2%;" data-correct="A. carótida común derecha"></select>
+            <select class="dropdown" style="top: 7%; left: 2%;" data-correct="A. subclavia derecha"></select>
+            <select class="dropdown" style="top: 11%; left: 2%;" data-correct="Tronco arterial braquiocefálico"></select>
+            <select class="dropdown" style="top: 18%; left: 2%;" data-correct="A. intercostal posterior (3.ª)"></select>
+            <select class="dropdown" style="top: 24%; left: 2%;" data-correct="Aorta ascendente"></select>
+            <select class="dropdown" style="top: 32%; left: 2%;" data-correct="A. intercostal (5.ª)"></select>
+            <select class="dropdown" style="top: 46%; left: 2%;" data-correct="Representación del diafragma"></select>
+            <select class="dropdown" style="top: 52%; left: 2%;" data-correct="Tronco celíaco"></select>
+            <select class="dropdown" style="top: 61%; left: 2%;" data-correct="A. mesentérica superior"></select>
+            <select class="dropdown" style="top: 69%; left: 2%;" data-correct="A. mesentérica inferior"></select>
+
+            <select class="dropdown" style="top: 4%; left: 73%;" data-correct="A. carótida común izquierda"></select>
+            <select class="dropdown" style="top: 7.5%; left: 73%;" data-correct="A. subclavia izquierda"></select>
+            <select class="dropdown" style="top: 11%; left: 73%;" data-correct="A. intercostal suprema"></select>
+            <select class="dropdown" style="top: 18%; left: 73%;" data-correct="Arco aórtico"></select>
+            <select class="dropdown" style="top: 23%; left: 73%;" data-correct="A. bronquial"></select>
+            <select class="dropdown" style="top: 27%; left: 73%;" data-correct="M. intercostal interno"></select>
+            <select class="dropdown" style="top: 32%; left: 73%;" data-correct="M. intercostal externo"></select>
+            <select class="dropdown" style="top: 36%; left: 73%;" data-correct="Aorta torácica"></select>
+            <select class="dropdown" style="top: 40%; left: 73%;" data-correct="A. frénica inferior"></select>
+            <select class="dropdown" style="top: 46%; left: 73%;" data-correct="Glándula suprarrenal"></select>
+            <select class="dropdown" style="top: 50.5%; left: 73%;" data-correct="A. suprarrenal media"></select>
+            <select class="dropdown" style="top: 54.5%; left: 73%;" data-correct="A. renal"></select>
+            <select class="dropdown" style="top: 59%; left: 73%;" data-correct="Riñón izquierdo"></select>
+            <select class="dropdown" style="top: 63%; left: 73%;" data-correct="A. lumbar (2.ª)"></select>
+            <select class="dropdown" style="top: 68%; left: 73%;" data-correct="A. gonadal"></select>
+            <select class="dropdown" style="top: 72%; left: 73%;" data-correct="A. ilíaca común"></select>
+            <select class="dropdown" style="top: 77%; left: 73%;" data-correct="A. sacra media"></select>
+            <select class="dropdown" style="top: 82%; left: 73%;" data-correct="A. ilíaca interna"></select>
+            <select class="dropdown" style="top: 86.5%; left: 73%;" data-correct="A. ilíaca externa"></select>
+            <select class="dropdown" style="top: 91%; left: 73%;" data-correct="Lig. inguinal"></select>
+            <select class="dropdown" style="top: 95.5%; left: 73%;" data-correct="A. epigástrica inferior"></select>
+        </div>
+    </div>
+
+    <script>
+        const opciones = [
+            "A. bronquial",
+            "A. carótida común derecha",
+            "A. carótida común izquierda",
+            "A. epigástrica inferior",
+            "A. frénica inferior",
+            "A. gonadal",
+            "A. ilíaca común",
+            "A. ilíaca externa",
+            "A. ilíaca interna",
+            "A. intercostal (5.ª)",
+            "A. intercostal posterior (3.ª)",
+            "A. intercostal suprema",
+            "A. lumbar (2.ª)",
+            "A. mesentérica inferior",
+            "A. mesentérica superior",
+            "A. renal",
+            "A. sacra media",
+            "A. subclavia derecha",
+            "A. subclavia izquierda",
+            "A. suprarrenal media",
+            "Aorta ascendente",
+            "Aorta torácica",
+            "Arco aórtico",
+            "Glándula suprarrenal",
+            "Lig. inguinal",
+            "M. intercostal externo",
+            "M. intercostal interno",
+            "Representación del diafragma",
+            "Riñón izquierdo",
+            "Tráquea",
+            "Tronco arterial braquiocefálico",
+            "Tronco celíaco"
+        ];
+
+        window.onload = function() {
+            const selects = document.querySelectorAll('.dropdown');
+            
+            selects.forEach(select => {
+                let defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "--- Selecciona ---";
+                select.appendChild(defaultOption);
+
+                opciones.forEach(opcion => {
+                    let opt = document.createElement('option');
+                    opt.value = opcion;
+                    opt.text = opcion;
+                    select.appendChild(opt);
+                });
+            });
+        };
+
+        function verificarRespuestas() {
+            const selects = document.querySelectorAll('.dropdown');
+            let correctas = 0;
+            let total = selects.length;
+
+            selects.forEach(select => {
+                let respuestaUsuario = select.value;
+                let respuestaCorrecta = select.getAttribute('data-correct');
+
+                select.classList.remove('correct', 'incorrect');
+
+                if (respuestaUsuario === respuestaCorrecta) {
+                    select.classList.add('correct');
+                    correctas++;
+                } else if (respuestaUsuario !== "") {
+                    select.classList.add('incorrect');
+                } else {
+                    select.classList.add('incorrect');
+                }
+            });
+
+            const scoreDiv = document.getElementById('score');
+            scoreDiv.innerHTML = `Has acertado ${correctas} de ${total} preguntas.`;
+            
+            if (correctas === total) {
+                scoreDiv.style.color = "#2e7d32";
+            } else {
+                scoreDiv.style.color = "#c62828";
+            }
+        }
+
+        function reiniciarTest() {
+            const selects = document.querySelectorAll('.dropdown');
+            selects.forEach(select => {
+                select.value = "";
+                select.classList.remove('correct', 'incorrect');
+            });
+            document.getElementById('score').innerHTML = "";
+        }
+    </script>
+</body>
+</html>

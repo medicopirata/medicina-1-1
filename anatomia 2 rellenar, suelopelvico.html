@@ -1,0 +1,250 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Anatomía del Periné (Suelo Pélvico)</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 10px;
+            background-color: #f0f4f8;
+            text-align: center;
+        }
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .instructions {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 16px;
+        }
+        .controls {
+            margin-bottom: 20px;
+            position: sticky;
+            top: 0;
+            background: white;
+            padding: 10px;
+            z-index: 100;
+            border-bottom: 2px solid #eee;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+            font-weight: bold;
+        }
+        .btn-verify {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-verify:hover { background-color: #45a049; }
+        .btn-retry {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-retry:hover { background-color: #1e88e5; }
+        .score-display {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #333;
+        }
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 1000px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        .img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .dropdown {
+            position: absolute;
+            width: 13%; 
+            height: 1.5%;
+            font-size: 9px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #444;
+            border-radius: 2px;
+            padding: 0 1px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+        .dropdown:focus {
+            z-index: 50;
+            border-color: #2196F3;
+            outline: none;
+            width: 18%; /* Se expande al hacer clic */
+        }
+        .correct {
+            background-color: #c8e6c9 !important;
+            border: 1px solid #2e7d32 !important;
+            color: #1b5e20;
+        }
+        .incorrect {
+            background-color: #ffcdd2 !important;
+            border: 1px solid #c62828 !important;
+            color: #b71c1c;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Quiz: Visión Inferior del Periné</h1>
+        <p class="instructions">Selecciona la estructura anatómica correcta en cada menú desplegable correspondiente a las líneas indicadoras de la lámina.</p>
+        
+        <div class="controls">
+            <button class="btn-verify" onclick="verificarRespuestas()">Verificar Respuestas</button>
+            <button class="btn-retry" onclick="reiniciarTest()">Volver a Intentar</button>
+            <div id="score" class="score-display"></div>
+        </div>
+
+        <div class="img-wrapper">
+            <img src="suelo_pelvico1.png" alt="Anatomía del Suelo Pélvico">
+            
+            <select class="dropdown" style="top: 13%; left: 24%;" data-correct="Músculo esfínter externo de la uretra"></select>
+            <select class="dropdown" style="top: 18%; left: 16%;" data-correct="Músculo compresor de la uretra"></select>
+            <select class="dropdown" style="top: 20%; left: 15%;" data-correct="Músculo esfínter uretrovaginal"></select>
+            <select class="dropdown" style="top: 27%; left: 20%;" data-correct="Fibras lisas"></select>
+            <select class="dropdown" style="top: 28%; left: 35%;" data-correct="Fascia superior del diafragma urogenital"></select>
+            <select class="dropdown" style="top: 18%; left: 38%;" data-correct="Uretra"></select>
+            <select class="dropdown" style="top: 19.5%; left: 39%;" data-correct="Vagina"></select>
+            <select class="dropdown" style="top: 21%; left: 41%;" data-correct="Membrana perineal"></select>
+
+            <select class="dropdown" style="top: 10.5%; left: 59%;" data-correct="Clítoris"></select>
+            <select class="dropdown" style="top: 15%; left: 48%;" data-correct="Uretra"></select>
+            <select class="dropdown" style="top: 16.5%; left: 49%;" data-correct="Vagina"></select>
+            <select class="dropdown" style="top: 24%; left: 45%;" data-correct="Músculo transverso superficial"></select>
+            <select class="dropdown" style="top: 29%; left: 48%;" data-correct="Fascia inferior del diafragma pélvico"></select>
+            <select class="dropdown" style="top: 12%; left: 69%;" data-correct="Músculo isquiocavernoso"></select>
+            <select class="dropdown" style="top: 15.5%; left: 72%;" data-correct="Músculo bulboesponjoso"></select>
+            <select class="dropdown" style="top: 18%; left: 73%;" data-correct="Membrana perineal"></select>
+            <select class="dropdown" style="top: 20.5%; left: 73%;" data-correct="Cuerpo perineal"></select>
+            <select class="dropdown" style="top: 23.5%; left: 73%;" data-correct="Ligamento sacrotuberoso"></select>
+            <select class="dropdown" style="top: 25.5%; left: 71%;" data-correct="Músculo esfínter externo del ano"></select>
+            <select class="dropdown" style="top: 28.5%; left: 70%;" data-correct="Rafe anococcígeo"></select>
+
+            <select class="dropdown" style="top: 40.5%; left: 19%;" data-correct="Ligamento arqueado del pubis"></select>
+            <select class="dropdown" style="top: 43.5%; left: 14%;" data-correct="Ligamento perineal transverso"></select>
+            <select class="dropdown" style="top: 52%; left: 16%;" data-correct="Músculo transverso profundo"></select>
+            <select class="dropdown" style="top: 55%; left: 28%;" data-correct="Fascia superior del diafragma urogenital"></select>
+            <select class="dropdown" style="top: 43%; left: 37%;" data-correct="Vena dorsal del pene"></select>
+            <select class="dropdown" style="top: 45.5%; left: 37%;" data-correct="Membrana perineal"></select>
+            <select class="dropdown" style="top: 52%; left: 34%;" data-correct="Músculo esfínter externo de la uretra"></select>
+
+            <select class="dropdown" style="top: 41%; left: 49%;" data-correct="Músculo isquiocavernoso"></select>
+            <select class="dropdown" style="top: 50%; left: 47%;" data-correct="Cuerpo perineal"></select>
+            <select class="dropdown" style="top: 55%; left: 45%;" data-correct="Músculo esfínter externo del ano"></select>
+            <select class="dropdown" style="top: 38.5%; left: 70%;" data-correct="Cuerpos eréctiles del pene"></select>
+            <select class="dropdown" style="top: 41%; left: 69%;" data-correct="Músculo bulboesponjoso"></select>
+            <select class="dropdown" style="top: 43.5%; left: 70%;" data-correct="Membrana perineal"></select>
+            <select class="dropdown" style="top: 45%; left: 73%;" data-correct="Músculo transverso superficial"></select>
+            <select class="dropdown" style="top: 51%; left: 71%;" data-correct="Fascia inferior del diafragma pélvico"></select>
+            <select class="dropdown" style="top: 54%; left: 70%;" data-correct="Ligamento anococcígeo"></select>
+            <select class="dropdown" style="top: 56.5%; left: 70%;" data-correct="Ligamento sacrotuberoso"></select>
+        </div>
+    </div>
+
+    <script>
+        // Lista alfabética unificada con todas las etiquetas
+        const opciones = [
+            "Clítoris",
+            "Cuerpo perineal",
+            "Cuerpos eréctiles del pene",
+            "Fascia inferior del diafragma pélvico",
+            "Fascia superior del diafragma urogenital",
+            "Fibras lisas",
+            "Ligamento anococcígeo",
+            "Ligamento arqueado del pubis",
+            "Ligamento perineal transverso",
+            "Ligamento sacrotuberoso",
+            "Membrana perineal",
+            "Músculo bulboesponjoso",
+            "Músculo compresor de la uretra",
+            "Músculo esfínter externo de la uretra",
+            "Músculo esfínter externo del ano",
+            "Músculo esfínter uretrovaginal",
+            "Músculo isquiocavernoso",
+            "Músculo transverso profundo",
+            "Músculo transverso superficial",
+            "Rafe anococcígeo",
+            "Uretra",
+            "Vagina",
+            "Vena dorsal del pene"
+        ];
+
+        window.onload = function() {
+            const selects = document.querySelectorAll('.dropdown');
+            
+            selects.forEach(select => {
+                let defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "--- Selecciona ---";
+                select.appendChild(defaultOption);
+
+                opciones.forEach(opcion => {
+                    let opt = document.createElement('option');
+                    opt.value = opcion;
+                    opt.text = opcion;
+                    select.appendChild(opt);
+                });
+            });
+        };
+
+        function verificarRespuestas() {
+            const selects = document.querySelectorAll('.dropdown');
+            let correctas = 0;
+            let total = selects.length;
+
+            selects.forEach(select => {
+                let respuestaUsuario = select.value;
+                let respuestaCorrecta = select.getAttribute('data-correct');
+
+                select.classList.remove('correct', 'incorrect');
+
+                if (respuestaUsuario === respuestaCorrecta) {
+                    select.classList.add('correct');
+                    correctas++;
+                } else if (respuestaUsuario !== "") {
+                    select.classList.add('incorrect');
+                } else {
+                    select.classList.add('incorrect');
+                }
+            });
+
+            const scoreDiv = document.getElementById('score');
+            scoreDiv.innerHTML = `Has acertado ${correctas} de ${total} estructuras.`;
+            
+            if (correctas === total) {
+                scoreDiv.style.color = "#2e7d32";
+            } else {
+                scoreDiv.style.color = "#c62828";
+            }
+        }
+
+        function reiniciarTest() {
+            const selects = document.querySelectorAll('.dropdown');
+            selects.forEach(select => {
+                select.value = "";
+                select.classList.remove('correct', 'incorrect');
+            });
+            document.getElementById('score').innerHTML = "";
+        }
+    </script>
+</body>
+</html>

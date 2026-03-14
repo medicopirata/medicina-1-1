@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Anatomía del Músculo Diafragma</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .instructions {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 16px;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        .btn-verify {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-verify:hover {
+            background-color: #45a049;
+        }
+        .btn-retry {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-retry:hover {
+            background-color: #1e88e5;
+        }
+        .score-display {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #333;
+        }
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 750px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        .img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .dropdown {
+            position: absolute;
+            width: 22%; 
+            height: 3%;
+            font-size: 11px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #666;
+            border-radius: 3px;
+            padding: 0 2px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+        .dropdown:focus {
+            z-index: 10;
+            border-color: #2196F3;
+            outline: none;
+        }
+        .correct {
+            background-color: #c8e6c9 !important;
+            border: 2px solid #2e7d32 !important;
+            color: #1b5e20;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #ffcdd2 !important;
+            border: 2px solid #c62828 !important;
+            color: #b71c1c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Quiz: Visión Anteroinferior del Diafragma</h1>
+        <p class="instructions">Selecciona la estructura anatómica correcta en cada menú desplegable situado al final de las líneas indicadoras.</p>
+        
+        <div class="controls">
+            <button class="btn-verify" onclick="verificarRespuestas()">Verificar Respuestas</button>
+            <button class="btn-retry" onclick="reiniciarTest()">Volver a Intentar</button>
+            <div id="score" class="score-display"></div>
+        </div>
+
+        <div class="img-wrapper">
+            <img src="diafragma.png" alt="Anatomía del Diafragma">
+            
+            <select class="dropdown" style="top: 8.5%; left: 21%;" data-correct="Orificio de la vena cava superior"></select>
+            <select class="dropdown" style="top: 8.5%; left: 48%;" data-correct="Centro tendinoso"></select>
+            
+            <select class="dropdown" style="top: 31%; left: 75%;" data-correct="Hiato esofágico"></select>
+            <select class="dropdown" style="top: 44.5%; left: 76%;" data-correct="Ligamento arqueado medio"></select>
+            
+            <select class="dropdown" style="top: 57%; left: 59%;" data-correct="Hiato aórtico"></select>
+            <select class="dropdown" style="top: 62%; left: 59%;" data-correct="Pilar izquierdo"></select>
+
+            <select class="dropdown" style="top: 48%; left: 14%;" data-correct="Triángulo vertebrocostal"></select>
+            <select class="dropdown" style="top: 56.5%; left: 19%;" data-correct="Ligamento arqueado lateral"></select>
+            <select class="dropdown" style="top: 60.5%; left: 25%;" data-correct="Ligamento arqueado medial"></select>
+            <select class="dropdown" style="top: 68%; left: 28%;" data-correct="Pilar derecho"></select>
+        </div>
+    </div>
+
+    <script>
+        // Opciones literales ordenadas alfabéticamente
+        const opciones = [
+            "Centro tendinoso",
+            "Hiato aórtico",
+            "Hiato esofágico",
+            "Ligamento arqueado lateral",
+            "Ligamento arqueado medial",
+            "Ligamento arqueado medio",
+            "Orificio de la vena cava superior",
+            "Pilar derecho",
+            "Pilar izquierdo",
+            "Triángulo vertebrocostal"
+        ];
+
+        window.onload = function() {
+            const selects = document.querySelectorAll('.dropdown');
+            
+            selects.forEach(select => {
+                let defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "--- Selecciona ---";
+                select.appendChild(defaultOption);
+
+                opciones.forEach(opcion => {
+                    let opt = document.createElement('option');
+                    opt.value = opcion;
+                    opt.text = opcion;
+                    select.appendChild(opt);
+                });
+            });
+        };
+
+        function verificarRespuestas() {
+            const selects = document.querySelectorAll('.dropdown');
+            let correctas = 0;
+            let total = selects.length;
+
+            selects.forEach(select => {
+                let respuestaUsuario = select.value;
+                let respuestaCorrecta = select.getAttribute('data-correct');
+
+                select.classList.remove('correct', 'incorrect');
+
+                if (respuestaUsuario === respuestaCorrecta) {
+                    select.classList.add('correct');
+                    correctas++;
+                } else if (respuestaUsuario !== "") {
+                    select.classList.add('incorrect');
+                } else {
+                    select.classList.add('incorrect');
+                }
+            });
+
+            const scoreDiv = document.getElementById('score');
+            scoreDiv.innerHTML = `Has acertado ${correctas} de ${total} preguntas.`;
+            
+            if (correctas === total) {
+                scoreDiv.style.color = "#2e7d32";
+            } else {
+                scoreDiv.style.color = "#c62828";
+            }
+        }
+
+        function reiniciarTest() {
+            const selects = document.querySelectorAll('.dropdown');
+            selects.forEach(select => {
+                select.value = "";
+                select.classList.remove('correct', 'incorrect');
+            });
+            document.getElementById('score').innerHTML = "";
+        }
+    </script>
+</body>
+</html>

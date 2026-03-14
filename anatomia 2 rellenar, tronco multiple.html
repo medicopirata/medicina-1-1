@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Visión Anterior del Tronco</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .instructions {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 16px;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        .btn-verify {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-verify:hover {
+            background-color: #45a049;
+        }
+        .btn-retry {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-retry:hover {
+            background-color: #1e88e5;
+        }
+        .score-display {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #333;
+        }
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        .img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .dropdown {
+            position: absolute;
+            width: 24%; 
+            height: 2.2%;
+            font-size: 11px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #666;
+            border-radius: 3px;
+            padding: 0 2px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+        .dropdown:focus {
+            z-index: 10;
+            border-color: #2196F3;
+            outline: none;
+        }
+        .correct {
+            background-color: #c8e6c9 !important;
+            border: 2px solid #2e7d32 !important;
+            color: #1b5e20;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #ffcdd2 !important;
+            border: 2px solid #c62828 !important;
+            color: #b71c1c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Quiz: Visión Anterior del Tronco</h1>
+        <p class="instructions">Selecciona la estructura anatómica correcta en cada menú desplegable al inicio o final de las líneas indicadoras.</p>
+        
+        <div class="controls">
+            <button class="btn-verify" onclick="verificarRespuestas()">Verificar Respuestas</button>
+            <button class="btn-retry" onclick="reiniciarTest()">Volver a Intentar</button>
+            <div id="score" class="score-display"></div>
+        </div>
+
+        <div class="img-wrapper">
+            <img src="tronco_multiple.png" alt="Visión Anterior del Tronco">
+            
+            <select class="dropdown" style="top: 14%; left: 0%;" data-correct="A. axilar"></select>
+            <select class="dropdown" style="top: 18%; left: 0%;" data-correct="A. torácica externa"></select>
+            <select class="dropdown" style="top: 31%; left: 0%;" data-correct="M. recto del abdomen"></select>
+            <select class="dropdown" style="top: 42%; left: 0%;" data-correct="M. oblicuo externo"></select>
+            <select class="dropdown" style="top: 49%; left: 0%;" data-correct="M. oblicuo interno"></select>
+            <select class="dropdown" style="top: 52%; left: 0%;" data-correct="N. intercostal"></select>
+            <select class="dropdown" style="top: 56%; left: 0%;" data-correct="M. transverso del abdomen"></select>
+            <select class="dropdown" style="top: 72%; left: 0%;" data-correct="A. epigástrica superficial"></select>
+            <select class="dropdown" style="top: 77%; left: 0%;" data-correct="A. circunfleja ilíaca superficial"></select>
+            <select class="dropdown" style="top: 86.5%; left: 15%; width: 18%;" data-correct="A. femoral"></select>
+
+            <select class="dropdown" style="top: 2%; left: 75%;" data-correct="A. subclavia"></select>
+            <select class="dropdown" style="top: 18%; left: 75%;" data-correct="A. torácica interna"></select>
+            <select class="dropdown" style="top: 21.5%; left: 75%;" data-correct="A. intercostal"></select>
+            <select class="dropdown" style="top: 26%; left: 75%;" data-correct="A. intercostal 5.ª"></select>
+            <select class="dropdown" style="top: 29.5%; left: 75%;" data-correct="A. pericardiofrénica"></select>
+            <select class="dropdown" style="top: 34%; left: 75%;" data-correct="A. epigástrica superior"></select>
+            <select class="dropdown" style="top: 49.5%; left: 75%;" data-correct="A. epigástrica inferior"></select>
+            <select class="dropdown" style="top: 70%; left: 75%;" data-correct="N. iliohipogástrico"></select>
+            <select class="dropdown" style="top: 73.5%; left: 75%;" data-correct="N. ilioinguinal"></select>
+            <select class="dropdown" style="top: 79%; left: 75%;" data-correct="Tendón conjunto"></select>
+        </div>
+    </div>
+
+    <script>
+        // Opciones literales ordenadas alfabéticamente
+        const opciones = [
+            "A. axilar",
+            "A. circunfleja ilíaca superficial",
+            "A. epigástrica inferior",
+            "A. epigástrica superficial",
+            "A. epigástrica superior",
+            "A. femoral",
+            "A. intercostal",
+            "A. intercostal 5.ª",
+            "A. pericardiofrénica",
+            "A. subclavia",
+            "A. torácica externa",
+            "A. torácica interna",
+            "M. oblicuo externo",
+            "M. oblicuo interno",
+            "M. recto del abdomen",
+            "M. transverso del abdomen",
+            "N. iliohipogástrico",
+            "N. ilioinguinal",
+            "N. intercostal",
+            "Tendón conjunto"
+        ];
+
+        window.onload = function() {
+            const selects = document.querySelectorAll('.dropdown');
+            
+            selects.forEach(select => {
+                let defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "--- Selecciona ---";
+                select.appendChild(defaultOption);
+
+                opciones.forEach(opcion => {
+                    let opt = document.createElement('option');
+                    opt.value = opcion;
+                    opt.text = opcion;
+                    select.appendChild(opt);
+                });
+            });
+        };
+
+        function verificarRespuestas() {
+            const selects = document.querySelectorAll('.dropdown');
+            let correctas = 0;
+            let total = selects.length;
+
+            selects.forEach(select => {
+                let respuestaUsuario = select.value;
+                let respuestaCorrecta = select.getAttribute('data-correct');
+
+                select.classList.remove('correct', 'incorrect');
+
+                if (respuestaUsuario === respuestaCorrecta) {
+                    select.classList.add('correct');
+                    correctas++;
+                } else if (respuestaUsuario !== "") {
+                    select.classList.add('incorrect');
+                } else {
+                    select.classList.add('incorrect');
+                }
+            });
+
+            const scoreDiv = document.getElementById('score');
+            scoreDiv.innerHTML = `Has acertado ${correctas} de ${total} preguntas.`;
+            
+            if (correctas === total) {
+                scoreDiv.style.color = "#2e7d32";
+            } else {
+                scoreDiv.style.color = "#c62828";
+            }
+        }
+
+        function reiniciarTest() {
+            const selects = document.querySelectorAll('.dropdown');
+            selects.forEach(select => {
+                select.value = "";
+                select.classList.remove('correct', 'incorrect');
+            });
+            document.getElementById('score').innerHTML = "";
+        }
+    </script>
+</body>
+</html>

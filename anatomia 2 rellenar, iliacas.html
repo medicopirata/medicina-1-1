@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Arterias Ilíacas</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+        .container {
+            max-width: 950px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .instructions {
+            margin-bottom: 20px;
+            color: #333;
+            font-size: 16px;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        .btn-verify {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-verify:hover {
+            background-color: #45a049;
+        }
+        .btn-retry {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-retry:hover {
+            background-color: #1e88e5;
+        }
+        .score-display {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #333;
+        }
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 800px;
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        .img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .dropdown {
+            position: absolute;
+            width: 22%; 
+            height: 2.5%;
+            font-size: 11px;
+            background-color: rgba(255, 255, 255, 0.95);
+            border: 1px solid #666;
+            border-radius: 3px;
+            padding: 0 2px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+        .dropdown:focus {
+            z-index: 10;
+            border-color: #2196F3;
+            outline: none;
+        }
+        .correct {
+            background-color: #c8e6c9 !important;
+            border: 2px solid #2e7d32 !important;
+            color: #1b5e20;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #ffcdd2 !important;
+            border: 2px solid #c62828 !important;
+            color: #b71c1c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Quiz: Arterias Ilíacas</h1>
+        <p class="instructions">Selecciona la estructura anatómica correcta en cada menú desplegable situado al final de las líneas indicadoras.</p>
+        
+        <div class="controls">
+            <button class="btn-verify" onclick="verificarRespuestas()">Verificar Respuestas</button>
+            <button class="btn-retry" onclick="reiniciarTest()">Volver a Intentar</button>
+            <div id="score" class="score-display"></div>
+        </div>
+
+        <div class="img-wrapper">
+            <img src="iliacas.png" alt="Arterias ilíacas">
+            
+            <select class="dropdown" style="top: 8%; left: 16%;" data-correct="A. ilíaca común"></select>
+            <select class="dropdown" style="top: 19.5%; left: 9%;" data-correct="A. umbilical"></select>
+            <select class="dropdown" style="top: 42%; left: 3%;" data-correct="A. epigástrica inf."></select>
+            <select class="dropdown" style="top: 52%; left: 1%;" data-correct="Lig. umbilical medial"></select>
+            <select class="dropdown" style="top: 71%; left: 4%;" data-correct="Conducto deferente"></select>
+            <select class="dropdown" style="top: 76%; left: 7%;" data-correct="R. pubiano"></select>
+            <select class="dropdown" style="top: 80%; left: 14%;" data-correct="A. obturatriz"></select>
+            <select class="dropdown" style="top: 83%; left: 16%;" data-correct="A. dorsal del pene"></select>
+            <select class="dropdown" style="top: 84%; left: 47%;" data-correct="A. profunda del pene"></select>
+
+            <select class="dropdown" style="top: 31%; left: 63%;" data-correct="A. iliolumbar"></select>
+            <select class="dropdown" style="top: 37%; left: 73%;" data-correct="A. sacra lateral"></select>
+            <select class="dropdown" style="top: 40%; left: 75%;" data-correct="A. glútea superior"></select>
+            <select class="dropdown" style="top: 43.5%; left: 77%;" data-correct="A. glútea inferior"></select>
+            <select class="dropdown" style="top: 47%; left: 78%;" data-correct="A. pudendo interna"></select>
+            <select class="dropdown" style="top: 71%; left: 66.5%;" data-correct="A. rectal inferior"></select>
+            <select class="dropdown" style="top: 75%; left: 63%;" data-correct="A. perineal"></select>
+            <select class="dropdown" style="top: 79%; left: 62%;" data-correct="A. del bulbo del pene"></select>
+            <select class="dropdown" style="top: 81.5%; left: 58%;" data-correct="A. uretral"></select>
+        </div>
+    </div>
+
+    <script>
+        // Opciones literales transcritas exactamente de la imagen
+        const opciones = [
+            "A. del bulbo del pene",
+            "A. dorsal del pene",
+            "A. epigástrica inf.",
+            "A. glútea inferior",
+            "A. glútea superior",
+            "A. iliolumbar",
+            "A. ilíaca común",
+            "A. obturatriz",
+            "A. perineal",
+            "A. profunda del pene",
+            "A. pudendo interna",
+            "A. rectal inferior",
+            "A. sacra lateral",
+            "A. umbilical",
+            "A. uretral",
+            "Conducto deferente",
+            "Lig. umbilical medial",
+            "R. pubiano"
+        ];
+
+        window.onload = function() {
+            const selects = document.querySelectorAll('.dropdown');
+            
+            selects.forEach(select => {
+                let defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "--- Selecciona ---";
+                select.appendChild(defaultOption);
+
+                opciones.forEach(opcion => {
+                    let opt = document.createElement('option');
+                    opt.value = opcion;
+                    opt.text = opcion;
+                    select.appendChild(opt);
+                });
+            });
+        };
+
+        function verificarRespuestas() {
+            const selects = document.querySelectorAll('.dropdown');
+            let correctas = 0;
+            let total = selects.length;
+
+            selects.forEach(select => {
+                let respuestaUsuario = select.value;
+                let respuestaCorrecta = select.getAttribute('data-correct');
+
+                select.classList.remove('correct', 'incorrect');
+
+                if (respuestaUsuario === respuestaCorrecta) {
+                    select.classList.add('correct');
+                    correctas++;
+                } else if (respuestaUsuario !== "") {
+                    select.classList.add('incorrect');
+                } else {
+                    select.classList.add('incorrect');
+                }
+            });
+
+            const scoreDiv = document.getElementById('score');
+            scoreDiv.innerHTML = `Has acertado ${correctas} de ${total} preguntas.`;
+            
+            if (correctas === total) {
+                scoreDiv.style.color = "#2e7d32";
+            } else {
+                scoreDiv.style.color = "#c62828";
+            }
+        }
+
+        function reiniciarTest() {
+            const selects = document.querySelectorAll('.dropdown');
+            selects.forEach(select => {
+                select.value = "";
+                select.classList.remove('correct', 'incorrect');
+            });
+            document.getElementById('score').innerHTML = "";
+        }
+    </script>
+</body>
+</html>

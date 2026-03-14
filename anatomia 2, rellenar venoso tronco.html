@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz: Anatomía Venosa</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            text-align: center;
+        }
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .instructions {
+            margin-bottom: 20px;
+            color: #333;
+        }
+        .controls {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            border-radius: 5px;
+            margin: 0 10px;
+            transition: background-color 0.3s;
+        }
+        .btn-verify {
+            background-color: #4CAF50;
+            color: white;
+        }
+        .btn-verify:hover {
+            background-color: #45a049;
+        }
+        .btn-retry {
+            background-color: #2196F3;
+            color: white;
+        }
+        .btn-retry:hover {
+            background-color: #1e88e5;
+        }
+        .score-display {
+            font-size: 18px;
+            font-weight: bold;
+            margin-top: 15px;
+            color: #333;
+        }
+        .img-wrapper {
+            position: relative;
+            display: inline-block;
+            width: 100%;
+            max-width: 850px; /* Ajustado al tamaño típico de estas imágenes */
+            border: 1px solid #ddd;
+            background-color: white;
+        }
+        .img-wrapper img {
+            width: 100%;
+            height: auto;
+            display: block;
+        }
+        .dropdown {
+            position: absolute;
+            width: 14%; /* Ancho aproximado de los rectángulos */
+            height: 2.3%; /* Alto aproximado de los rectángulos */
+            font-size: 11px;
+            background-color: transparent; /* Transparente para ver el fondo o mimetizarse */
+            border: 2px solid #333; /* Borde oscuro para que parezca la caja */
+            border-radius: 0px;
+            padding: 0 2px;
+            box-sizing: border-box;
+            cursor: pointer;
+        }
+        .dropdown:focus {
+            background-color: white;
+            z-index: 10; /* Para que quede por encima si se expande */
+        }
+        /* Clases para corregir */
+        .correct {
+            background-color: #c8e6c9 !important;
+            border-color: #2e7d32 !important;
+            color: #1b5e20;
+            font-weight: bold;
+        }
+        .incorrect {
+            background-color: #ffcdd2 !important;
+            border-color: #c62828 !important;
+            color: #b71c1c;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h1>Quiz de Anatomía Venosa</h1>
+        <p class="instructions">Haz clic sobre cada recuadro en blanco para desplegar las opciones y selecciona la estructura correcta.</p>
+        
+        <div class="controls">
+            <button class="btn-verify" onclick="verificarRespuestas()">Verificar Respuestas</button>
+            <button class="btn-retry" onclick="reiniciarTest()">Volver a Intentar</button>
+            <div id="score" class="score-display"></div>
+        </div>
+
+        <div class="img-wrapper">
+            <img src="anatomia_cuadrados.png" alt="Esquema Anatómico">
+            
+            <select class="dropdown" style="top: 1%; left: 35%;" data-correct="Vena yugular interna der."></select>
+            <select class="dropdown" style="top: 3.5%; left: 20%;" data-correct="Vena subclavia"></select>
+            <select class="dropdown" style="top: 7%; left: 17%;" data-correct="Tronco venoso braquiocefálico derecho"></select>
+            <select class="dropdown" style="top: 10.5%; left: 11%;" data-correct="Tronco venoso braquiocefálico izquierdo"></select>
+            <select class="dropdown" style="top: 14%; left: 9%;" data-correct="V. cava superior"></select>
+            <select class="dropdown" style="top: 17.5%; left: 9%;" data-correct="V. intercostal superior derecha"></select>
+            <select class="dropdown" style="top: 26.5%; left: 6%;" data-correct="V. intercostal"></select>
+            <select class="dropdown" style="top: 31.5%; left: 6%;" data-correct="V. intercostal posterior (7.ª)"></select>
+            <select class="dropdown" style="top: 37%; left: 9%;" data-correct="V. ácigos"></select>
+            <select class="dropdown" style="top: 46%; left: 9%;" data-correct="Vs. hepáticas"></select>
+            <select class="dropdown" style="top: 51%; left: 9%;" data-correct="V. cava inferior"></select>
+            <select class="dropdown" style="top: 66%; left: 22%;" data-correct="V. gonadal derecha"></select>
+            <select class="dropdown" style="top: 69%; left: 22%;" data-correct="V. lumbar ascendente derecha"></select>
+            <select class="dropdown" style="top: 75%; left: 6%;" data-correct="V. ilíaca común"></select>
+            <select class="dropdown" style="top: 82%; left: 6%;" data-correct="V. sacra media"></select>
+            <select class="dropdown" style="top: 85%; left: 8%;" data-correct="V. ilíaca interna"></select>
+            <select class="dropdown" style="top: 89%; left: 8%;" data-correct="V. ilíaca externa"></select>
+
+            <select class="dropdown" style="top: 1%; left: 55%;" data-correct="V. yugular interna izq."></select>
+            <select class="dropdown" style="top: 4%; left: 60%;" data-correct="V. subclavia izq."></select>
+            <select class="dropdown" style="top: 8%; left: 66%;" data-correct="V. intercostal suprema izq."></select>
+            <select class="dropdown" style="top: 11%; left: 67%;" data-correct="V. intercostal superior izq."></select>
+            <select class="dropdown" style="top: 14%; left: 70%;" data-correct="Arco aórtico"></select>
+            <select class="dropdown" style="top: 21%; left: 72%;" data-correct="V. hemiácigos accesoria"></select>
+            <select class="dropdown" style="top: 35%; left: 76%;" data-correct="V. hemiácigos"></select>
+            <select class="dropdown" style="top: 45%; left: 75%;" data-correct="V. ácigos lumbar izquierda"></select>
+            <select class="dropdown" style="top: 49%; left: 75%;" data-correct="V. lumbar ascendente izquierda"></select>
+            <select class="dropdown" style="top: 58%; left: 70%;" data-correct="V. renal izquierda"></select>
+            <select class="dropdown" style="top: 66%; left: 65%;" data-correct="V. gonadal izquierda"></select>
+            <select class="dropdown" style="top: 69%; left: 61%;" data-correct="Bifurcación aórtica"></select>
+            <select class="dropdown" style="top: 73%; left: 72%;" data-correct="A. ilíaca común"></select>
+            <select class="dropdown" style="top: 80%; left: 75%;" data-correct="A. ilíaca interna"></select>
+            <select class="dropdown" style="top: 86%; left: 72%;" data-correct="A. ilíaca externa"></select>
+            <select class="dropdown" style="top: 89.5%; left: 68%;" data-correct="Lig. inguinal"></select>
+        </div>
+    </div>
+
+    <script>
+        const opciones = [
+            "A. ilíaca común",
+            "A. ilíaca externa",
+            "A. ilíaca interna",
+            "Arco aórtico",
+            "Bifurcación aórtica",
+            "Lig. inguinal",
+            "Tronco venoso braquiocefálico derecho",
+            "Tronco venoso braquiocefálico izquierdo",
+            "V. cava inferior",
+            "V. cava superior",
+            "V. gonadal derecha",
+            "V. gonadal izquierda",
+            "V. hemiácigos",
+            "V. hemiácigos accesoria",
+            "V. ilíaca común",
+            "V. ilíaca externa",
+            "V. ilíaca interna",
+            "V. intercostal",
+            "V. intercostal posterior (7.ª)",
+            "V. intercostal superior derecha",
+            "V. intercostal superior izq.",
+            "V. intercostal suprema izq.",
+            "V. lumbar ascendente derecha",
+            "V. lumbar ascendente izquierda",
+            "V. renal izquierda",
+            "V. sacra media",
+            "V. subclavia izq.",
+            "V. yugular interna izq.",
+            "V. ácigos",
+            "V. ácigos lumbar izquierda",
+            "Vena subclavia",
+            "Vena yugular interna der.",
+            "Vs. hepáticas"
+        ];
+
+        window.onload = function() {
+            const selects = document.querySelectorAll('.dropdown');
+            
+            selects.forEach(select => {
+                let defaultOption = document.createElement('option');
+                defaultOption.value = "";
+                defaultOption.text = "---";
+                select.appendChild(defaultOption);
+
+                opciones.forEach(opcion => {
+                    let opt = document.createElement('option');
+                    opt.value = opcion;
+                    opt.text = opcion;
+                    select.appendChild(opt);
+                });
+            });
+        };
+
+        function verificarRespuestas() {
+            const selects = document.querySelectorAll('.dropdown');
+            let correctas = 0;
+            let total = selects.length;
+
+            selects.forEach(select => {
+                let respuestaUsuario = select.value;
+                let respuestaCorrecta = select.getAttribute('data-correct');
+
+                select.classList.remove('correct', 'incorrect');
+
+                if (respuestaUsuario === respuestaCorrecta) {
+                    select.classList.add('correct');
+                    correctas++;
+                } else {
+                    select.classList.add('incorrect'); 
+                }
+            });
+
+            const scoreDiv = document.getElementById('score');
+            scoreDiv.innerHTML = `Has acertado ${correctas} de ${total} preguntas.`;
+            
+            if (correctas === total) {
+                scoreDiv.style.color = "#2e7d32";
+            } else {
+                scoreDiv.style.color = "#c62828";
+            }
+        }
+
+        function reiniciarTest() {
+            const selects = document.querySelectorAll('.dropdown');
+            selects.forEach(select => {
+                select.value = "";
+                select.classList.remove('correct', 'incorrect');
+            });
+            document.getElementById('score').innerHTML = "";
+        }
+    </script>
+</body>
+</html>
