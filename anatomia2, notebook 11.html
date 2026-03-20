@@ -51,10 +51,10 @@
             font-size: 0.9em;
             transition: 0.3s;
             border: 2px solid transparent;
+            flex-shrink: 0;
         }
 
         .index-item:hover { background: var(--accent); }
-        .index-item.active { border-color: white; background: var(--accent); }
         .index-item.correct { background: var(--success); }
         .index-item.incorrect { background: var(--error); }
         .index-item.marked { position: relative; }
@@ -72,11 +72,16 @@
             padding: 40px;
             overflow-y: auto;
             position: relative;
+            scroll-behavior: smooth;
         }
 
         .container {
             max-width: 800px;
             margin: 0 auto;
+            background: transparent;
+        }
+
+        .card-setup {
             background: white;
             padding: 30px;
             border-radius: 12px;
@@ -99,11 +104,18 @@
             transition: 0.3s;
         }
         .btn:hover { opacity: 0.9; transform: translateY(-2px); }
-        .btn-finish { background: #95a5a6; }
+        .btn-finish { background: #95a5a6; padding: 15px 40px; font-size: 1.1em;}
 
         /* Preguntas */
-        .question-block { display: none; }
-        .question-block.active { display: block; }
+        .question-block { 
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 30px;
+            border-left: 6px solid var(--secondary);
+        }
+        
         .options { margin-top: 20px; }
         .option-btn {
             display: block;
@@ -127,6 +139,7 @@
             background: #e1f5fe;
             border-left: 5px solid var(--accent);
             display: none;
+            border-radius: 0 8px 8px 0;
         }
 
         .marking-zone {
@@ -136,31 +149,24 @@
             gap: 10px;
             font-size: 0.9em;
             color: #666;
-        }
-
-        /* Navegación inferior */
-        .nav-buttons {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 30px;
             border-top: 1px solid #eee;
-            padding-top: 20px;
+            padding-top: 15px;
         }
 
         /* Pantalla Final */
         #result-screen { display: none; text-align: center; }
         .summary-stats { display: flex; justify-content: space-around; margin: 20px 0; }
-        .stat-box { padding: 15px; border-radius: 8px; background: #f8f9fa; min-width: 100px; }
+        .stat-box { padding: 15px; border-radius: 8px; background: #f8f9fa; min-width: 100px; box-shadow: 0 2px 8px rgba(0,0,0,0.05);}
 
     </style>
 </head>
 <body>
 
-    <div id="sidebar"></div>
+    <div id="sidebar" style="display: none;"></div>
 
     <div id="main-content">
         <div class="container">
-            <div id="setup-screen">
+            <div id="setup-screen" class="card-setup">
                 <h1>🫁 Anatomía: Bloques 1-8</h1>
                 <p>Bienvenido al cuestionario de Anatomía Aplicada.</p>
                 <div style="margin: 30px 0;">
@@ -172,16 +178,12 @@
 
             <div id="quiz-screen" style="display: none;">
                 <div id="question-container"></div>
-                <div class="nav-buttons">
+                <div style="text-align: center; margin-top: 40px; margin-bottom: 60px;">
                     <button class="btn btn-finish" onclick="confirmFinish()">Finalizar Cuestionario</button>
-                    <div>
-                        <button class="btn" id="prevBtn" onclick="changeQuestion(-1)">Anterior</button>
-                        <button class="btn" id="nextBtn" onclick="changeQuestion(1)">Siguiente</button>
-                    </div>
                 </div>
             </div>
 
-            <div id="result-screen">
+            <div id="result-screen" class="card-setup">
                 <h1>Resultados Finales</h1>
                 <div class="summary-stats">
                     <div class="stat-box"><h2 id="res-total">0</h2><p>Respondidas</p></div>
@@ -284,7 +286,6 @@ const rawData = [
 ];
 
 let questions = [];
-let currentIndex = 0;
 let userAnswers = {}; // { index: { selected: char, correct: bool, marked: bool } }
 
 function startQuiz(isRandom) {
@@ -301,7 +302,7 @@ function startQuiz(isRandom) {
     renderQuiz();
     document.getElementById('setup-screen').style.display = 'none';
     document.getElementById('quiz-screen').style.display = 'block';
-    showQuestion(0);
+    document.getElementById('sidebar').style.display = 'flex';
 }
 
 function renderQuiz() {
@@ -336,20 +337,14 @@ function renderQuiz() {
         const item = document.createElement('div');
         item.className = `index-item ii-${i}`;
         item.innerText = i + 1;
-        item.onclick = () => showQuestion(i);
+        item.onclick = () => {
+            document.querySelector(`.qb-${i}`).scrollIntoView({ behavior: 'smooth', block: 'start' });
+        };
         sidebar.appendChild(item);
     });
-}
-
-function showQuestion(index) {
-    document.querySelectorAll('.question-block').forEach(b => b.classList.remove('active'));
-    document.querySelectorAll('.index-item').forEach(i => i.classList.remove('active'));
     
-    document.querySelector(`.qb-${index}`).classList.add('active');
-    document.querySelector(`.ii-${index}`).classList.add('active');
-    
-    currentIndex = index;
-    updateNav();
+    // Al volver a renderizar, forzar el scroll arriba del todo
+    document.getElementById('main-content').scrollTop = 0;
 }
 
 function checkAnswer(qIdx, letter, btn) {
@@ -384,16 +379,6 @@ function toggleMark(index) {
     }
 }
 
-function changeQuestion(dir) {
-    const newIdx = currentIndex + dir;
-    if (newIdx >= 0 && newIdx < questions.length) showQuestion(newIdx);
-}
-
-function updateNav() {
-    document.getElementById('prevBtn').disabled = currentIndex === 0;
-    document.getElementById('nextBtn').disabled = currentIndex === questions.length - 1;
-}
-
 function confirmFinish() {
     if (confirm("¿Estás seguro de que quieres finalizar el cuestionario?")) {
         showResults();
@@ -404,6 +389,7 @@ function showResults() {
     document.getElementById('quiz-screen').style.display = 'none';
     document.getElementById('result-screen').style.display = 'block';
     document.getElementById('sidebar').style.display = 'none';
+    document.getElementById('main-content').scrollTop = 0;
 
     let correct = 0, failed = 0;
     Object.values(userAnswers).forEach(v => {
@@ -442,7 +428,6 @@ function repeatMode(mode) {
     document.getElementById('sidebar').style.display = 'flex';
     document.getElementById('quiz-screen').style.display = 'block';
     renderQuiz();
-    showQuestion(0);
 }
 </script>
 </body>
