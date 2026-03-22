@@ -8,16 +8,16 @@
         :root {
             --p-dark: #2c3e50; --p-gold: #c0a16b; --c-blue: #0077be;
             --c-sand: #fdfbf7; --o-stone: #d2b48c;
-            --c1: #34495e; --c2: #d35400; --pv: #c0392b;
+            --c1: #34495e; --c-off: #95a5a6; --pv: #c0392b;
         }
 
         body, html {
             height: 100%; margin: 0; padding: 0;
             font-family: 'Segoe UI', Tahoma, sans-serif;
-            background-color: var(--c-sand); overflow: hidden; /* Evita doble scroll */
+            background-color: var(--c-sand); overflow: hidden;
         }
 
-        /* --- PANTALLA DE ACCESO --- */
+        /* --- ACCESO --- */
         #l-s {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             background: linear-gradient(135deg, var(--c-blue) 0%, #ff7e5f 100%);
@@ -41,12 +41,9 @@
             width: 100%; font-weight: bold; text-transform: uppercase;
         }
 
-        /* --- LAYOUT PRINCIPAL (Banner + Iframe) --- */
-        .main-layout {
-            display: flex; flex-direction: column; height: 100vh; width: 100vw;
-        }
+        /* --- LAYOUT PRINCIPAL --- */
+        .main-layout { display: flex; flex-direction: column; height: 100vh; width: 100vw; }
 
-        /* Banner Superior */
         .h-b {
             height: 25vh; min-height: 180px; width: 100%;
             background: url('medico_pirate.png') no-repeat center center;
@@ -54,50 +51,43 @@
             position: relative; flex-shrink: 0;
         }
 
-        /* Barra de Usuario (Capitán) */
         .user-bar {
             position: absolute; bottom: 10px; right: 20px;
             background: rgba(44, 62, 80, 0.85); color: white;
             padding: 8px 20px; border-radius: 50px;
             display: flex; align-items: center; gap: 15px;
-            border: 1px solid var(--p-gold); backdrop-filter: blur(5px);
-            font-size: 0.9rem;
+            border: 1px solid var(--p-gold); backdrop-filter: blur(5px); font-size: 0.85rem;
         }
 
-        .logout-btn {
-            background: var(--pv); color: white; border: none;
-            padding: 5px 12px; border-radius: 20px; cursor: pointer;
-            font-weight: bold; font-size: 0.8rem; transition: 0.3s;
-        }
-        .logout-btn:hover { background: #ff4d4d; }
+        .logout-btn { background: var(--pv); color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-weight: bold; }
 
-        /* Contenedor de contenido */
-        #content-area {
-            flex-grow: 1; position: relative; width: 100%; overflow-y: auto;
-        }
+        #content-area { flex-grow: 1; position: relative; width: 100%; overflow-y: auto; background: var(--c-sand); }
 
-        /* Iframe de Trabajo (Toda la página menos el banner) */
-        #work-frame {
-            width: 100%; height: 100%; border: none; display: none;
-            background: white;
+        #work-frame { width: 100%; height: 100%; border: none; display: none; background: white; }
+
+        #back-nav {
+            position: absolute; top: 15px; left: 15px; z-index: 100;
+            background: var(--p-gold); color: var(--p-dark); border: none;
+            padding: 10px 20px; border-radius: 8px; font-weight: bold;
+            cursor: pointer; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
         }
 
-        /* Menú de selección inicial */
-        #menu-grid {
-            padding: 40px 20px; max-width: 1100px; margin: 0 auto;
-        }
+        /* Menú de Cursos */
+        #menu-grid { padding: 30px 20px; max-width: 1100px; margin: 0 auto; }
+        h1 { font-size: 2.5rem; text-align: center; border-bottom: 4px solid var(--p-gold); padding-bottom: 10px; margin-bottom: 10px; letter-spacing: 3px; }
+        .a-t { text-align: center; margin-bottom: 40px; font-weight: 500; color: var(--p-dark); font-size: 1.2rem; }
 
-        h1 { font-size: 2.5rem; letter-spacing: 3px; text-align: center; border-bottom: 4px solid var(--p-gold); padding-bottom: 10px; margin-bottom: 30px; }
-        .a-t { text-align: center; margin-bottom: 40px; font-weight: 500; font-size: 1.2rem; }
+        .course-title { font-size: 1.6rem; margin: 40px 0 20px 0; padding-left: 15px; border-left: 6px solid var(--p-gold); text-transform: uppercase; color: var(--p-dark); font-weight: 700; }
 
-        .s-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; }
-        .s-c { background: #fff; border-radius: 15px; padding: 30px; text-align: center; text-decoration: none; color: inherit; box-shadow: 0 5px 15px rgba(0,0,0,0.06); transition: 0.3s; border-bottom: 4px solid var(--p-gold); display: block; }
-        .s-c:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .s-g { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 50px; }
+        .s-c { background: #fff; border-radius: 15px; padding: 35px; text-align: center; cursor: pointer; color: inherit; box-shadow: 0 5px 15px rgba(0,0,0,0.05); transition: 0.3s; border-bottom: 5px solid var(--p-gold); }
+        .s-c:hover:not(.disabled) { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
         .icon { font-size: 3rem; margin-bottom: 15px; }
-        .disabled { opacity: 0.5; cursor: not-allowed; }
+        
+        .disabled { background: #f2f2f2; border-bottom-color: #ccc; cursor: not-allowed; opacity: 0.6; }
 
-        /* Panel Admin */
-        .a-p { background: #fff; padding: 25px; border-radius: 15px; border: 3px solid var(--pv); margin-top: 40px; }
+        .a-p { background: #fff; padding: 30px; border-radius: 15px; border: 4px solid var(--pv); margin-top: 50px; }
+        .a-p li { padding: 8px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; font-family: monospace; }
     </style>
 </head>
 <body>
@@ -107,7 +97,7 @@
             <h2 style="letter-spacing:2px; margin-top:0;">MÉDICO PIRATA</h2>
             <p>Tripulación: Identifícate</p>
             <input type="password" id="u-i" placeholder="Código de acceso" onkeypress="if(event.key==='Enter')hL()">
-            <button onclick="hL()">Navegar por la Bahía</button>
+            <button onclick="hL()">Embarcar</button>
             <div id="e-m" style="color:red; display:none; margin-top:15px; font-weight:bold;">Clave incorrecta.</div>
         </div>
     </div>
@@ -115,30 +105,43 @@
     <div class="main-layout" id="main-view" style="display:none;">
         <div class="h-b">
             <div class="user-bar">
-                <span>⚓ Tripulante: <strong id="display-user"></strong></span>
+                <span>⚓ Capitán: <strong id="display-user"></strong></span>
                 <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
             </div>
         </div>
 
         <div id="content-area">
+            <button id="back-nav" onclick="closeResource()">⚓ Volver al Mapa</button>
+
             <div id="menu-grid">
                 <h1>MÉDICO PIRATA</h1>
                 <div class="a-t">Recursos para medic@s piratas en Cádiz</div>
                 
+                <div class="course-title">Primer Curso</div>
                 <div class="s-g">
-                    <a href="javascript:void(0)" onclick="openResource('index primero primer cuatrimestre.html')" class="s-c">
+                    <div onclick="openResource('index primero primer cuatrimestre.html')" class="s-c">
                         <div class="icon">&#128218;</div>
-                        <h3 style="color:var(--c1)">1er Cuatrimestre</h3>
+                        <h3>1er Cuatrimestre</h3>
                         <span>Anatomía I, Biología, Física...</span>
-                    </a>
-                    <a href="javascript:void(0)" onclick="openResource('indice segundo cuatri de preimero.html')" class="s-c">
+                    </div>
+                    <div onclick="openResource('indice segundo cuatri de preimero.html')" class="s-c">
                         <div class="icon">&#128128;</div>
-                        <h3 style="color:var(--c1)">2do Cuatrimestre</h3>
+                        <h3>2do Cuatrimestre</h3>
                         <span>Anatomía II, Histología...</span>
-                    </a>
+                    </div>
                 </div>
 
-                <div id="admin-zone"></div> </div>
+                <div class="course-title" style="opacity:0.5">Próximas Travesías (Pendientes)</div>
+                <div class="s-g">
+                    <div class="s-c disabled"><div class="icon">🔒</div><h3>Segundo</h3></div>
+                    <div class="s-c disabled"><div class="icon">🔒</div><h3>Tercero</h3></div>
+                    <div class="s-c disabled"><div class="icon">🔒</div><h3>Cuarto</h3></div>
+                    <div class="s-c disabled"><div class="icon">🔒</div><h3>Quinto</h3></div>
+                    <div class="s-c disabled"><div class="icon">🔒</div><h3>Sexto</h3></div>
+                </div>
+
+                <div id="admin-zone"></div>
+            </div>
 
             <iframe id="work-frame" name="work-frame"></iframe>
         </div>
@@ -161,16 +164,17 @@
         const app = initializeApp(fC);
         const db = getDatabase(app);
 
-        // Seguridad: Nombres ofuscados
+        // Seguridad Ofuscada
         const _T = ["OTExNDM=", "bWFyaWFwZXJleg==", "bWFydGFqaW1lbmV6", "bWFydGFsb3Bleg==", "YWxiYWxhaW5leg==", "QnVjaGk="];
 
+        // --- FUNCIONES GLOBALES ---
         window.hL = function() {
             const val = document.getElementById("u-i").value;
             const encoded = btoa(val);
             if (_T.includes(encoded)) {
                 sessionStorage.setItem("_a_t", "1");
                 sessionStorage.setItem("_a_u", val);
-                location.reload(); // Recarga para aplicar la vista
+                location.reload();
             } else {
                 document.getElementById("e-m").style.display = "block";
             }
@@ -182,13 +186,24 @@
         };
 
         window.openResource = function(url) {
-            document.getElementById("menu-grid").style.display = "none";
+            const menu = document.getElementById("menu-grid");
             const frame = document.getElementById("work-frame");
+            const btn = document.getElementById("back-nav");
+            
+            menu.style.display = "none";
             frame.src = url;
             frame.style.display = "block";
+            btn.style.display = "block";
         };
 
-        // Lógica de carga al iniciar
+        window.closeResource = function() {
+            document.getElementById("menu-grid").style.display = "block";
+            document.getElementById("work-frame").style.display = "none";
+            document.getElementById("work-frame").src = "";
+            document.getElementById("back-nav").style.display = "none";
+        };
+
+        // --- CARGA INICIAL ---
         window.onload = async function() {
             if (sessionStorage.getItem("_a_t") === "1") {
                 const cU = sessionStorage.getItem("_a_u");
@@ -198,18 +213,16 @@
 
                 try {
                     update(ref(db, 'visitas/' + cU), { total: increment(1) });
-                    
                     if (cU === "91143") {
                         const snap = await get(ref(db, 'visitas'));
                         const data = snap.val() || {};
                         let list = Object.keys(data).map(k => `<li><span>${k}</span> <strong>${data[k].total}</strong></li>`).join('');
-                        
                         document.getElementById("admin-zone").innerHTML = `
                             <div class="a-p">
-                                <h3 style="color:var(--pv)">Bitácora del Almirante</h3>
+                                <h3 style="color:var(--pv)">Bitácora del Almirante (Admin)</h3>
                                 <div class="s-g" style="margin-bottom:20px">
-                                    <a href="javascript:void(0)" onclick="openResource('privados.html')" class="s-c"><div class="icon">&#128128;</div>Exámenes</a>
-                                    <a href="javascript:void(0)" onclick="openResource('quiz_privado_1.html')" class="s-c"><div class="icon">&#128272;</div>Quiz</a>
+                                    <div onclick="openResource('privados.html')" class="s-c"><div class="icon">&#128128;</div><h3>Exámenes</h3></div>
+                                    <div onclick="openResource('quiz_privado_1.html')" class="s-c"><div class="icon">&#128272;</div><h3>Quiz</h3></div>
                                 </div>
                                 <ul style="list-style:none; padding:0;">${list}</ul>
                             </div>`;
