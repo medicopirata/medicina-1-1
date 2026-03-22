@@ -157,11 +157,9 @@
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
         import { getDatabase, ref, get, update, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
-        // Tu configuración exacta de Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyAKughV5w2XAKRm3rWuUmhVldwU2bjj0zY",
             authDomain: "portal-estudio-medicina.firebaseapp.com",
-            // He añadido la URL de la base de datos basándome en el ID de tu proyecto
             databaseURL: "https://portal-estudio-medicina-default-rtdb.europe-west1.firebasedatabase.app",
             projectId: "portal-estudio-medicina",
             storageBucket: "portal-estudio-medicina.firebasestorage.app",
@@ -170,11 +168,9 @@
             measurementId: "G-52KKQDCFXD"
         };
 
-        // Inicializamos Firebase
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Listado de usuarios autorizados
         const _u = [
             "\x39\x31\x31\x34\x33",                            // 91143
             "\x6d\x61\x72\x69\x61\x70\x65\x72\x65\x7a",        // mariaperez
@@ -184,40 +180,36 @@
             "\x42\x75\x63\x68\x69"                              // Buchi
         ];
 
-        // Contenido HTML fraccionado principal
         const _c = [
             '<div id="main-content">',
-            '<h', '1>G', 'rado e', 'n Me', 'dicin', 'a</h', '1>',
-            '<d', 'iv cl', 'ass="auth', 'or-text">R', 'ecursos de e', 'studio de S', 'anti Dí', 'az</d', 'iv>',
-            '<div cl', 'ass="course-sec', 'tion">',
-            '<div cl', 'ass="course-ti', 'tle" sty', 'le="border-co', 'lor: var(--curso1-color); color: var(--curso1-color);">',
-            'Pri', 'mero</div>',
-            '<div cl', 'ass="seme', 'ster-grid" id="grid-primero">',
-            '<a hre', 'f="index p', 'rimero primer c', 'uatrimestre.ht', 'ml" cla', 'ss="semester-ca', 'rd">',
-            '<div cl', 'ass="ic', 'on">&#128218;</div>',
-            '<h3 sty', 'le="color: var(--curso1-color)">1er C', 'uatrimestre</h3>',
-            '<s', 'pan>Ana', 'tomía I, Bio', 'logía, Fís', 'ica...</span></a>',
-            '<a hr', 'ef="indice se', 'gundo cuatri de preimero.ht', 'ml" clas', 's="semester-ca', 'rd">',
-            '<div cla', 'ss="ico', 'n">&#128128;</div>',
-            '<h3 sty', 'le="color: var(--curso1-color)">2do C', 'uatrimestre</h3>',
-            '<sp', 'an>Ana', 'tomía II, His', 'tología...</span></a>',
+            '<h1>Grado en Medicina</h1>',
+            '<div class="author-text">Recursos de estudio de Santi Díaz</div>',
+            '<div class="course-section">',
+            '<div class="course-title" style="border-color: var(--curso1-color); color: var(--curso1-color);">Primero</div>',
+            '<div class="semester-grid" id="grid-primero">',
+            '<a href="index primero primer cuatrimestre.html" class="semester-card">',
+            '<div class="icon">&#128218;</div>',
+            '<h3 style="color: var(--curso1-color)">1er Cuatrimestre</h3>',
+            '<span>Anatomía I, Biología, Física...</span></a>',
+            '<a href="indice segundo cuatri de preimero.html" class="semester-card">',
+            '<div class="icon">&#128128;</div>',
+            '<h3 style="color: var(--curso1-color)">2do Cuatrimestre</h3>',
+            '<span>Anatomía II, Histología...</span></a>',
             '</div></div>',
-            '<div cla', 'ss="course-se', 'ction">',
-            '<div cla', 'ss="course-t', 'itle" sty', 'le="border-col', 'or: var(--curso2-color); color: var(--curso2-color);">',
-            'Seg', 'undo</div>',
-            '<div cla', 'ss="seme', 'ster-grid">',
-            '<a hre', 'f="#" cla', 'ss="semester-ca', 'rd disa', 'bled">',
-            '<div cla', 'ss="ic', 'on">&#128274;</div>',
-            '<h3 st', 'yle="color: var(--curso2-color)">1er Cuat', 'rimestre</h3>',
-            '<spa', 'n>No dispo', 'nible a', 'ún</span></a>',
-            '<a hre', 'f="#" cla', 'ss="semester-car', 'd disab', 'led">',
-            '<div cla', 'ss="ico', 'n">&#128274;</div>',
-            '<h3 st', 'yle="color: var(--curso2-color)">2do Cua', 'trimestre</h3>',
-            '<spa', 'n>No disp', 'onible a', 'ún</span></a>',
+            '<div class="course-section">',
+            '<div class="course-title" style="border-color: var(--curso2-color); color: var(--curso2-color);">Segundo</div>',
+            '<div class="semester-grid">',
+            '<a href="#" class="semester-card disabled">',
+            '<div class="icon">&#128274;</div>',
+            '<h3 style="color: var(--curso2-color)">1er Cuatrimestre</h3>',
+            '<span>No disponible aún</span></a>',
+            '<a href="#" class="semester-card disabled">',
+            '<div class="icon">&#128274;</div>',
+            '<h3 style="color: var(--curso2-color)">2do Cuatrimestre</h3>',
+            '<span>No disponible aún</span></a>',
             '</div></div></div>'
         ];
 
-        // Exportamos las funciones al entorno global (window)
         window.checkUser = function() {
             const input = document.getElementById("username-input").value;
             const errorMsg = document.getElementById("error-msg");
@@ -243,14 +235,12 @@
             document.getElementById("login-screen").style.display = "none";
             
             if (!document.getElementById("main-content")) {
-                // 1. Inyectamos el contenido general para todos
                 const payload = _c.join('');
                 document.body.insertAdjacentHTML('beforeend', payload);
                 
                 const mainContent = document.getElementById("main-content");
                 const currentUser = sessionStorage.getItem("_auth_user");
                 
-                // 2. Lógica OCULTA de registro de visitas en la NUBE (Firebase)
                 try {
                     if (!sessionStorage.getItem('session_counted_for_' + currentUser)) {
                         const userRef = ref(db, 'visitas/' + currentUser);
@@ -258,24 +248,23 @@
                         sessionStorage.setItem('session_counted_for_' + currentUser, "true");
                     }
                 } catch (error) {
-                    console.log("Aún no has creado la base de datos en Firebase o hay un error de conexión.");
+                    console.log("Error de conexión con Firebase.");
                 }
 
-                // 3. Lógica EXCLUSIVA para el usuario 91143
+                // Lógica EXCLUSIVA para el usuario 91143
                 if (currentUser === "91143") {
-                    let listaContadores = '<li>Cargando datos desde la nube...</li>';
+                    let listaContadores = '<li>Cargando datos...</li>';
                     
                     try {
                         const snapshot = await get(ref(db, 'visitas'));
                         const datosVisitas = snapshot.exists() ? snapshot.val() : {};
-
                         listaContadores = '';
                         _u.forEach(usuario => {
                             let visitas = datosVisitas[usuario] ? datosVisitas[usuario].total : 0;
                             listaContadores += `<li><strong>${usuario}</strong> <span>${visitas} visitas</span></li>`;
                         });
                     } catch (error) {
-                        listaContadores = '<li><em>Error: ¿Has habilitado la Realtime Database en modo prueba en Firebase?</em></li>';
+                        listaContadores = '<li><em>Error al cargar estadísticas</em></li>';
                     }
 
                     const privateHTML = `
@@ -285,6 +274,12 @@
                         </div>
                         
                         <div class="semester-grid">
+                            <a href="privados.html" class="semester-card">
+                                <div class="icon">&#128128;</div>
+                                <h3 style="color: var(--privado-color)">Exámenes 24 y 25</h3>
+                                <span>Anatomía II - Bloques 1 a 4</span>
+                            </a>
+
                             <a href="quiz_privado_1.html" class="semester-card">
                                 <div class="icon">&#128272;</div>
                                 <h3 style="color: var(--privado-color)">Quizz Privado 1</h3>
@@ -298,7 +293,7 @@
                                 ${listaContadores}
                             </ul>
                             <div class="admin-note">
-                                *Nota: Estas estadísticas se actualizan en tiempo real y reflejan los accesos desde cualquier dispositivo.
+                                *Nota: Estas estadísticas se actualizan en tiempo real.
                             </div>
                         </div>
                     </div>`;
@@ -314,6 +309,5 @@
             }
         };
     </script>
-
 </body>
 </html>
