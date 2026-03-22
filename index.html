@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>MÉDICO PIRATA - Portal de Medicina</title>
+    <title>MÉDICO PIRATA - Cádiz</title>
     <style>
         :root {
             --cadiz-blue: #005c84;
@@ -20,123 +20,123 @@
             background-color: var(--sand); overflow: hidden;
         }
 
-        /* --- ACCESO --- */
+        /* --- LOGIN --- */
         #login-screen {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('medico_pirate.png') center/cover;
+            background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('medico_pirate.png') center/cover;
             display: flex; justify-content: center; align-items: center; z-index: 10000;
         }
         .login-box {
-            background: rgba(255, 255, 255, 0.95); padding: 40px; border-radius: 20px;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center; max-width: 400px; width: 90%;
+            background: rgba(255, 255, 255, 0.98); padding: 40px; border-radius: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.3); text-align: center; max-width: 380px; width: 90%;
             border: 3px solid var(--pirate-gold); backdrop-filter: blur(10px);
         }
-        .login-box h2 { margin: 0 0 10px; color: var(--cadiz-blue); letter-spacing: 2px; }
-        .login-box input { width: 100%; padding: 12px; margin: 20px 0; border: 2px solid #ddd; border-radius: 8px; text-align: center; outline: none; font-size: 16px; }
-        .login-box button { background: var(--cadiz-blue); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; transition: 0.3s; }
-        .login-box button:hover { background: var(--text-dark); }
+        .login-box input { width: 100%; padding: 12px; margin: 20px 0; border: 2px solid #ddd; border-radius: 8px; text-align: center; font-size: 16px; outline: none; }
+        .login-box button { background: var(--cadiz-blue); color: white; border: none; padding: 12px; border-radius: 8px; cursor: pointer; width: 100%; font-weight: bold; text-transform: uppercase; }
 
-        /* --- LAYOUT PRINCIPAL --- */
+        /* --- ESTRUCTURA --- */
         #main-view { display: none; flex-direction: column; height: 100vh; width: 100vw; }
 
-        /* Banner Superior */
         .top-banner {
-            height: 180px; width: 100%;
-            background: linear-gradient(to right, rgba(0,0,0,0.4), transparent), url('medico_pirate.png') center 30%/cover;
+            height: 20vh; min-height: 150px; width: 100%;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.2), rgba(0,0,0,0.6)), url('medico_pirate.png') center 20%/cover;
             border-bottom: 5px solid var(--ostionera);
             position: relative; flex-shrink: 0;
-            display: flex; align-items: flex-end; padding: 0 20px 15px; box-sizing: border-box;
+            display: flex; align-items: flex-end; padding: 15px 25px; box-sizing: border-box;
         }
-        .banner-info {
-            display: flex; width: 100%; justify-content: space-between; align-items: center;
-            background: rgba(0, 92, 132, 0.85); color: white;
-            padding: 10px 25px; border-radius: 50px;
-            border: 1px solid var(--pirate-gold); backdrop-filter: blur(5px);
+        .user-tag {
+            background: rgba(0, 92, 132, 0.9); color: white;
+            padding: 8px 20px; border-radius: 50px; border: 1px solid var(--pirate-gold);
+            display: flex; align-items: center; gap: 15px; font-size: 0.9rem;
         }
-        .logout-btn { background: var(--danger); color: white; border: none; padding: 6px 15px; border-radius: 20px; cursor: pointer; font-weight: bold; transition: 0.3s; }
-        .logout-btn:hover { transform: scale(1.05); }
+        .btn-exit { background: var(--danger); color: white; border: none; padding: 5px 12px; border-radius: 20px; cursor: pointer; font-weight: bold; }
 
-        /* Área de Contenido */
-        #content-container { flex-grow: 1; position: relative; overflow-y: auto; background: var(--sand); }
+        #content-area { flex-grow: 1; position: relative; overflow-y: auto; background: var(--sand); }
 
-        /* Menú de Cuadros */
-        #home-menu { padding: 40px 20px; max-width: 1000px; margin: 0 auto; text-align: center; }
-        .welcome-text { font-size: 1.4rem; color: var(--text-dark); margin-bottom: 40px; border-bottom: 2px solid var(--ostionera); display: inline-block; padding-bottom: 10px; }
-        
-        .section-title { text-align: left; font-size: 1.5rem; color: var(--cadiz-blue); margin: 30px 0 15px; text-transform: uppercase; font-weight: bold; border-left: 8px solid var(--pirate-gold); padding-left: 15px; }
+        /* MENU PRINCIPAL */
+        #main-menu { padding: 30px 20px; max-width: 1000px; margin: 0 auto; text-align: center; }
+        .quote { font-style: italic; color: var(--text-dark); margin-bottom: 40px; }
+        .section-header { text-align: left; font-size: 1.4rem; color: var(--cadiz-blue); margin: 30px 0 15px; text-transform: uppercase; font-weight: bold; border-left: 6px solid var(--pirate-gold); padding-left: 15px; }
 
-        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; margin-bottom: 50px; }
-        .card { background: white; border-radius: 15px; padding: 35px; cursor: pointer; border-bottom: 6px solid var(--pirate-gold); transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
-        .card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0,0,0,0.1); }
-        .card .icon { font-size: 3.5rem; margin-bottom: 15px; }
-        .card h3 { margin: 0; color: var(--cadiz-blue); }
-        .card span { font-size: 0.9rem; color: #7f8c8d; display: block; margin-top: 10px; }
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 25px; }
+        .card { background: white; border-radius: 15px; padding: 30px; cursor: pointer; border-bottom: 5px solid var(--pirate-gold); transition: 0.3s; box-shadow: 0 5px 15px rgba(0,0,0,0.05); }
+        .card:hover:not(.locked) { transform: translateY(-5px); box-shadow: 0 12px 25px rgba(0,0,0,0.1); }
+        .icon { font-size: 3rem; margin-bottom: 10px; }
+        .locked { opacity: 0.5; cursor: not-allowed; background: #f0f0f0; border-bottom-color: #ccc; }
 
-        .disabled { opacity: 0.6; cursor: not-allowed; background: #eee; border-bottom-color: #bdc3c7; }
-        .disabled:hover { transform: none; }
-
-        /* IFRAME DE TRABAJO */
-        #work-iframe { width: 100%; height: 100%; border: none; display: none; background: white; }
+        /* TRABAJO */
+        #study-frame { width: 100%; height: 100%; border: none; display: none; background: white; }
         #btn-back { position: absolute; top: 15px; left: 15px; z-index: 100; background: var(--pirate-gold); color: white; border: none; padding: 10px 20px; border-radius: 8px; font-weight: bold; cursor: pointer; display: none; box-shadow: 0 4px 10px rgba(0,0,0,0.2); }
 
-        /* Panel Admin */
-        .admin-box { background: #fff; padding: 25px; border-radius: 15px; border: 3px solid var(--danger); margin-top: 40px; text-align: left; }
+        /* ZONA PRIVADA */
+        .admin-panel { background: #fff; padding: 25px; border-radius: 15px; border: 3px solid var(--danger); margin-top: 50px; text-align: left; }
+        .admin-panel ul { list-style: none; padding: 0; font-family: monospace; }
+        .admin-panel li { padding: 8px 0; border-bottom: 1px solid #eee; display: flex; justify-content: space-between; }
     </style>
 </head>
 <body>
 
     <div id="login-screen">
         <div class="login-box">
-            <h2 style="font-size: 1.8rem;">MÉDICO PIRATA</h2>
-            <p>Embarque al Portal de Medicina</p>
-            <input type="password" id="pass-in" placeholder="Nombre de usuario" onkeypress="if(event.key==='Enter')handleLogin()">
-            <button onclick="handleLogin()">Navegar</button>
-            <div id="err" style="color:var(--danger); display:none; margin-top:15px; font-weight:bold;">Tripulante no reconocido.</div>
+            <h2 style="color: var(--cadiz-blue)">MÉDICO PIRATA</h2>
+            <p>Introduce tu código para zarpar</p>
+            <input type="password" id="u-input" placeholder="Nombre de usuario" onkeypress="if(event.key==='Enter')window.checkIn()">
+            <button onclick="window.checkIn()">Entrar</button>
+            <div id="login-err" style="color:var(--danger); display:none; margin-top:15px; font-weight:bold;">Usuario no reconocido.</div>
         </div>
     </div>
 
     <div id="main-view">
         <header class="top-banner">
-            <div class="banner-info">
-                <span>⚓ Capitán: <strong id="user-tag"></strong> | <small>Recursos en Cádiz</small></span>
-                <button class="logout-btn" onclick="logout()">Cerrar Sesión</button>
+            <div class="user-tag">
+                <span>⚓ Tripulante: <strong id="user-display"></strong> | Cádiz</span>
+                <button class="btn-exit" onclick="window.checkOut()">Salir</button>
             </div>
         </header>
 
-        <main id="content-container">
-            <button id="btn-back" onclick="closeStudy()">⚓ Volver al Mapa</button>
+        <main id="content-area">
+            <button id="back-map" onclick="window.showMenu()">⚓ Volver al Mapa</button>
 
-            <div id="home-menu">
-                <h1>MÉDICO PIRATA</h1>
-                <div class="welcome-text">Recursos para medic@s piratas en Cádiz</div>
+            <div id="main-menu">
+                <h1 style="letter-spacing: 3px; color: var(--text-dark)">MÉDICO PIRATA</h1>
+                <div class="quote">Recursos para medic@s piratas en Cádiz</div>
 
-                <div class="section-title">Primer Curso</div>
+                <div class="section-header">Primer Curso</div>
                 <div class="grid">
-                    <div class="card" onclick="loadPage('index primero primer cuatrimestre.html')">
+                    <div class="card" onclick="window.openFile('index primero primer cuatrimestre.html')">
                         <div class="icon">&#128218;</div>
                         <h3>1er Cuatrimestre</h3>
                         <span>Anatomía I, Biología, Física...</span>
                     </div>
-                    <div class="card" onclick="loadPage('indice segundo cuatri de preimero.html')">
+                    <div class="card" onclick="window.openFile('indice segundo cuatri de preimero.html')">
                         <div class="icon">&#128128;</div>
                         <h3>2do Cuatrimestre</h3>
                         <span>Anatomía II, Histología...</span>
                     </div>
                 </div>
 
-                <div class="section-title" style="opacity:0.6">Próximas Travesías</div>
+                <div class="section-header" style="opacity:0.5">Cursos Pendientes</div>
                 <div class="grid">
-                    <div class="card disabled"><div class="icon">🔒</div><h3>Segundo</h3><span>Pendiente</span></div>
-                    <div class="card disabled"><div class="icon">🔒</div><h3>Tercero</h3><span>Pendiente</span></div>
-                    <div class="card disabled"><div class="icon">🔒</div><h3>Cuarto</h3><span>Pendiente</span></div>
-                    <div class="card disabled"><div class="icon">🔒</div><h3>Quinto</h3><span>Pendiente</span></div>
-                    <div class="card disabled"><div class="icon">🔒</div><h3>Sexto</h3><span>Pendiente</span></div>
+                    <div class="card locked"><div class="icon">🔒</div><h3>Segundo</h3></div>
+                    <div class="card locked"><div class="icon">🔒</div><h3>Tercero</h3></div>
+                    <div class="card locked"><div class="icon">🔒</div><h3>Cuarto</h3></div>
+                    <div class="card locked"><div class="icon">🔒</div><h3>Quinto</h3></div>
+                    <div class="card locked"><div class="icon">🔒</div><h3>Sexto</h3></div>
                 </div>
 
-                <div id="admin-panel"></div>
+                <div id="private-zone" style="display:none;">
+                    <div class="admin-panel">
+                        <h3 style="color:var(--danger); margin-top:0;">🚩 Zona Privada (Almirante)</h3>
+                        <div class="grid" style="margin-bottom:20px">
+                            <div class="card" onclick="window.openFile('privados.html')"><div class="icon">&#128128;</div><h3>Exámenes</h3></div>
+                            <div class="card" onclick="window.openFile('quiz_privado_1.html')"><div class="icon">&#128272;</div><h3>Quiz</h3></div>
+                        </div>
+                        <ul id="stats-list"><li>Cargando bitácora...</li></ul>
+                    </div>
+                </div>
             </div>
 
-            <iframe id="work-iframe"></iframe>
+            <iframe id="study-frame" name="study-frame"></iframe>
         </main>
     </div>
 
@@ -157,62 +157,71 @@
         const app = initializeApp(firebaseConfig);
         const db = getDatabase(app);
 
-        // Seguridad: Usuarios Ofuscados
         const _U = ["OTExNDM=", "bWFyaWFwZXJleg==", "bWFydGFqaW1lbmV6", "bWFydGFsb3Bleg==", "YWxiYWxhaW5leg==", "QnVjaGk="];
 
-        window.handleLogin = function() {
-            const val = document.getElementById("pass-in").value;
-            const encoded = btoa(val);
-            if (_U.includes(encoded)) {
-                sessionStorage.setItem("p_auth", "1");
-                sessionStorage.setItem("p_user", val);
+        // FUNCIONES GLOBALES (Atadas a window para que funcionen siempre)
+        window.checkIn = function() {
+            const val = document.getElementById("u-input").value;
+            if (_U.includes(btoa(val))) {
+                sessionStorage.setItem("pirate_ok", "1");
+                sessionStorage.setItem("pirate_user", val);
                 location.reload();
             } else {
-                document.getElementById("err").style.display = "block";
+                document.getElementById("login-err").style.display = "block";
             }
         };
 
-        window.logout = function() {
+        window.checkOut = function() {
             sessionStorage.clear();
             location.reload();
         };
 
-        window.loadPage = function(url) {
-            document.getElementById("home-menu").style.display = "none";
-            document.getElementById("btn-back").style.display = "block";
-            const frame = document.getElementById("work-iframe");
+        window.openFile = function(url) {
+            document.getElementById("main-menu").style.display = "none";
+            document.getElementById("back-map").style.display = "block";
+            const frame = document.getElementById("study-frame");
             frame.src = url;
             frame.style.display = "block";
         };
 
-        window.closeStudy = function() {
-            document.getElementById("home-menu").style.display = "block";
-            document.getElementById("btn-back").style.display = "none";
-            const frame = document.getElementById("work-iframe");
+        window.showMenu = function() {
+            document.getElementById("main-menu").style.display = "block";
+            document.getElementById("back-map").style.display = "none";
+            const frame = document.getElementById("study-frame");
             frame.style.display = "none";
             frame.src = "";
         };
 
+        // INICIO DE SESIÓN
         window.onload = async function() {
-            if (sessionStorage.getItem("p_auth") === "1") {
-                const user = sessionStorage.getItem("p_user");
+            if (sessionStorage.getItem("pirate_ok") === "1") {
+                const user = sessionStorage.getItem("pirate_user");
                 document.getElementById("login-screen").style.display = "none";
                 document.getElementById("main-view").style.display = "flex";
-                document.getElementById("user-tag").innerText = user;
+                document.getElementById("user-display").innerText = user;
 
+                // Registro de visita
                 try {
                     update(ref(db, 'visitas/' + user), { total: increment(1) });
-                    if (user === "91143") {
+                } catch(e) {}
+
+                // ZONA PRIVADA PARA 91143
+                if (user === "91143") {
+                    document.getElementById("private-zone").style.display = "block";
+                    try {
                         const snap = await get(ref(db, 'visitas'));
-                        const data = snap.val() || {};
-                        let stats = Object.keys(data).map(k => `<li><strong>${k}</strong>: ${data[k].total} visitas</li>`).join('');
-                        document.getElementById("admin-panel").innerHTML = `
-                            <div class="admin-box">
-                                <h3 style="color:var(--danger)">☁️ Bitácora del Almirante</h3>
-                                <ul style="list-style:none; padding:0; font-family:monospace;">${stats}</ul>
-                            </div>`;
+                        if (snap.exists()) {
+                            const data = snap.val();
+                            let html = "";
+                            for(let k in data) {
+                                html += `<li><span>${k}</span> <strong>${data[k].total} visitas</strong></li>`;
+                            }
+                            document.getElementById("stats-list").innerHTML = html;
+                        }
+                    } catch(e) {
+                        document.getElementById("stats-list").innerHTML = "<li>Error al leer bitácora</li>";
                     }
-                } catch (e) { }
+                }
             }
         };
     </script>
