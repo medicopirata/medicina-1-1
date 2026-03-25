@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quizz de Anatomía del Corazón</title>
+    <style>
+        :root {
+            --primary: #2c3e50;
+            --secondary: #34495e;
+            --accent: #e74c3c;
+            --success: #27ae60;
+            --bg: #f4f7f6;
+            --text: #333;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: var(--bg);
+            color: var(--text);
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+        }
+
+        /* --- Pantalla de Inicio --- */
+        #setup-screen, #results-screen {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(255,255,255,0.95);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            text-align: center;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            margin: 10px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            background: var(--primary);
+            color: white;
+            transition: 0.3s;
+        }
+
+        .btn:hover { background: var(--secondary); }
+        .btn-accent { background: var(--accent); }
+
+        /* --- Layout Principal --- */
+        #main-container {
+            display: grid;
+            grid-template-columns: 280px 1fr;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        /* --- Sidebar --- */
+        aside {
+            background: var(--primary);
+            color: white;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            border-right: 2px solid #ddd;
+        }
+
+        .nav-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 5px;
+            overflow-y: auto;
+            padding-bottom: 20px;
+        }
+
+        .nav-btn {
+            padding: 8px 2px;
+            background: #455a64;
+            color: white;
+            border: 1px solid #546e7a;
+            cursor: pointer;
+            font-size: 12px;
+            text-align: center;
+        }
+
+        .nav-btn.answered { background: var(--success); }
+        .nav-btn.marked { border: 2px solid gold; box-shadow: inset 0 0 5px gold; }
+
+        /* --- Contenido de Preguntas --- */
+        main {
+            overflow-y: auto;
+            padding: 30px;
+            scroll-behavior: smooth;
+        }
+
+        .question-block {
+            background: white;
+            padding: 25px;
+            margin-bottom: 40px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: relative;
+        }
+
+        .mark-container {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 14px;
+        }
+
+        .question-text {
+            font-weight: bold;
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .options-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .option-item {
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .option-item:hover { background: #f9f9f9; }
+        .option-item.correct { background: #d4edda; border-color: #c3e6cb; font-weight: bold; }
+        .option-item.wrong { background: #f8d7da; border-color: #f5c6cb; }
+        .option-item.disabled { pointer-events: none; }
+
+        .explanation {
+            margin-top: 15px;
+            padding: 15px;
+            background: #eef;
+            border-left: 5px solid #3f51b5;
+            display: none;
+        }
+
+        .sticky-footer {
+            padding: 15px;
+            background: #eee;
+            text-align: center;
+            border-top: 1px solid #ccc;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="setup-screen">
+        <h1>Cuestionario: Anatomía del Corazón</h1>
+        <p>Seleccione el orden de las preguntas:</p>
+        <button class="btn" onclick="startQuiz(false)">Orden Preestablecido</button>
+        <button class="btn" onclick="startQuiz(true)">Mezclar Aleatoriamente</button>
+    </div>
+
+    <div id="results-screen" style="display:none;">
+        <h2 id="score-text"></h2>
+        <p>¿Qué desea hacer ahora?</p>
+        <button class="btn" onclick="retry('all')">Repetir Todo</button>
+        <button class="btn" onclick="retry('failed')">Repetir solo falladas</button>
+        <button class="btn" onclick="retry('marked')">Repetir solo marcadas</button>
+        <button class="btn" onclick="retry('failed-marked')">Repetir falladas + marcadas</button>
+        <button class="btn btn-accent" onclick="location.reload()">Cambiar Configuración</button>
+    </div>
+
+    <div id="main-container" style="display:none;">
+        <aside>
+            <h3 style="margin-top:0">Índice</h3>
+            <div class="nav-grid" id="nav-grid"></div>
+            <button class="btn btn-accent" onclick="finishQuiz()">Finalizar Cuestionario</button>
+        </aside>
+
+        <main id="questions-wrapper">
+            </main>
+    </div>
+
+<script>
+    const allQuestions = [
+        { id:1, q: "1. El profesor describe el corazón con una \"doble funcionalidad biomecánica\". Además de expulsar la sangre, ¿qué otra acción realiza gracias a la relajación de la fibra muscular especializada?", options: ["a) Es filtrante y termorreguladora.", "b) Es aspirante e impelente.", "c) Es exclusivamente contráctil sistólica.", "d) Es reservorio pasivo del sistema linfático."], correct: "b) Es aspirante e impelente.", exp: "En la diástole, la relajación muscular provoca una aspiración desde el sistema venoso, facilitando el retorno, y en sístole es impelente." },
+        { id:2, q: "2. Topográficamente, el corazón se sitúa en el mediastino inferior. ¿En qué subdivisión específica se localiza y hacia dónde está desplazado?", options: ["a) Mediastino anterior, lateralizado a la derecha.", "b) Mediastino posterior, central.", "c) Mediastino medio, lateralizado 2/3 hacia la izquierda.", "d) Mediastino superior, lateralizado 2/3 hacia la izquierda."], correct: "c) Mediastino medio, lateralizado 2/3 hacia la izquierda.", exp: "Se encuentra en el mediastino medio, ocupando 2/3 de su volumen en el hemitórax izquierdo." },
+        { id:3, q: "3. ¿Entre qué niveles vertebrales se proyecta clásicamente la silueta cardíaca en reposo?", options: ["a) T1-T4.", "b) T5-T8.", "c) T9-T12.", "d) C7-T3."], correct: "b) T5-T8.", exp: "Las vértebras \"cardíacas\" clásicas en las que se proyecta el corazón son de T5 a T8." },
+        { id:4, q: "4. Durante una inspiración profunda, ¿qué le ocurre posicionalmente al corazón debido a su anclaje diafragmático?", options: ["a) Se horizontaliza.", "b) Adopta una posición más verticalizada.", "c) Se desplaza al hemitórax derecho.", "d) Asciende hacia la carina."], correct: "b) Adopta una posición más verticalizada.", exp: "Al descender el diafragma en la inspiración, tira del saco pericárdico y verticaliza el corazón." },
+        { id:5, q: "5. El corazón tiene forma de pirámide o cono. ¿A qué cavidades corresponde su BASE, orientada hacia atrás y a la derecha?", options: ["a) A los ventrículos.", "b) A las aurículas.", "c) Al ventrículo izquierdo exclusivamente.", "d) Al cayado aórtico."], correct: "b) A las aurículas.", exp: "La base del corazón se opone al vértice y está formada por las aurículas (preeminentemente la izquierda por detrás y la derecha lateral)." },
+        { id:6, q: "6. ¿Qué cavidad forma de manera casi exclusiva el vértice (ápex) del corazón?", options: ["a) Ventrículo derecho.", "b) Aurícula izquierda.", "c) Ventrículo izquierdo.", "d) Aurícula derecha."], correct: "c) Ventrículo izquierdo.", exp: "Debido a su mayor tamaño y pared muscular, el ventrículo izquierdo conforma la punta o ápex cardíaco." },
+        { id:7, q: "7. ¿Qué elemento ocupa de forma natural los surcos auriculoventriculares e interventriculares, actuando estructuralmente con un carácter \"cardioprotector\"?", options: ["a) Tejido linfoide.", "b) Músculo liso estriado.", "c) Grasa epicárdica.", "d) Líquido pericárdico puro."], correct: "c) Grasa epicárdica.", exp: "Los surcos están rellenos de una cantidad variable de grasa epicárdica por la que discurren los vasos coronarios." },
+        { id:8, q: "8. En la cara pulmonar del corazón, ¿qué efecto genera sobre los pulmones adyacentes?", options: ["a) Imprime una convexidad idéntica en ambos pulmones.", "b) Destaca la convexidad mucho más marcada en el pulmón izquierdo.", "c) El corazón no contacta con los pulmones, sino con la pleura diafragmática.", "d) Genera el hilio pulmonar derecho."], correct: "b) Destaca la convexidad mucho más marcada en el pulmón izquierdo.", exp: "El corazón \"se come\" parte del pulmón izquierdo, dejando una impronta o convexidad muy evidente." },
+        { id:9, q: "9. Al analizar la salida de los grandes vasos desde la base ventricular del corazón, ¿cuál es el elemento más ANTERIOR (ventral)?", options: ["a) La aorta ascendente.", "b) La vena cava superior.", "c) La arteria pulmonar.", "d) Las venas pulmonares."], correct: "c) La arteria pulmonar.", exp: "Trampa clásica muy remarcada en clase: la arteria pulmonar sale por delante de la aorta." },
+        { id:10, q: "10. En su trayecto inicial, ¿qué gran vaso cabalga (pasa por encima y hacia atrás) sobre la arteria pulmonar izquierda y el bronquio principal izquierdo?", options: ["a) La vena ácigos.", "b) El cayado aórtico.", "c) La vena cava superior.", "d) El tronco braquiocefálico."], correct: "b) El cayado aórtico.", exp: "El cayado aórtico se monta sobre el pedículo pulmonar izquierdo." },
+        { id:11, q: "11. ¿A qué estructura se fusiona íntimamente el pericardio fibroso en su porción inferior, estabilizando el corazón?", options: ["a) Al esternón mediante ligamentos xifoideos.", "b) A las pleuras costales.", "c) Al centro frénico (tendinoso) del diafragma.", "d) A los cuerpos vertebrales T5-T8."], correct: "c) Al centro frénico (tendinoso) del diafragma.", exp: "Se une firmemente al diafragma mediante el ligamento pericardicofrénico." },
+        { id:12, q: "12. En la anatomía de las serosas, ¿qué estructura es exactamente sinónima del \"Epicardio\"?", options: ["a) Pericardio fibroso.", "b) Hoja parietal del pericardio seroso.", "c) Fascia endotorácica.", "d) Hoja visceral del pericardio seroso."], correct: "d) Hoja visceral del pericardio seroso.", exp: "El epicardio es la capa serosa que tapiza íntimamente el músculo cardíaco (hoja visceral)." },
+        { id:13, q: "13. Topográficamente, ¿dónde se localiza el Seno transverso de Theile?", options: ["a) Detrás de la aurícula izquierda, entre las venas pulmonares.", "b) Entre la aorta ascendente/tronco pulmonar por delante, y las aurículas/VCS por detrás.", "c) Entre el ventrículo derecho y el diafragma.", "d) En la desembocadura del seno coronario."], correct: "b) Entre la aorta ascendente/tronco pulmonar por delante, y las aurículas/VCS por detrás.", exp: "Es un pasillo interpedicular transversal de vital importancia quirúrgica, separando el pedículo arterial del venoso." },
+        { id:14, q: "14. ¿Cuál es el límite anterior del Seno oblicuo de Haller?", options: ["a) El esófago.", "b) El pericardio parietal posterior.", "c) La cara posterior de la aurícula izquierda.", "d) La vena cava inferior."], correct: "c) La cara posterior de la aurícula izquierda.", exp: "Queda delimitado entre la aurícula izquierda (por delante) y el pericardio parietal (por detrás)." },
+        { id:15, q: "15. Las arterias que irrigan el saco pericárdico son principalmente ramas de la arteria torácica interna (mamaria). ¿Cuáles son?", options: ["a) Arterias bronquiales y esofágicas.", "b) Arteria pericardiofrénica y musculofrenica.", "c) Arterias coronarias derecha e izquierda.", "d) Arterias intercostales supremas."], correct: "b) Arteria pericardiofrénica y musculofrenica.", exp: "La irrigación corre a cargo de los vasos que acompañan al frénico y el reborde costal." },
+        { id:16, q: "16. ¿Qué nervios recogen predominantemente la sensibilidad del pericardio?", options: ["a) Nervios Vagos (X).", "b) Troncos simpáticos.", "c) Nervios Frénicos.", "d) Nervios esplácnicos mayores."], correct: "c) Nervios Frénicos.", exp: "El frénico aporta la sensibilidad somática al pericardio." },
+        { id:17, q: "17. En la porción lisa de la Aurícula Derecha, delimitada externamente por el surco terminal, desembocan las cavas y el propio retorno venoso del corazón. ¿Cómo se denomina al receso fibroso en la entrada de la Vena Cava Inferior?", options: ["a) Válvula de Tebesio.", "b) Válvula de Eustaquio.", "c) Anillo de Vieussens.", "d) Limbo de Todaro."], correct: "b) Válvula de Eustaquio.", exp: "Eustaquio corresponde a la VCI; Tebesio corresponde al Seno Coronario." },
+        { id:18, q: "18. La luz de la aurícula derecha presenta una porción rugosa y una lisa. ¿Qué relieve muscular interno separa ambas zonas, coincidiendo exactamente con el surco terminal externo?", options: ["a) Cresta supraventricular.", "b) Limbo de la fosa oval.", "c) Trabécula septomarginal.", "d) Cresta terminal (de His)."], correct: "d) Cresta terminal (de His).", exp: "La cresta terminalis es la protrusión interna que deja el \"molde\" del surco terminalis externo." },
+        { id:19, q: "19. El profesor insiste en la localización del Trígono de Koch por albergar el Nódulo AV. ¿Cuáles son sus límites?", options: ["a) Fosa oval, válvula de Eustaquio y orejuela.", "b) Valva septal de la tricúspide, orificio del seno coronario y tendón de Todaro.", "c) Arteria pulmonar, aorta y válvula mitral.", "d) Cresta terminal, Vena cava superior y seno coronario."], correct: "b) Valva septal de la tricúspide, orificio del seno coronario y tendón de Todaro.", exp: "Es un triángulo clave electrofisiológicamente, delimitado por esas tres estructuras." },
+        { id:20, q: "20. En la pared septal de la aurícula derecha observamos la Fosa Oval. El reborde muscular grueso que la enmarca se denomina:", options: ["a) Válvula de Eustaquio.", "b) Tendón de Todaro.", "c) Limbo de la fosa oval (Anillo de Vieussens).", "d) Cresta supraventricular."], correct: "c) Limbo de la fosa oval (Anillo de Vieussens).", exp: "Es el \"marco de la ventana\" embriológica mal cerrada, formado por el septum secundum." },
+        { id:21, q: "21. Funcionalmente, la orejuela izquierda se caracteriza en la clínica (y en clase) por ser:", options: ["a) El marcapasos principal del corazón.", "b) La principal zona de formación de émbolos debido a su superficie trabeculada (músculos pectíneos).", "c) Una porción avascular e inerte.", "d) El punto de drenaje de las venas pulmonares."], correct: "b) La principal zona de formación de émbolos debido a su superficie trabeculada (músculos pectíneos).", exp: "Al tener recesos musculares y menor flujo, es el asiento típico de trombos en arritmias como la fibrilación." },
+        { id:22, q: "22. Al pasar al Ventrículo Derecho, vemos que las válvulas auriculoventriculares no tienen el borde libre suelto. ¿A qué estructuras están ancladas las \"cuerdas tendinosas\"?", options: ["a) A las válvulas semilunares.", "b) Al esqueleto fibroso directamente.", "c) A los músculos papilares (de primer orden).", "d) A los músculos pectíneos (lumbricales)."], correct: "c) A los músculos papilares (de primer orden).", exp: "Los músculos papilares proyectan las cuerdas que tensan las valvas." },
+        { id:23, q: "23. ¿Cuál es el papel hemodinámico de estas cuerdas tendinosas durante la sístole ventricular?", options: ["a) Abrir las valvas hacia la arteria pulmonar.", "b) Facilitar el paso de sangre a la aurícula.", "c) Impedir la inversión o prolapso de las valvas hacia la aurícula, manteniendo la presión en la cavidad.", "d) Retrasar el estímulo eléctrico."], correct: "c) Impedir la inversión o prolapso de las valvas hacia la aurícula, manteniendo la presión en la cavidad.", exp: "Usando la analogía del paracaídas, evitan que la válvula se \"dé la vuelta\" (prolapse) por la inmensa presión sistólica." },
+        { id:24, q: "24. El ventrículo derecho tiene una zona de entrada trabeculada y una zona de salida lisa que dirige el flujo hacia la válvula pulmonar. ¿Qué cresta las separa?", options: ["a) Cresta terminal.", "b) Cresta supraventricular.", "c) Trabécula septomarginal.", "d) Anillo de Vieussens."], correct: "b) Cresta supraventricular.", exp: "La cresta supraventricular divide la zona de los papilares del cono de eyección liso." },
+        { id:25, q: "25. ¿Cómo se denomina a la porción lisa del ventrículo derecho en forma de troncocono que contacta con la válvula pulmonar?", options: ["a) Seno venoso.", "b) Orejuela.", "c) Cono de eyección (infundíbulo).", "d) Fosa oval."], correct: "c) Cono de eyección (infundíbulo).", exp: "El infundíbulo arterial es el tramo final liso que minimiza turbulencias hacia el pulmón." },
+        { id:26, q: "26. En el ventrículo derecho destaca una gran trabécula que cruza desde el tabique al músculo papilar anterior, por la cual discurre la rama derecha del Haz de His. Se trata de:", options: ["a) Tendón de Todaro.", "b) Trabécula septomarginal (Banda moderadora).", "c) Músculo pectíneo.", "d) Cuerda tendinosa falsa."], correct: "b) Trabécula septomarginal (Banda moderadora).", exp: "Vital para la rápida conducción del estímulo eléctrico a la pared libre del VD." },
+        { id:27, q: "27. Anatómicamente, la pared muscular del Ventrículo Izquierdo es mucho más gruesa que la del Ventrículo Derecho. ¿En qué proporción aproximadamente?", options: ["a) Son exactamente iguales.", "b) El izquierdo es la mitad de grueso.", "c) El izquierdo tiene un grosor doble o triple respecto al derecho.", "d) El derecho es cinco veces más grueso."], correct: "c) El izquierdo tiene un grosor doble o triple respecto al derecho.", exp: "Adaptado a la presión sistémica, la pared del VI es de 2 a 3 veces más gruesa." },
+        { id:28, q: "28. La válvula Mitral (auriculoventricular izquierda) se diferencia de la tricúspide en el número de valvas. ¿Cuántas posee?", options: ["a) Tres.", "b) Cuatro.", "c) Dos (bicúspide).", "d) Una continua."], correct: "c) Dos (bicúspide).", exp: "Como su nombre indica (mitra obispal), tiene solo dos valvas (anterior y posterior)." },
+        { id:29, q: "29. En la \"trampa\" anatómica del tabique interventricular: su mayor parte es gruesa y muscular, pero su porción superior/craneal tiene otra constitución, siendo asiento frecuente de malformaciones (CIV). ¿Qué constitución tiene?", options: ["a) Cartilaginosa.", "b) Adiposa pura.", "c) Membranosa / Fibrosa.", "d) Ósea."], correct: "c) Membranosa / Fibrosa.", exp: "La \"pars membranacea\" o fibrosa es delgada, se asocia al esqueleto fibroso y es donde fallan los cierres embrionarios." },
+        { id:30, q: "30. El \"Esqueleto Fibroso del corazón\" une las cuatro válvulas formando anillos y trígonos. Su principal función electrofisiológica, muy remarcada en clase, es:", options: ["a) Generar el latido cardíaco (marcapasos).", "b) Conducir la electricidad lo más rápido posible.", "c) Actuar de aislante o separación electrofisiológica entre aurículas y ventrículos.", "d) Segregar líquido lubricante."], correct: "c) Actuar de aislante o separación electrofisiológica entre aurículas y ventrículos.", exp: "Bloquea el paso libre de la electricidad, obligando al impulso a ir solo por el Haz de His, ralentizando así la señal." },
+        { id:31, q: "31. Si el esqueleto fibroso aísla eléctricamente, ¿por qué punto exacto atraviesa el Haz de His (segmento atrioventricular) para llevar el impulso a los ventrículos?", options: ["a) Por el Trígono Fibroso Izquierdo.", "b) Por la parte muscular pura del tabique.", "c) Por el Trígono Fibroso Derecho.", "d) A través de la valva septal de la tricúspide directamente."], correct: "c) Por el Trígono Fibroso Derecho.", exp: "Es la única vía de perforación de conducción especializada entre aurículas y ventrículos." },
+        { id:32, q: "32. El Cuerpo Fibroso Central del corazón está constituido por la unión de dos estructuras fibrosas:", options: ["a) Anillo mitral y anillo pulmonar.", "b) Trígono fibroso derecho y la porción membranosa del tabique interventricular.", "c) Válvula de Eustaquio y tendón de Todaro.", "d) Trígono izquierdo y septum secundum."], correct: "b) Trígono fibroso derecho y la porción membranosa del tabique interventricular.", exp: "Es el \"núcleo\" conectivo del corazón, en el centro de la cruz valvular y septal." },
+        { id:33, q: "33. Las válvulas semilunares (aórtica y pulmonar) tienen una forma de \"nido de golondrina\". Para sellar herméticamente su luz, el borde libre presenta un refuerzo conectivo. ¿Cómo se denomina a la pequeña parte más dura central de este borde?", options: ["a) Lúnula.", "b) Nódulo.", "c) Papila.", "d) Comisura."], correct: "b) Nódulo.", exp: "La lúnula es el borde libre fino, y el nódulo es el punto central endurecido de encuentro." },
+        { id:34, q: "34. Justo por encima de la válvula aórtica existen tres dilataciones arteriales desde las cuales nacen las arterias coronarias. Se denominan:", options: ["a) Senos de Haller.", "b) Senos de Theile.", "c) Senos de Valsalva (senos aórticos).", "d) Recesos de Morgagni."], correct: "c) Senos de Valsalva (senos aórticos).", exp: "De los senos aórticos izquierdo y derecho parten las respectivas arterias coronarias." },
+        { id:35, q: "35. ¿En qué momento del ciclo cardíaco es más favorable y copioso el llenado de las arterias coronarias?", options: ["a) En la sístole ventricular máxima.", "b) Durante la contracción isométrica.", "c) En la diástole, cuando la válvula aórtica se cierra impidiendo el retroceso de sangre al ventrículo.", "d) Simultáneo a la apertura de la válvula mitral."], correct: "c) En la diástole, cuando la válvula aórtica se cierra impidiendo el retroceso de sangre al ventrículo.", exp: "Al cerrarse la válvula aórtica, los bolsillos se llenan de sangre rebotada e inyectan el flujo a las coronarias." },
+        { id:36, q: "36. Utilizando la analogía del aula y los alumnos de económicas: Si una válvula auriculoventricular no es capaz de soportar la alta presión sistólica y sus valvas se asoman/ceden hacia la luz de la aurícula, perdiendo presión, ¿cómo se denomina el cuadro?", options: ["a) Estenosis calcificada.", "b) Prolapso valvular (insuficiencia).", "c) Atresia congénita.", "d) Fibrilación."], correct: "b) Prolapso valvular (insuficiencia).", exp: "Ceder bajo la presión y abrirse al revés es el prolapso, causando insuficiencia de volumen y presión." },
+        { id:37, q: "37. Por el contrario, si la válvula está rígida o fibrosada y \"no queda suficientemente abierta\", impidiendo el llenado fácil del ventrículo, estamos ante una:", options: ["a) Isquemia.", "b) Insuficiencia pura.", "c) Estenosis.", "d) Taquicardia."], correct: "c) Estenosis.", exp: "Estrechez u obstrucción al flujo por falta de apertura completa." },
+        { id:38, q: "38. La Arteria Coronaria Izquierda tiene un tronco inicial corto. ¿Cuáles son sus dos ramas principales a nivel auriculoventricular?", options: ["a) Interventricular posterior y Marginal derecha.", "b) Interventricular anterior y Circunfleja.", "c) Arteria del nódulo sinusal y Diagonal.", "d) Arteria pulmonar y aorta descendente."], correct: "b) Interventricular anterior y Circunfleja.", exp: "Se bifurca rápidamente: la IV anterior baja por el surco homónimo y la circunfleja rodea por la izquierda." },
+        { id:39, q: "39. La Arteria Coronaria Derecha discurre por el surco AV derecho. En la cara posterior (cruz del corazón), ¿qué importante arteria suele originar (dominancia derecha)?", options: ["a) Arteria interventricular posterior.", "b) Arteria marginal izquierda.", "c) Rama circunfleja accesoria.", "d) Arteria recurrente anterior."], correct: "a) Arteria interventricular posterior.", exp: "En la mayoría de las personas, la coronaria derecha da la interventricular posterior." },
+        { id:40, q: "40. Si un individuo tiene \"predominancia izquierda\" en su circulación coronaria, significa que:", options: ["a) Su corazón está posicionado en el hemitórax derecho.", "b) La arteria interventricular posterior nace de la arteria circunfleja (rama de la coronaria izquierda).", "c) No tiene arteria coronaria derecha.", "d) El retorno venoso va a la aurícula izquierda."], correct: "b) La arteria interventricular posterior nace de la arteria circunfleja (rama de la coronaria izquierda).", exp: "La predominancia se define por qué arteria irriga la cruz posterior (dando la IV posterior)." },
+        { id:41, q: "41. El drenaje venoso del corazón desemboca en un 95% en el Seno Coronario. ¿Dónde drena este gran vaso?", options: ["a) En la Vena Cava Inferior.", "b) En el ventrículo izquierdo.", "c) Directamente en la Aurícula Derecha.", "d) En la aurícula izquierda, junto a las pulmonares."], correct: "c) Directamente en la Aurícula Derecha.", exp: "Toda la sangre desoxigenada del cuerpo (y del propio corazón) termina en la Aurícula Derecha." },
+        { id:42, q: "42. ¿Qué vena cardíaca acompaña a la arteria interventricular anterior (descendente anterior) y luego se curva para formar el inicio del seno coronario?", options: ["a) Vena Cardíaca Mayor.", "b) Vena Cardíaca Media.", "c) Vena Cardíaca Menor.", "d) Vena Oblicua."], correct: "a) Vena Cardíaca Mayor.", exp: "La Vena Cardíaca Mayor asciende por el surco IV anterior." },
+        { id:43, q: "43. En la conducción cardíaca, ¿dónde se localiza el Nódulo Sinusal (Sinoauricular), considerado el marcapasos primario (60-90 ppm)?", options: ["a) En el tabique interventricular membranoso.", "b) En la unión de la Vena Cava Superior con la Aurícula Derecha, cerca de la cresta terminal.", "c) En la orejuela izquierda.", "d) En el vértice del ventrículo derecho."], correct: "b) En la unión de la Vena Cava Superior con la Aurícula Derecha, cerca de la cresta terminal.", exp: "Es el \"cuartel general\", subepicárdico cranealmente y subendocárdico caudalmente, en la entrada de la VCS." },
+        { id:44, q: "44. Si el Nódulo Sinusal falla, ¿qué estructura asume el mando del ritmo cardíaco (a una frecuencia menor, 40-60 ppm)?", options: ["a) Las Fibras de Purkinje directamente.", "b) El Nódulo Auriculoventricular (AV).", "c) El cayado aórtico.", "d) El plexo cardíaco simpático."], correct: "b) El Nódulo Auriculoventricular (AV).", exp: "El segundo al mando toma el control para mantener el latido vital, aunque más lento." },
+        { id:45, q: "45. Tras pasar el Nódulo AV, el estímulo viaja por el Haz de His. ¿Dónde se ramifica finalmente este haz para iniciar la contracción desde la base de los músculos papilares?", options: ["a) En el sistema parasimpático del Vago.", "b) En la red de Fibras de Purkinje por el ventrículo.", "c) En los nódulos de Valsalva.", "d) En los trígonos fibrosos."], correct: "b) En la red de Fibras de Purkinje por el ventrículo.", exp: "Las ramas de His se deshilachan en la red subendocárdica de Purkinje." },
+        { id:46, q: "46. ¿Cuál de estas afirmaciones sobre las Fibras de Purkinje es correcta histológica y funcionalmente, según explicó el profesor?", options: ["a) Son nervios idénticos a los del sistema somático.", "b) Son tejido conectivo inerte.", "c) Son fibras musculares estriadas cardíacas (cardiomiocitos) especializadas en conducción rápida, no neuronas.", "d) Son músculo liso controlado por la voluntad."], correct: "c) Son fibras musculares estriadas cardíacas (cardiomiocitos) especializadas en conducción rápida, no neuronas.", exp: "A pesar de conducir impulsos velozmente, son células musculares modificadas, no verdaderos axones nerviosos." },
+        { id:47, q: "47. El profesor hizo una \"aclaración\" (Inciso) advirtiendo de un error muy común. En el mediastino posterior a los lados de la columna, NO existe:", options: ["a) Cadena ganglionar simpática.", "b) Vena ácigos.", "c) Cadena parasimpática vertebral.", "d) Aorta torácica."], correct: "c) Cadena parasimpática vertebral.", exp: "Subrayó fuertemente que es un error hablar de \"parasimpático vertebral\". Las cadenas paravertebrales son exclusivamente SIMPÁTICAS. El parasimpático viaja por el Vago." },
+        { id:48, q: "48. La inervación autónoma modifica el ritmo cardíaco. ¿Qué nervio aporta la vía Parasimpática encargada de REDUCIR la frecuencia cardíaca?", options: ["a) Los ganglios de T1 a T4.", "b) Nervio Frénico.", "c) Nervio Vago (X).", "d) Nervio Glosofaríngeo (IX)."], correct: "c) Nervio Vago (X).", exp: "El componente parasimpático vagal frena y relaja el corazón." },
+        { id:49, q: "49. Por el contrario, la inervación Simpática, que aumenta la frecuencia y el tono cardíaco, procede de:", options: ["a) Ganglios cervicales y ganglios torácicos (T1-T4).", "b) Únicamente del bulbo raquídeo.", "c) El nervio frénico.", "d) El plexo mesentérico."], correct: "a) Ganglios cervicales y ganglios torácicos (T1-T4).", exp: "Procede de la cadena simpática cervical y los primeros segmentos torácicos." },
+        { id:50, q: "50. Embriología: ¿En qué capa embrionaria se sitúa primariamente la \"zona cardiogénica\" (acúmulos angiógenos) hacia la mitad de la 3ª semana?", options: ["a) Ectodermo superficial.", "b) Endodermo faríngeo.", "c) Hoja esplácnica del mesodermo.", "d) Cresta neural cefálica."], correct: "c) Hoja esplácnica del mesodermo.", exp: "Aparece en el mesodermo esplácnico, craneal a la placa neural inicialmente." },
+        { id:51, q: "51. Durante el plegamiento cefalocaudal del embrión, el tubo cardíaco cambia de posición. ¿Hacia dónde se desplaza y cómo se sitúa respecto al intestino primitivo?", options: ["a) A posición dorsal y craneal extrema.", "b) A posición ventral respecto al sistema nervioso primitivo y al intestino primitivo.", "c) A posición totalmente retroperitoneal lumbar.", "d) Se asienta sobre el saco vitelino externo."], correct: "b) A posición ventral respecto al sistema nervioso primitivo y al intestino primitivo.", exp: "Al rotar el embrión, el corazón cae hacia adelante (ventral) y hacia el tórax." },
+        { id:52, q: "52. En el plegamiento del asa cardíaca (días 23-28), ¿hacia dónde crece y se dobla la porción del ventrículo primitivo?", options: ["a) Dorsal, craneal y a la izquierda.", "b) Ventral, caudal y hacia la derecha.", "c) Directamente hacia el ombligo.", "d) Permanece rígida y rectilínea."], correct: "b) Ventral, caudal y hacia la derecha.", exp: "El ventrículo cae hacia adelante y a la derecha, mientras las aurículas suben hacia atrás y a la izquierda." },
+        { id:53, q: "53. Durante la tabicación de la aurícula primitiva en la 4ª semana, aparece una primera cresta en forma de media luna que crece desde el techo. Se denomina:", options: ["a) Septum secundum.", "b) Válvula de Eustaquio.", "c) Almohadilla endocárdica.", "d) Septum primum."], correct: "d) Septum primum.", exp: "Es el primer tabique divisorio de las aurículas." },
+        { id:54, q: "54. El orificio temporal que queda entre el borde libre del septum primum y las almohadillas endocárdicas mientras este crece se llama:", options: ["a) Foramen oval.", "b) Ostium primum.", "c) Ostium secundum.", "d) Conducto arterioso."], correct: "b) Ostium primum.", exp: "Es el orificio inferior original (\"primer orificio\") que luego desaparece al fusionarse con las almohadillas." },
+        { id:55, q: "55. Antes de que el ostium primum se cierre, se produce muerte celular en la parte alta (techo) del septum primum para asegurar que la sangre siga cruzando de derecha a izquierda. A este nuevo agujero se le llama:", options: ["a) Fosa oval.", "b) Agujero interventricular.", "c) Ostium secundum.", "d) Canal atrioventricular común."], correct: "c) Ostium secundum.", exp: "Este segundo orificio salva el flujo fisiológico antes de cerrarse el inferior." },
+        { id:56, q: "56. A la derecha del septum primum crece un tabique más rígido e incompleto que nunca llega a tapar del todo la aurícula, dejando un orificio definitivo para la época fetal. ¿Cómo se llama este segundo tabique?", options: ["a) Tabique espiral.", "b) Almohadilla endocárdica superior.", "c) Pars membranacea.", "d) Septum secundum."], correct: "d) Septum secundum.", exp: "Este tabique forma el borde firme (limbo de la fosa oval) y deja el foramen oval." },
+        { id:57, q: "57. ¿Qué nombre recibe la comunicación fetal permanente entre AD y AI que queda delimitada por el reborde del septum secundum?", options: ["a) Ductus venosus.", "b) Agujero oval (o de Botal).", "c) Ostium primum.", "d) Orificio auriculoventricular."], correct: "b) Agujero oval (o de Botal).", exp: "El foramen oval es la ventana indispensable para oxigenar la cabeza fetal." },
+        { id:58, q: "58. Embriológicamente, ¿qué estructura actúa como la \"tela\" o válvula que impide el retroceso de sangre en el agujero oval desde la AI a la AD?", options: ["a) El septum secundum.", "b) El tejido de la válvula mitral.", "c) La lámina remanente del septum primum.", "d) La cresta terminal."], correct: "c) La lámina remanente del septum primum.", exp: "El septum primum es fino y se pega al septum secundum actuando como una válvula batiente." },
+        { id:59, q: "59. La división del canal auriculoventricular primitivo (que era único) en orificios derecho e izquierdo se logra mediante la fusión de unas masas de tejido que crecen desde dorsal y ventral. Son las:", options: ["a) Almohadillas endocárdicas o cojinetes.", "b) Crestas neurales.", "c) Trabéculas carnosas.", "d) Válvulas semilunares."], correct: "a) Almohadillas endocárdicas o cojinetes.", exp: "Estas almohadillas forman el \"cuerpo fibroso central\" y parten el agujero en mitral y tricúspide." },
+        { id:60, q: "60. Patrón de circulación fetal: La sangre oxigenada proveniente de la placenta materna ingresa al cuerpo del feto a través de:", options: ["a) Las arterias umbilicales.", "b) La aorta descendente.", "c) La vena umbilical.", "d) El conducto arterioso."], correct: "c) La vena umbilical.", exp: "\"Trampa\" de nomenclatura: las venas van AL corazón fetal, pero la umbilical trae sangre RICA en oxígeno." },
+        { id:61, q: "61. Para evitar pasar por los pulmones (que no oxigenan aún), la sangre fetal salta de la arteria pulmonar directamente hacia la aorta descendente a través de un vaso llamado:", options: ["a) Seno venoso.", "b) Conducto de Arancio.", "c) Conducto arterioso (Ductus arteriosus).", "d) Vena pulmonar accesoria."], correct: "c) Conducto arterioso (Ductus arteriosus).", exp: "Gran \"shunt\" o cortocircuito arterial fetal que se cierra (ligamento arterioso) tras el parto." },
+        { id:62, q: "62. ¿Qué ocurre fisiológicamente en el momento del parto que provoca el cierre de la válvula del agujero oval?", options: ["a) Comienza la respiración, aumenta masivamente el flujo a pulmones y por tanto aumenta la presión en la aurícula izquierda, aplastando el septum primum contra el secundum.", "b) El cordón umbilical estalla y vacía el ventrículo derecho.", "c) La falta de oxígeno contrae el foramen oval muscular.", "d) El esqueleto fibroso se osifica súbitamente."], correct: "a) Comienza la respiración, aumenta masivamente el flujo a pulmones y por tanto aumenta la presión en la aurícula izquierda, aplastando el septum primum contra el secundum.", exp: "La inversión de presiones (AI > AD) sella el agujero mecánicamente de forma inmediata." },
+        { id:63, q: "63. Cuando el profesor habla de focos ectópicos de automatismo que se vuelven \"locos\" (fibrilación) y es necesario \"quemarlos\" (ablación), se refiere a:", options: ["a) Fibras del pericardio parietal.", "b) Puntos del endocardio que generan estímulos eléctricos autónomos fuera del Nódulo Sinusal, frecuentemente en aurícula izquierda o venas pulmonares.", "c) Músculos papilares disfuncionales.", "d) Ganglios vagales."], correct: "b) Puntos del endocardio que generan estímulos eléctricos autónomos fuera del Nódulo Sinusal, frecuentemente en aurícula izquierda o venas pulmonares.", exp: "Células que toman el mando erráticamente, provocando taquicardias o fibrilaciones." },
+        { id:64, q: "64. Si abriésemos la Aurícula Izquierda, ¿cuál de los siguientes relieves musculares NO encontraríamos jamás, por ser exclusivo de la derecha?", options: ["a) Músculos pectíneos en la orejuela.", "b) Orificios de venas.", "c) Cresta terminal y Válvula de Eustaquio.", "d) Válvula del foramen oval (sellada)."], correct: "c) Cresta terminal y Válvula de Eustaquio.", exp: "La cresta terminal y Eustaquio (VCI) son estructuras topográficas únicas de la AD." },
+        { id:65, q: "65. Al estudiar las relaciones cardíacas, la cara diafragmática (inferior) del corazón corresponde anatómicamente de forma casi íntegra a:", options: ["a) Las aurículas derecha e izquierda.", "b) El tronco de la pulmonar y aorta.", "c) Los ventrículos derecho e izquierdo.", "d) La vena cava inferior."], correct: "c) Los ventrículos derecho e izquierdo.", exp: "El corazón se asienta sobre sus ventrículos en el centro frénico." },
+        { id:66, q: "66. La válvula tricúspide posee tres valvas. Teniendo en cuenta la posición del tabique y paredes, su denominación correcta es:", options: ["a) Anterior, Posterior y Lateral.", "b) Septal, Anterior y Posterior.", "c) Interna, Externa y Superior.", "d) Coronaria, Pulmonar y Aórtica."], correct: "b) Septal, Anterior y Posterior.", exp: "La valva septal se adosa al tabique, la anterior a la pared esternal, y la posterior a la diafragmática." },
+        { id:67, q: "67. Según las ilustraciones y notas de clase (y el texto explícito), ¿en qué cara del corazón discurre la arteria Interventricular Anterior?", options: ["a) En la cara Diafragmática (postero-inferior).", "b) En la cara Esternocostal (anterior).", "c) En la base pura de las aurículas.", "d) En el surco terminal de la aurícula derecha."], correct: "b) En la cara Esternocostal (anterior).", exp: "Baja por el surco anterior visible desde el abordaje frontal (externocostal)." },
+        { id:68, q: "68. A diferencia de las venas cardíacas mayores que drenan al Seno Coronario, las \"Venas Mínimas de Tebesio\" drenan de una forma peculiar. Aunque no se desgranó ampliamente en texto, por definición de los recesos de Tebesio, su función se asocia a:", options: ["a) Irrigar los ganglios linfáticos.", "b) Desembocar directamente en las cavidades cardíacas (especialmente las derechas) perforando el endocardio.", "c) Drenar en la vena porta.", "d) Llenar el saco pericárdico."], correct: "b) Desembocar directamente en las cavidades cardíacas (especialmente las derechas) perforando el endocardio.", exp: "Las venas pequeñas cardíacas drenan directamente a las cavidades (\"foraminas de Tebesio\")." },
+        { id:69, q: "69. En una disección transversal del corazón (cortando por encima del esqueleto fibroso y mirando hacia abajo), la válvula aórtica se posicionaría topográficamente:", options: ["a) Totalmente lateral y a la izquierda de la mitral.", "b) En el centro del macizo cardíaco, rodeada por la mitral, tricúspide y posterior a la pulmonar.", "c) Por delante de la arteria pulmonar.", "d) Exclusivamente en el espesor del trígono izquierdo."], correct: "b) En el centro del macizo cardíaco, rodeada por la mitral, tricúspide y posterior a la pulmonar.", exp: "La aorta está muy central, \"acuñada\" entre el resto de válvulas (mitral detrás-izq, tricúspide detrás-der, pulmonar delante)." },
+        { id:70, q: "70. Mencionó el profesor que el músculo papilar anterior del Ventrículo Derecho recibe un puente muscular desde el tabique. ¿De qué estructura se trata?", options: ["a) Cresta supraventricular.", "b) Trabécula septomarginal.", "c) Válvula septal.", "d) Músculo papilar posterior."], correct: "b) Trabécula septomarginal.", exp: "La trabécula septomarginal salta del tabique a la base del papilar anterior llevando el haz de conducción." },
+        { id:71, q: "71. La arteria descendente posterior (interventricular posterior) habitualmente acompaña a una gran vena por su surco en la cara diafragmática. ¿A cuál?", options: ["a) Vena cardíaca magna.", "b) Vena cardíaca media.", "c) Vena cava inferior.", "d) Vena cardíaca menor."], correct: "b) Vena cardíaca media.", exp: "La vena cardíaca media acompaña a la arteria IV posterior hacia el seno coronario." },
+        { id:72, q: "72. La inervación vagal tiene un efecto específico en los nodos cardíacos. Principalmente, un estímulo vagal potente produciría:", options: ["a) Taquicardia ventricular sostenida.", "b) Dilatación intensa de las pupilas (midriasis).", "c) Reducción brusca de la frecuencia cardíaca (bradicardia).", "d) Constricción de la arteria pulmonar."], correct: "c) Reducción brusca de la frecuencia cardíaca (bradicardia).", exp: "El parasimpático es frenador del ritmo (bradicardizante)." },
+        { id:73, q: "73. A nivel de la válvula semilunar pulmonar, ¿cómo se distribuyen exactamente sus 3 valvas respecto a sus senos?", options: ["a) 1 Anterior y 2 Laterales (Derecha e Izquierda).", "b) 1 Posterior y 2 Laterales.", "c) 2 Anteriores y 1 Posterior.", "d) 1 Septal, 1 Marginal, 1 Superior."], correct: "a) 1 Anterior y 2 Laterales (Derecha e Izquierda).", exp: "La pulmonar (más anterior) tiene 1 valva anterior y 2 laterales. La aórtica (más atrás) tiene 1 posterior y 2 laterales (coronarias)." },
+        { id:74, q: "74. ¿De qué seno aórtico no nace ninguna arteria coronaria habitualmente?", options: ["a) Del seno aórtico izquierdo.", "b) Del seno aórtico anterior.", "c) Del seno aórtico derecho.", "d) Del seno aórtico posterior (no coronario)."], correct: "d) Del seno aórtico posterior (no coronario).", exp: "A la válvula posterior de la aorta se le llama \"valva no coronariana\" porque de su seno no nace arteria." },
+        { id:75, q: "75. En un ECG (electrocardiograma), el vector de despolarización se evalúa en conjunto. ¿Hacia dónde apuntaría macroscópicamente el vector principal de contracción muscular normal de todo el corazón?", options: ["a) Hacia arriba y a la derecha.", "b) Hacia la base auricular pura.", "c) Hacia abajo, hacia adelante y hacia la izquierda (hacia el vértice del VI).", "d) Hacia la arteria pulmonar y el cuello."], correct: "c) Hacia abajo, hacia adelante y hacia la izquierda (hacia el vértice del VI).", exp: "El eje de contracción sigue la disposición de masa y anatomía (hacia el ápex izquierdo anteroinferior)." },
+        { id:76, q: "76. Tras la sístole, ocurre la \"diástole\" con el consiguiente cierre de las válvulas sigmoideas. ¿Qué fenómeno físico ayuda a abrir las válvulas auriculoventriculares?", options: ["a) La contracción activa de los músculos papilares empujando las valvas.", "b) La alta presión remanente de la aorta.", "c) La aspiración ventricular y el peso/presión de la sangre acumulada en la aurícula.", "d) La inflamación de la pared epicárdica."], correct: "c) La aspiración ventricular y el peso/presión de la sangre acumulada en la aurícula.", exp: "El ventrículo se relaja y \"aspira\", mientras la sangre de la aurícula empuja pasivamente las valvas abriéndolas." },
+        { id:77, q: "77. El \"pericardio seroso\" está compuesto por una hoja visceral (epicardio) y una parietal. La cantidad normal de líquido lubricante contenido entre ellas es de:", options: ["a) 1-2 Litros.", "b) 0 mililitros (es seco).", "c) 15 a 50 mililitros.", "d) 500 a 700 mililitros."], correct: "c) 15 a 50 mililitros.", exp: "Según el esquema proporcionado (diapositiva de pericardio), el \"LPC\" fisiológico es de 15 - 50 ml para lubricar sin comprimir." },
+        { id:78, q: "78. Si este volumen se multiplica patológicamente (ej. un sangrado o inflamación grave) y el pericardio fibroso \"inextensible\" no puede ceder, ¿qué complicación hemodinámica letal impide el llenado del corazón?", options: ["a) Soplo sistólico inocente.", "b) Taponamiento cardíaco por derrame pericárdico masivo.", "c) Disección aórtica ascendente.", "d) Fibrilación auricular exclusiva."], correct: "b) Taponamiento cardíaco por derrame pericárdico masivo.", exp: "Es la consecuencia clínica mostrada en el TAC del \"derrame pericárdico\". Al no poder distenderse hacia afuera, la presión colapsa las cavidades cardíacas (especialmente las derechas, de pared más fina)." },
+        { id:79, q: "79. En el cierre del tubo cardíaco embrionario (23-28 días), vemos que en su zona caudal presenta unas astas que recogerán las venas. Esa zona se denomina:", options: ["a) Saco aórtico.", "b) Bulbo cardíaco.", "c) Seno venoso.", "d) Tronco arterioso."], correct: "c) Seno venoso.", exp: "El seno venoso primitivo queda caudal y absorberá los sistemas de venas cardinales, umbilicales y vitelinas." },
+        { id:80, q: "80. El cierre prematuro del conducto arterioso EN EL FETO (antes del parto) produciría:", options: ["a) Una mejor oxigenación cerebral al desviar toda la sangre a la aorta.", "b) Una insuficiencia masiva del ventrículo derecho por enviar la sangre a unos pulmones con altísima resistencia, no pudiendo evacuar hacia la aorta descendente.", "c) Un aumento de la nutrición hepática.", "d) Desarrollo normal sin consecuencias."], correct: "b) Una insuficiencia masiva del ventrículo derecho por enviar la sangre a unos pulmones con altísima resistencia, no pudiendo evacuar hacia la aorta descendente.", exp: "El ductus es vital porque los pulmones están \"apagados\" (mucha resistencia). Si se cierra, el VD falla intentando empujar sangre a un lecho vascular bloqueado." }
+    ];
+
+    let currentQuestions = [];
+    let state = { answered: {}, marked: {}, results: {} };
+
+    function shuffleArray(array) {
+        for (let i = array.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [array[i], array[j]] = [array[j], array[i]];
+        }
+    }
+
+    function startQuiz(randomize) {
+        currentQuestions = [...allQuestions];
+        if (randomize) shuffleArray(currentQuestions);
+        
+        document.getElementById('setup-screen').style.display = 'none';
+        document.getElementById('main-container').style.display = 'grid';
+        renderQuiz();
+    }
+
+    function renderQuiz() {
+        const wrapper = document.getElementById('questions-wrapper');
+        const nav = document.getElementById('nav-grid');
+        wrapper.innerHTML = '';
+        nav.innerHTML = '';
+
+        currentQuestions.forEach((item, index) => {
+            // Sidebar Nav
+            const navBtn = document.createElement('button');
+            navBtn.className = `nav-btn ${state.marked[item.id] ? 'marked' : ''} ${state.answered[item.id] ? 'answered' : ''}`;
+            navBtn.innerText = item.id;
+            navBtn.onclick = () => document.getElementById(`q-block-${item.id}`).scrollIntoView();
+            nav.appendChild(navBtn);
+
+            // Question Block
+            const block = document.createElement('div');
+            block.className = 'question-block';
+            block.id = `q-block-${item.id}`;
+
+            // Shuffling options for each render
+            let opts = [...item.options];
+            shuffleArray(opts);
+
+            let optionsHtml = opts.map(o => `<li class="option-item ${state.answered[item.id] ? 'disabled' : ''}" onclick="checkAnswer(this, ${item.id}, '${o.replace(/'/g, "\\'")}', '${item.correct.replace(/'/g, "\\'")}')">${o}</li>`).join('');
+
+            block.innerHTML = `
+                <div class="mark-container">
+                    <label><input type="checkbox" onchange="toggleMark(${item.id})" ${state.marked[item.id] ? 'checked' : ''}> Marcar pregunta</label>
+                </div>
+                <span class="question-text">${item.q}</span>
+                <ul class="options-list">${optionsHtml}</ul>
+                <div class="explanation" id="exp-${item.id}">${item.exp}</div>
+            `;
+            wrapper.appendChild(block);
+            
+            // Re-apply styles if already answered (for retries)
+            if(state.answered[item.id]) {
+                const selected = state.answered[item.id];
+                const items = block.querySelectorAll('.option-item');
+                items.forEach(li => {
+                    if(li.innerText === item.correct) li.classList.add('correct');
+                    if(li.innerText === selected && selected !== item.correct) li.classList.add('wrong');
+                    li.classList.add('disabled');
+                });
+                block.querySelector('.explanation').style.display = 'block';
+            }
+        });
+    }
+
+    function checkAnswer(el, qId, selected, correct) {
+        if (state.answered[qId]) return;
+
+        state.answered[qId] = selected;
+        const parent = el.parentElement;
+        const items = parent.querySelectorAll('.option-item');
+        
+        items.forEach(li => {
+            li.classList.add('disabled');
+            if (li.innerText === correct) li.classList.add('correct');
+        });
+
+        if (selected !== correct) {
+            el.classList.add('wrong');
+            state.results[qId] = false;
+        } else {
+            state.results[qId] = true;
+        }
+
+        document.getElementById(`exp-${qId}`).style.display = 'block';
+        updateNav();
+    }
+
+    function toggleMark(id) {
+        state.marked[id] = !state.marked[id];
+        updateNav();
+    }
+
+    function updateNav() {
+        const buttons = document.querySelectorAll('.nav-btn');
+        buttons.forEach(btn => {
+            const id = parseInt(btn.innerText);
+            btn.className = 'nav-btn';
+            if (state.answered[id]) btn.classList.add('answered');
+            if (state.marked[id]) btn.classList.add('marked');
+        });
+    }
+
+    function finishQuiz() {
+        const total = currentQuestions.length;
+        const correctCount = Object.values(state.results).filter(v => v === true).length;
+        
+        document.getElementById('score-text').innerText = `Resultado: ${correctCount} de ${total} correctas`;
+        document.getElementById('results-screen').style.display = 'flex';
+    }
+
+    function retry(mode) {
+        let nextBatch = [];
+        
+        if (mode === 'all') {
+            nextBatch = [...allQuestions];
+            state.answered = {}; state.results = {}; // Reset answers for fresh start
+        } else if (mode === 'failed') {
+            nextBatch = allQuestions.filter(q => state.results[q.id] === false);
+        } else if (mode === 'marked') {
+            nextBatch = allQuestions.filter(q => state.marked[q.id] === true);
+        } else if (mode === 'failed-marked') {
+            nextBatch = allQuestions.filter(q => state.results[q.id] === false || state.marked[q.id] === true);
+        }
+
+        if (nextBatch.length === 0) {
+            alert("No hay preguntas que coincidan con esta selección.");
+            return;
+        }
+
+        // Limpiar estados solo para las preguntas que se van a repetir
+        nextBatch.forEach(q => {
+            delete state.answered[q.id];
+            delete state.results[q.id];
+        });
+
+        currentQuestions = nextBatch;
+        document.getElementById('results-screen').style.display = 'none';
+        renderQuiz();
+    }
+</script>
+</body>
+</html>
