@@ -911,31 +911,37 @@
             {
                 hash: "26f23fc6cb9d53db0d5041fd0c3b1a09b03c3359f01ab4f9b99a2b3063b8e603",
                 alias: "Comodoro Supremo",
+                label: "Administrador",
                 admin: true
             },
             {
                 hash: "0aaf6107f7ad50f68c7fdd9e43e25d22a6bc026080aff0f1013c322babe65cc5",
                 alias: "Tripulante",
+                label: "Tripulante 1",
                 admin: false
             },
             {
                 hash: "e1357c6a116c33525352fee3d57b090847e027bac164b873b410eac234e3ef27",
                 alias: "Tripulante",
+                label: "Tripulante 2",
                 admin: false
             },
             {
                 hash: "7a1d5d03f970ac38d2080c6ac040902bd30d8d59b4c5cc374c30445d2b690778",
                 alias: "Tripulante",
+                label: "Tripulante 3",
                 admin: false
             },
             {
                 hash: "7e153005924bb1c6049581649bd1310e60ff18c58bb5033f0433e42efbd76c26",
                 alias: "Tripulante",
+                label: "Tripulante 4",
                 admin: false
             },
             {
                 hash: "835288e0a626d18f9ca168a38570afcb81a5b79f7f7570007191a409870fbcd0",
                 alias: "Tripulante",
+                label: "Tripulante 5",
                 admin: false
             }
         ];
@@ -994,7 +1000,7 @@
         }
 
         function formatNumber(n) {
-            return new Intl.NumberFormat("es-ES").format(n || 0);
+            return new Intl.NumberFormat("es-ES").format(Number(n || 0));
         }
 
         function getSafeDisplayName(userObj) {
@@ -1005,6 +1011,14 @@
         function getAvatarText(userObj) {
             if (!userObj || !userObj.alias) return "M";
             return userObj.alias.charAt(0).toUpperCase();
+        }
+
+        function getTodayKey() {
+            const now = new Date();
+            const y = now.getFullYear();
+            const m = String(now.getMonth() + 1).padStart(2, "0");
+            const d = String(now.getDate()).padStart(2, "0");
+            return `${y}-${m}-${d}`;
         }
 
         function getRankData(visits, isAdmin = false) {
@@ -1090,16 +1104,10 @@
         };
 
         window.logout = function () {
-            const currentHash = sessionStorage.getItem("_auth_hash");
             sessionStorage.removeItem("_auth_tkn_882");
             sessionStorage.removeItem("_auth_hash");
             sessionStorage.removeItem("_auth_alias");
             sessionStorage.removeItem("_auth_admin");
-
-            if (currentHash) {
-                sessionStorage.removeItem("session_counted_for_" + currentHash);
-            }
-
             location.reload();
         };
 
@@ -1150,25 +1158,36 @@
         async function getUserVisitCount(hash) {
             try {
                 const snapshot = await get(ref(db, "visitas/" + hash));
-                if (snapshot.exists()) {
-                    return snapshot.val()?.total || 0;
-                }
-                return 0;
-            } catch {
+                if (!snapshot.exists()) return 0;
+
+                const data = snapshot.val();
+                return Number(data?.total || 0);
+            } catch (error) {
+                console.log("No se pudo leer el contador.", error);
                 return 0;
             }
         }
 
         async function countSessionVisit(hash) {
             try {
-                const key = "session_counted_for_" + hash;
-                if (!sessionStorage.getItem(key)) {
-                    const userRef = ref(db, "visitas/" + hash);
-                    await update(userRef, { total: increment(1) });
-                    sessionStorage.setItem(key, "true");
+                const today = getTodayKey();
+                const key = "visit_counted_" + hash + "_" + today;
+
+                if (localStorage.getItem(key)) {
+                    return false;
                 }
+
+                const userRef = ref(db, "visitas/" + hash);
+                await update(userRef, {
+                    total: increment(1),
+                    lastVisit: new Date().toISOString()
+                });
+
+                localStorage.setItem(key, "true");
+                return true;
             } catch (error) {
-                console.log("Error de conexión con Firebase.");
+                console.log("Error de conexión con Firebase.", error);
+                return false;
             }
         }
 
@@ -1184,9 +1203,17 @@
                 listaContadores = "";
 
                 USERS.forEach(usuario => {
-                    const visitas = datosVisitas?.[usuario.hash]?.total || 0;
-                    const aliasSeguro = usuario.admin ? "Almirante" : usuario.alias;
-                    listaContadores += `<li><strong>${aliasSeguro}</strong> <span>${formatNumber(visitas)} visitas</span></li>`;
+                    const visitas = Number(datosVisitas?.[usuario.hash]?.total || 0);
+                    const nombreMostrar = usuario.admin
+                        ? (usuario.label || "Administrador")
+                        : (usuario.label || usuario.alias || "Tripulante");
+
+                    listaContadores += `
+                        <li>
+                            <strong>${nombreMostrar}</strong>
+                            <span>${formatNumber(visitas)} visitas</span>
+                        </li>
+                    `;
                 });
             } catch (error) {
                 listaContadores = "<li><em>Error al cargar estadísticas</em></li>";
@@ -1228,7 +1255,7 @@
                             ${listaContadores}
                         </ul>
                         <div class="admin-note">
-                            *Estas estadísticas se actualizan una vez por sesión iniciada.
+                            *Estas estadísticas se actualizan una vez por usuario y día en este navegador.
                         </div>
                     </div>
                 </div>
