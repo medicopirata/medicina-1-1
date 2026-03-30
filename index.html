@@ -6,285 +6,110 @@
   <title>Médico Pirata | Comunidad</title>
   <style>
     :root{
-      --bg:#f6f0e5;
-      --card:#ffffffee;
-      --ink:#173140;
-      --muted:#5c6f78;
-      --line:rgba(23,49,64,.12);
-      --navy:#14364a;
-      --navy2:#244e66;
-      --gold:#d4a85d;
-      --gold2:#f0c987;
-      --danger:#b43e36;
-      --ok:#2d7b57;
+      --bg:#f6f0e5; --ink:#173140; --muted:#5c6f78; --navy:#14364a;
+      --gold:#d4a85d; --gold2:#f0c987; --danger:#b43e36; --ok:#2d7b57;
       --shadow:0 12px 30px rgba(0,0,0,.09);
-      --shadow-2:0 18px 40px rgba(0,0,0,.16);
     }
-
     *{box-sizing:border-box}
-    html,body{
-      margin:0;padding:0;min-height:100%;
-      font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
-      color:var(--ink);
-      background:
-        radial-gradient(circle at top right, rgba(212,168,93,.14), transparent 24%),
-        linear-gradient(180deg,#fbf7ef 0%,#f4ede0 100%);
+    body{
+      margin:0; font-family:"Segoe UI", sans-serif; color:var(--ink);
+      background: linear-gradient(180deg,#fbf7ef 0%,#f4ede0 100%);
+      min-height: 100vh;
     }
-
-    body{overflow-x:hidden}
-    button,input,textarea,select{font:inherit}
-    a{color:inherit}
     .hidden{display:none !important}
-
     .auth-screen{
-      min-height:100vh;
-      display:grid;
-      place-items:center;
-      padding:24px;
-      background: linear-gradient(rgba(8,28,39,.78), rgba(8,28,39,.84));
+      min-height:100vh; display:grid; place-items:center; padding:24px;
+      background: linear-gradient(rgba(8,28,39,.8), rgba(8,28,39,.9));
     }
-
     .auth-card{
-      width:min(620px,100%);
-      background:rgba(255,255,255,.98);
-      border-radius:28px;
-      box-shadow:var(--shadow-2);
-      padding:30px;
-      border:1px solid rgba(255,255,255,.65);
+      width:min(500px,100%); background:#fff; border-radius:28px;
+      padding:40px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
     }
-
-    .kicker{
-      display:inline-flex;
-      padding:8px 14px;
-      border-radius:999px;
-      font-size:.8rem;
-      font-weight:800;
-      text-transform:uppercase;
-      letter-spacing:2px;
-      background:#f7ead3;
-      color:#8e6230;
-      margin-bottom:14px;
+    input, textarea{
+      width:100%; padding:14px; margin:10px 0; border:2px solid #ddd;
+      border-radius:12px; outline:none; font-size: 1rem;
     }
-
-    h1,h2,h3,h4{margin:0 0 10px}
-    p{margin:0 0 14px;color:var(--muted);line-height:1.5}
-
-    .field-grid{
-      display:grid;
-      grid-template-columns:1fr 1fr;
-      gap:12px;
-    }
-
-    .field-full{grid-column:1/-1}
-
-    input,textarea,select{
-      width:100%;
-      padding:13px 14px;
-      border:2px solid #d9dfdf;
-      border-radius:12px;
-      background:#fffdf9;
-      outline:none;
-      transition:.2s ease;
-      margin:10px 0;
-    }
-
-    input:focus,textarea:focus,select:focus{
-      border-color:var(--navy2);
-      box-shadow:0 0 0 4px rgba(36,78,102,.08);
-    }
-
     .btn{
-      border:none;
-      border-radius:14px;
-      padding:13px 18px;
-      font-weight:800;
-      cursor:pointer;
-      transition:.2s ease;
-      display:inline-flex;
-      align-items:center;
-      justify-content:center;
-      gap:8px;
+      padding:14px 20px; border:none; border-radius:12px; font-weight:800;
+      cursor:pointer; transition: .2s; width: 100%; margin-top: 10px;
     }
-
-    .btn:hover{transform:translateY(-1px)}
-    .btn-primary{color:#143140;background:linear-gradient(135deg,var(--gold2),var(--gold));box-shadow:0 10px 20px rgba(201,153,82,.26)}
-    .btn-dark{color:#fff;background:linear-gradient(135deg,var(--navy2),var(--navy));box-shadow:0 10px 20px rgba(20,77,99,.24)}
-    .btn-soft{color:#fff;background:linear-gradient(135deg,#6b7b84,#52626c)}
-
-    .row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
-
-    .msg{
-      display:none;
-      margin-top:10px;
-      padding:12px 14px;
-      border-radius:12px;
-      font-weight:700;
-    }
-    .msg.error{background:#fff1ef;color:var(--danger);border:1px solid #f4c8c2}
-    .msg.ok{background:#edf8f1;color:var(--ok);border:1px solid #cbe9d6}
-
-    .app-shell{display:none;min-height:100vh}
-
-    .hero{
-      position:relative;
-      min-height:190px;
-      background: linear-gradient(rgba(7,25,35,.7), rgba(7,25,35,.7));
-      box-shadow:0 8px 24px rgba(0,0,0,.14);
-    }
-
-    .hero-inner{
-      width:min(1380px,calc(100% - 24px));
-      margin:0 auto;
-      color:#fff;
-      padding:24px 0 26px;
-    }
-
-    .topbar{
-      position:sticky;top:0;z-index:1000;
-      background:rgba(12,38,52,.95);
-      backdrop-filter:blur(10px);
-      border-bottom:1px solid rgba(255,255,255,.08);
-    }
-
-    .topbar-inner{
-      width:min(1380px,calc(100% - 24px));
-      margin:0 auto;
-      display:flex;
-      justify-content:space-between;
-      align-items:center;
-      padding:10px 0;
-    }
-
-    .avatar{
-      width:48px;height:48px; border-radius:50%;
-      background:linear-gradient(135deg,#f1c17a,#c99952);
-      display:grid; place-items:center; font-weight:900; color:#143140;
-    }
-
-    .app{
-      width:min(1380px,calc(100% - 24px));
-      margin:18px auto 30px;
-      display:grid;
-      grid-template-columns:300px 1fr;
-      gap:18px;
-    }
-
-    .side, .panel{
-      background:rgba(255,255,255,.96);
-      border-radius:24px;
-      padding:20px;
-      box-shadow:var(--shadow);
-    }
-
-    .nav-btn{
-      width:100%; border:none; border-radius:16px; padding:14px 16px;
-      text-align:left; font-weight:800; cursor:pointer; margin-bottom:8px;
-      background:#fff; border:1px solid #e8edef;
-    }
-
-    .nav-btn.active{ background:linear-gradient(135deg,var(--gold2),var(--gold)); border-color:transparent; }
-
-    @media (max-width:980px){
-      .app{grid-template-columns:1fr}
-    }
+    .btn-primary{ background: linear-gradient(135deg,var(--gold2),var(--gold)); color:#143140; }
+    .btn-dark{ background: var(--navy); color:#fff; }
+    .msg{ padding:12px; border-radius:10px; margin-top:15px; font-weight:bold; display:none; text-align:center; }
+    .msg.error{ background:#fff1ef; color:var(--danger); border:1px solid #f4c8c2; }
+    
+    /* Layout App */
+    .app-shell{ display:none; }
+    .topbar{ background:var(--navy); color:#fff; padding:15px; display:flex; justify-content:space-between; align-items:center; }
+    .app-content{ display:grid; grid-template-columns: 250px 1fr; gap:20px; padding:20px; max-width:1400px; margin:auto; }
+    .side{ background:#fff; border-radius:20px; padding:15px; height: fit-content; box-shadow: var(--shadow); }
+    .panel{ background:#fff; border-radius:20px; padding:30px; box-shadow: var(--shadow); min-height: 400px; }
   </style>
 </head>
 <body>
 
   <section id="auth-screen" class="auth-screen">
     <div class="auth-card">
-      <div class="kicker">⚓ Acceso a la comunidad</div>
-      <h2>Médico Pirata</h2>
-      <p id="auth-subtitle">Inicia sesión con tu correo o nombre de usuario.</p>
-
-      <div class="row" style="margin-bottom:16px;">
-        <button class="btn btn-primary" onclick="showAuthMode('login')">Entrar</button>
-        <button class="btn btn-dark" onclick="showAuthMode('register')">Crear cuenta</button>
-      </div>
+      <h2 style="margin-top:0">⚓ Médico Pirata</h2>
+      <p id="auth-subtitle">Introduce tu usuario o correo para embarcar.</p>
 
       <div id="login-form">
-        <input id="login-identifier" type="text" placeholder="Correo o nombre de usuario" />
-        <input id="login-password" type="password" placeholder="Contraseña" />
-        <div class="auth-actions">
-          <button class="btn btn-primary" onclick="login()">Entrar ahora</button>
-          <button class="btn btn-soft" onclick="sendReset()">Recuperar contraseña</button>
-        </div>
+        <input id="login-id" type="text" placeholder="Usuario (91143) o Correo" />
+        <input id="login-pass" type="password" placeholder="Contraseña" />
+        <button class="btn btn-primary" onclick="login()">Entrar</button>
+        <button class="btn" style="background:none; color:var(--muted)" onclick="showAuthMode('register')">¿No tienes cuenta? Regístrate</button>
       </div>
 
       <div id="register-form" class="hidden">
-        <div class="field-grid">
-          <input id="reg-username" placeholder="Nombre de usuario (ej: 91143)" />
-          <input id="reg-curso" placeholder="Curso" />
-          <input id="reg-nombre" placeholder="Nombre" />
-          <input id="reg-apellidos" placeholder="Apellidos" />
-          <input id="reg-email" class="field-full" type="email" placeholder="Correo electrónico" />
-          <input id="reg-telefono" placeholder="Teléfono" />
-          <input id="reg-password" type="password" placeholder="Contraseña (mín. 6)" />
-          <textarea id="reg-bio" class="field-full" placeholder="Breve descripción..."></textarea>
-        </div>
-        <div class="auth-actions" style="margin-top:10px">
-          <button class="btn btn-primary" onclick="register()">Registrarme</button>
-        </div>
+        <input id="reg-username" placeholder="Nombre de usuario (ej: 91143)" />
+        <input id="reg-email" type="email" placeholder="Tu correo personal" />
+        <input id="reg-pass" type="password" placeholder="Contraseña (mín. 6)" />
+        <button class="btn btn-dark" onclick="register()">Crear mi cuenta</button>
+        <button class="btn" style="background:none; color:var(--muted)" onclick="showAuthMode('login')">Ya tengo cuenta</button>
       </div>
 
       <div id="auth-error" class="msg error"></div>
-      <div id="auth-ok" class="msg ok"></div>
     </div>
   </section>
 
   <div id="app-shell" class="app-shell">
-    <header class="hero">
-      <div class="hero-inner">
-        <div class="hero-title">Médico Pirata</div>
-        <p>Tripulación académica bajo el mando de Santiago Díaz.</p>
-      </div>
+    <header class="topbar">
+      <div style="font-weight:900; letter-spacing:1px">MÉDICO PIRATA</div>
+      <div id="user-info" style="font-size:0.9rem"></div>
+      <button class="btn btn-primary" style="width:auto; padding:8px 15px" onclick="logout()">Salir</button>
     </header>
 
-    <div class="topbar">
-      <div class="topbar-inner">
-        <div class="row">
-          <div class="avatar" id="top-avatar">?</div>
-          <div>
-            <strong id="top-name">Usuario</strong><br>
-            <small id="top-line">Conectado</small>
-          </div>
-        </div>
-        <button class="btn btn-soft" onclick="signOutUser()">Cerrar sesión</button>
-      </div>
-    </div>
-
-    <div class="app">
+    <main class="app-content">
       <aside class="side">
-        <button class="nav-btn active" onclick="openView('home')">🏠 Inicio</button>
-        <button class="nav-btn" onclick="openView('profile')">👤 Mi Perfil</button>
-        <button id="admin-nav-btn" class="nav-btn hidden" onclick="openView('admin')">🛡️ Panel Admin</button>
+        <p><b>Menú</b></p>
+        <div style="display:grid; gap:10px">
+          <button class="btn btn-dark" onclick="openView('home')">Inicio</button>
+          <button id="admin-btn" class="btn btn-primary hidden" onclick="openView('admin')">Panel Admin</button>
+        </div>
       </aside>
 
       <section class="panel">
-        <div id="view-blank" class="hidden"></div>
+        <div id="view-blank" class="hidden">
+            <h2 style="color:var(--muted); text-align:center; margin-top:50px;">Registrado correctamente. Espera instrucciones.</h2>
+        </div>
 
         <div id="view-home">
-          <h3>Bienvenido de nuevo</h3>
-          <p>Has accedido correctamente a la plataforma.</p>
+          <h3>¡Bienvenido a bordo!</h3>
+          <p>Has iniciado sesión correctamente.</p>
         </div>
 
         <div id="view-admin" class="hidden">
-          <h3>🛡️ Panel de Administración</h3>
-          <p>Gestiona aquí los accesos y archivos de la tripulación.</p>
+          <h3>🛡️ Zona de Administración</h3>
+          <p>Solo Santiago Díaz tiene acceso aquí.</p>
         </div>
       </section>
-    </div>
+    </main>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import {
-      getAuth, onAuthStateChanged, createUserWithEmailAndPassword,
-      signInWithEmailAndPassword, signOut, sendPasswordResetEmail
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import {
-      getDatabase, ref as dbRef, get, set, update
-    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAKughV5w2XAKRm3rWuUmhVldwU2bjj0zY",
@@ -300,137 +125,84 @@
     const auth = getAuth(app);
     const db = getDatabase(app);
 
-    // CONFIGURACIÓN DE TU PERFIL ADMIN
     const ADMIN_EMAILS = ["santiagodiazf@gmail.com"];
-
-    let currentUser = null;
-    let currentProfile = null;
     let justRegistered = false;
 
-    // --- LÓGICA DE LOGIN MEJORADA (Correo o Usuario) ---
-    async function login() {
-      clearAuthMsgs();
-      const identifier = document.getElementById("login-identifier").value.trim();
-      const password = document.getElementById("login-password").value;
-
-      if (!identifier || !password) {
-        setAuthError("Faltan datos de acceso.");
-        return;
-      }
+    // --- LÓGICA DE ACCESO ---
+    window.login = async () => {
+      const id = document.getElementById("login-id").value.trim();
+      const pass = document.getElementById("login-pass").value;
+      const err = document.getElementById("auth-error");
+      err.style.display = "none";
 
       try {
-        let emailToAuth = identifier;
-
-        // Si NO tiene una @, asumimos que es un nombre de usuario
-        if (!identifier.includes("@")) {
-          const slug = identifier.toLowerCase().replace(/[^a-z0-9]/g, "");
-          const userSnap = await get(dbRef(db, "usernames/" + slug));
+        let email = id;
+        // Si no es un email, lo buscamos por nombre de usuario
+        if (!id.includes("@")) {
+          const slug = id.toLowerCase().replace(/[^a-z0-9]/g, "");
+          const snap = await get(ref(db, `usernames/${slug}`));
           
-          if (!userSnap.exists()) {
-            setAuthError("El nombre de usuario '" + identifier + "' no existe.");
-            return;
-          }
-
-          const uid = userSnap.val();
-          const profileSnap = await get(dbRef(db, "profiles/" + uid));
+          if (!snap.exists()) throw new Error("El usuario '" + id + "' no está registrado.");
           
-          if (!profileSnap.exists()) {
-            setAuthError("No se pudo recuperar el correo asociado.");
-            return;
-          }
-          
-          emailToAuth = profileSnap.val().email;
+          const uid = snap.val();
+          const prof = await get(ref(db, `profiles/${uid}`));
+          email = prof.val().email;
         }
-
-        // Una vez tenemos el correo, autenticamos en Firebase
-        await signInWithEmailAndPassword(auth, emailToAuth, password);
+        await signInWithEmailAndPassword(auth, email, pass);
       } catch (e) {
-        setAuthError("Error: Credenciales incorrectas.");
+        err.style.display = "block";
+        err.textContent = e.message.includes("auth/") ? "Contraseña incorrecta o usuario no encontrado." : e.message;
       }
-    }
-    window.login = login;
+    };
 
-    async function register() {
-      const username = document.getElementById("reg-username").value.trim();
+    window.register = async () => {
+      const user = document.getElementById("reg-username").value.trim();
       const email = document.getElementById("reg-email").value.trim();
-      const password = document.getElementById("reg-password").value;
-      const slug = username.toLowerCase().replace(/[^a-z0-9]/g, "");
-
-      if(!username || !email || password.length < 6) {
-        setAuthError("Datos insuficientes.");
-        return;
-      }
+      const pass = document.getElementById("reg-pass").value;
+      const slug = user.toLowerCase().replace(/[^a-z0-9]/g, "");
 
       try {
-        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const cred = await createUserWithEmailAndPassword(auth, email, pass);
         const isAdmin = ADMIN_EMAILS.includes(email);
         
-        const profile = {
-          uid: cred.user.uid,
-          username,
-          usernameSlug: slug,
-          email,
-          role: isAdmin ? "admin" : "user",
-          createdAt: new Date().toISOString()
-        };
+        await set(ref(db, `profiles/${cred.user.uid}`), {
+          uid: cred.user.uid, username: user, email,
+          role: isAdmin ? "admin" : "user", createdAt: new Date().toISOString()
+        });
+        await set(ref(db, `usernames/${slug}`), cred.user.uid);
+        justRegistered = true;
+      } catch (e) { alert(e.message); }
+    };
 
-        await set(dbRef(db, "profiles/" + cred.user.uid), profile);
-        await set(dbRef(db, "usernames/" + slug), cred.user.uid);
-        
-        justRegistered = true; 
-      } catch (e) { setAuthError("Error en registro: " + e.message); }
-    }
-    window.register = register;
+    window.showAuthMode = (mode) => {
+      document.getElementById("login-form").classList.toggle("hidden", mode !== 'login');
+      document.getElementById("register-form").classList.toggle("hidden", mode !== 'register');
+    };
 
-    // --- INTERFAZ ---
-    function showAuthMode(mode) {
-      document.getElementById("login-form").classList.toggle("hidden", mode !== "login");
-      document.getElementById("register-form").classList.toggle("hidden", mode !== "register");
-      clearAuthMsgs();
-    }
-    window.showAuthMode = showAuthMode;
+    window.openView = (name) => {
+      document.querySelectorAll('.panel > div').forEach(v => v.classList.add('hidden'));
+      document.getElementById('view-' + name).classList.remove('hidden');
+    };
 
-    function setAuthError(msg) {
-      const el = document.getElementById("auth-error");
-      el.style.display = "block";
-      el.textContent = msg;
-    }
+    window.logout = () => signOut(auth).then(() => location.reload());
 
-    function clearAuthMsgs() {
-      document.getElementById("auth-error").style.display = "none";
-      document.getElementById("auth-ok").style.display = "none";
-    }
-
-    function openView(name) {
-      const vs = ["home", "profile", "admin", "blank"];
-      vs.forEach(v => document.getElementById("view-" + v)?.classList.add("hidden"));
-      document.getElementById("view-" + name).classList.remove("hidden");
-    }
-    window.openView = openView;
-
-    async function signOutUser() { await signOut(auth); location.reload(); }
-    window.signOutUser = signOutUser;
-
-    // --- OBSERVADOR DE ESTADO ---
+    // --- OBSERVADOR Y AUTO-REPARACIÓN ---
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const snap = await get(dbRef(db, "profiles/" + user.uid));
-        currentProfile = snap.val();
+        const snap = await get(ref(db, `profiles/${user.uid}`));
+        const profile = snap.val();
+
+        // Mapeo automático de seguridad (para que tu usuario 91143 funcione siempre)
+        const slug = profile.username.toLowerCase().replace(/[^a-z0-9]/g, "");
+        await set(ref(db, `usernames/${slug}`), user.uid);
 
         document.getElementById("auth-screen").classList.add("hidden");
         document.getElementById("app-shell").style.display = "block";
-        document.getElementById("top-name").textContent = currentProfile.username;
-        document.getElementById("top-avatar").textContent = currentProfile.username.charAt(0).toUpperCase();
+        document.getElementById("user-info").innerHTML = `<b>${profile.username}</b> (${profile.email})`;
 
-        if (currentProfile.role === "admin") {
-          document.getElementById("admin-nav-btn").classList.remove("hidden");
-        }
-
-        if (justRegistered) {
-          openView("blank");
-        } else {
-          openView("home");
-        }
+        if (profile.role === "admin") document.getElementById("admin-btn").classList.remove("hidden");
+        
+        if (justRegistered) openView('blank'); else openView('home');
       } else {
         document.getElementById("auth-screen").classList.remove("hidden");
         document.getElementById("app-shell").style.display = "none";
