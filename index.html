@@ -647,10 +647,51 @@
           </div>
           <div class="panel-body">
             <div class="field-grid">
-              <input id="upload-title" placeholder="Título del archivo" />
+              <input id="upload-title" class="field-full" placeholder="Título del archivo" />
+              
+              <select id="upload-course">
+                <option value="">Curso</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+                <option value="3">3</option>
+                <option value="4">4</option>
+                <option value="5">5</option>
+                <option value="6">6</option>
+              </select>
+
+              <select id="upload-semester">
+                <option value="">Cuatrimestre</option>
+                <option value="1">1</option>
+                <option value="2">2</option>
+              </select>
+
+              <select id="upload-subject" class="field-full">
+                <option value="">Asignatura</option>
+                <option value="Biología Celular">Biología Celular</option>
+                <option value="Anatomía 1">Anatomía 1</option>
+                <option value="Anatomía 2">Anatomía 2</option>
+                <option value="Comunicación Médica">Comunicación Médica</option>
+                <option value="Física Médica">Física Médica</option>
+                <option value="Sociología Sanitaria">Sociología Sanitaria</option>
+                <option value="Bioquímica de los Nutrientes">Bioquímica de los Nutrientes</option>
+                <option value="Bioquímica Médica">Bioquímica Médica</option>
+                <option value="Bioquímica Humana">Bioquímica Humana</option>
+                <option value="Fisiología Celular y Tisular 1">Fisiología Celular y Tisular 1</option>
+                <option value="Embriología e Histología 1">Embriología e Histología 1</option>
+                <option value="Bioestadística">Bioestadística</option>
+              </select>
+
+              <select id="upload-category">
+                <option value="">Tipo de material</option>
+                <option value="Apuntes / Resumen / Esquema">Apuntes / Resumen / Esquema</option>
+                <option value="Libro">Libro</option>
+                <option value="Actividades">Actividades</option>
+              </select>
+
               <input id="upload-file" type="file" />
               <textarea id="upload-description" class="field-full" placeholder="Descripción del archivo"></textarea>
             </div>
+
             <div class="row">
               <button class="btn btn-primary" onclick="uploadSharedFile()">Subir archivo</button>
               <button class="btn btn-soft" onclick="loadSharedFiles()">Recargar lista</button>
@@ -817,13 +858,34 @@
     const storage = getStorage(app);
 
     const ADMIN_EMAILS = [
-      "TU_CORREO_ADMIN@EJEMPLO.COM"
+      "santiagodiaz@gmail.com"
     ];
 
     let currentUser = null;
     let currentProfile = null;
     let commonInterval = null;
     let notifInterval = null;
+
+    const SUBJECTS = [
+      "Biología Celular",
+      "Anatomía 1",
+      "Anatomía 2",
+      "Comunicación Médica",
+      "Física Médica",
+      "Sociología Sanitaria",
+      "Bioquímica de los Nutrientes",
+      "Bioquímica Médica",
+      "Bioquímica Humana",
+      "Fisiología Celular y Tisular 1",
+      "Embriología e Histología 1",
+      "Bioestadística"
+    ];
+
+    const FILE_CATEGORIES = [
+      "Apuntes / Resumen / Esquema",
+      "Libro",
+      "Actividades"
+    ];
 
     function slugifyUsername(str) {
       return String(str || "")
@@ -927,7 +989,7 @@
       try {
         const email = await resolveEmailFromIdentifier(identifier);
         await sendPasswordResetEmail(auth, email);
-        setAuthOk("Correo de restablecimiento enviado.");
+        setAuthOk("Correo de restablecimiento enviado. Revisa también la carpeta de spam o correo no deseado.");
       } catch (e) {
         setAuthError(e?.message || "No se pudo enviar el correo.");
       }
@@ -971,7 +1033,7 @@
 
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         const uid = cred.user.uid;
-        const admin = ADMIN_EMAILS.includes(santiagodiazf@gmail.com);
+        const admin = ADMIN_EMAILS.includes(email.toLowerCase());
 
         const profile = {
           uid,
@@ -1090,8 +1152,6 @@
         }
 
         if (newEmail !== currentProfile.email) {
-          debug.style.display = "block";
-          debug.textContent = "Para cambiar el correo, primero inicia sesión de nuevo si Firebase lo solicita.";
           await updateEmail(currentUser, newEmail);
         }
 
@@ -1167,6 +1227,28 @@
       }
     }
     window.uploadProfilePhoto = uploadProfilePhoto;
+
+    function formatDateTime(iso) {
+      if (!iso) return "—";
+      try {
+        return new Date(iso).toLocaleString("es-ES");
+      } catch {
+        return iso;
+      }
+    }
+
+    function escapeHtml(str) {
+      return String(str ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function getConversationId(a, b) {
+      return [a, b].sort().join("__");
+    }
 
     async function loadPublicProfiles() {
       const wrap = document.getElementById("profiles-list");
@@ -1256,6 +1338,12 @@
           fileBox.innerHTML = files.map(f => `
             <div class="file-item">
               <div class="file-meta">${escapeHtml(f.title || "Archivo")} · ${escapeHtml(formatDateTime(f.createdAt))}</div>
+              <div style="margin-bottom:8px;">
+                <strong>Curso:</strong> ${escapeHtml(f.course || "—")} ·
+                <strong>Cuatrimestre:</strong> ${escapeHtml(f.semester || "—")} ·
+                <strong>Asignatura:</strong> ${escapeHtml(f.subject || "—")} ·
+                <strong>Tipo:</strong> ${escapeHtml(f.category || "—")}
+              </div>
               <div style="margin-bottom:8px;">${escapeHtml(f.description || "")}</div>
               <a class="btn btn-dark" href="${f.url}" target="_blank" rel="noopener noreferrer">Abrir archivo</a>
             </div>
@@ -1593,6 +1681,10 @@
       if (!currentUser || !isApproved()) return;
 
       const title = document.getElementById("upload-title").value.trim();
+      const course = document.getElementById("upload-course").value;
+      const semester = document.getElementById("upload-semester").value;
+      const subject = document.getElementById("upload-subject").value;
+      const category = document.getElementById("upload-category").value;
       const description = document.getElementById("upload-description").value.trim();
       const file = document.getElementById("upload-file").files[0];
       const debug = document.getElementById("files-debug");
@@ -1605,9 +1697,9 @@
         return;
       }
 
-      if (!title || !file) {
+      if (!title || !course || !semester || !subject || !category || !file) {
         debug.style.display = "block";
-        debug.textContent = "Pon un título y selecciona un archivo.";
+        debug.textContent = "Completa título, curso, cuatrimestre, asignatura, tipo de material y archivo.";
         return;
       }
 
@@ -1624,6 +1716,10 @@
           ownerUsername: currentProfile.username,
           title,
           description,
+          course,
+          semester,
+          subject,
+          category,
           fileName: file.name,
           url,
           storagePath: path,
@@ -1634,6 +1730,10 @@
         });
 
         document.getElementById("upload-title").value = "";
+        document.getElementById("upload-course").value = "";
+        document.getElementById("upload-semester").value = "";
+        document.getElementById("upload-subject").value = "";
+        document.getElementById("upload-category").value = "";
         document.getElementById("upload-description").value = "";
         document.getElementById("upload-file").value = "";
         debug.style.display = "block";
@@ -1694,6 +1794,12 @@
           <div class="file-item">
             <div class="file-meta">@${escapeHtml(f.ownerUsername || "usuario")} · ${escapeHtml(formatDateTime(f.createdAt))}</div>
             <strong>${escapeHtml(f.title || "Archivo")}</strong>
+            <div style="margin:8px 0;">
+              <strong>Curso:</strong> ${escapeHtml(f.course || "—")} ·
+              <strong>Cuatrimestre:</strong> ${escapeHtml(f.semester || "—")} ·
+              <strong>Asignatura:</strong> ${escapeHtml(f.subject || "—")} ·
+              <strong>Tipo:</strong> ${escapeHtml(f.category || "—")}
+            </div>
             <div style="margin:8px 0;">${escapeHtml(f.description || "")}</div>
             <a class="btn btn-dark" href="${f.url}" target="_blank" rel="noopener noreferrer">Abrir / descargar</a>
           </div>
@@ -1703,6 +1809,12 @@
           <div class="file-item">
             <div class="file-meta">${escapeHtml(formatDateTime(f.createdAt))}</div>
             <strong>${escapeHtml(f.title || "Archivo")}</strong>
+            <div style="margin:8px 0;">
+              <strong>Curso:</strong> ${escapeHtml(f.course || "—")} ·
+              <strong>Cuatrimestre:</strong> ${escapeHtml(f.semester || "—")} ·
+              <strong>Asignatura:</strong> ${escapeHtml(f.subject || "—")} ·
+              <strong>Tipo:</strong> ${escapeHtml(f.category || "—")}
+            </div>
             <div style="margin:8px 0;">${escapeHtml(f.description || "")}</div>
             <div class="row">
               <span class="pill ${f.approved ? "on" : "off"}">${f.approved ? "Aprobado" : "Pendiente"}</span>
@@ -1794,6 +1906,12 @@
         <div class="file-item">
           <div class="file-meta">@${escapeHtml(f.ownerUsername || "usuario")} · ${escapeHtml(formatDateTime(f.createdAt))}</div>
           <strong>${escapeHtml(f.title || "Archivo")}</strong>
+          <div style="margin:8px 0;">
+            <strong>Curso:</strong> ${escapeHtml(f.course || "—")} ·
+            <strong>Cuatrimestre:</strong> ${escapeHtml(f.semester || "—")} ·
+            <strong>Asignatura:</strong> ${escapeHtml(f.subject || "—")} ·
+            <strong>Tipo:</strong> ${escapeHtml(f.category || "—")}
+          </div>
           <div style="margin:8px 0;">${escapeHtml(f.description || "")}</div>
           <div class="row">
             <span class="pill ${f.approved ? "on" : "off"}">${f.approved ? "Aprobado" : "Pendiente"}</span>
