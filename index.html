@@ -6,110 +6,799 @@
   <title>Médico Pirata | Comunidad</title>
   <style>
     :root{
-      --bg:#f6f0e5; --ink:#173140; --muted:#5c6f78; --navy:#14364a;
-      --gold:#d4a85d; --gold2:#f0c987; --danger:#b43e36; --ok:#2d7b57;
+      --bg:#f6f0e5;
+      --card:#ffffffee;
+      --ink:#173140;
+      --muted:#5c6f78;
+      --line:rgba(23,49,64,.12);
+      --navy:#14364a;
+      --navy2:#244e66;
+      --gold:#d4a85d;
+      --gold2:#f0c987;
+      --danger:#b43e36;
+      --ok:#2d7b57;
       --shadow:0 12px 30px rgba(0,0,0,.09);
+      --shadow-2:0 18px 40px rgba(0,0,0,.16);
     }
+
     *{box-sizing:border-box}
-    body{
-      margin:0; font-family:"Segoe UI", sans-serif; color:var(--ink);
-      background: linear-gradient(180deg,#fbf7ef 0%,#f4ede0 100%);
-      min-height: 100vh;
+    html,body{
+      margin:0;padding:0;min-height:100%;
+      font-family:"Segoe UI",Tahoma,Geneva,Verdana,sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(circle at top right, rgba(212,168,93,.14), transparent 24%),
+        linear-gradient(180deg,#fbf7ef 0%,#f4ede0 100%);
     }
+
+    body{overflow-x:hidden}
+    button,input,textarea,select{font:inherit}
+    a{color:inherit}
     .hidden{display:none !important}
+
     .auth-screen{
-      min-height:100vh; display:grid; place-items:center; padding:24px;
-      background: linear-gradient(rgba(8,28,39,.8), rgba(8,28,39,.9));
+      min-height:100vh;
+      display:grid;
+      place-items:center;
+      padding:24px;
+      background:
+        linear-gradient(rgba(8,28,39,.78), rgba(8,28,39,.84)),
+        url("portada.png") center/cover no-repeat;
     }
+
     .auth-card{
-      width:min(500px,100%); background:#fff; border-radius:28px;
-      padding:40px; box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+      width:min(700px,100%);
+      background:rgba(255,255,255,.98);
+      border-radius:28px;
+      box-shadow:var(--shadow-2);
+      padding:30px;
+      border:1px solid rgba(255,255,255,.65);
     }
-    input, textarea{
-      width:100%; padding:14px; margin:10px 0; border:2px solid #ddd;
-      border-radius:12px; outline:none; font-size: 1rem;
+
+    .kicker{
+      display:inline-flex;
+      padding:8px 14px;
+      border-radius:999px;
+      font-size:.8rem;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:2px;
+      background:#f7ead3;
+      color:#8e6230;
+      margin-bottom:14px;
     }
+
+    h1,h2,h3,h4{margin:0 0 10px}
+    p{margin:0 0 14px;color:var(--muted);line-height:1.5}
+
+    .field-grid{
+      display:grid;
+      grid-template-columns:1fr 1fr;
+      gap:12px;
+    }
+
+    .field-full{grid-column:1/-1}
+
+    input,textarea,select{
+      width:100%;
+      padding:13px 14px;
+      border:2px solid #d9dfdf;
+      border-radius:12px;
+      background:#fffdf9;
+      outline:none;
+      transition:.2s ease;
+      margin:0;
+    }
+
+    input:focus,textarea:focus,select:focus{
+      border-color:var(--navy2);
+      box-shadow:0 0 0 4px rgba(36,78,102,.08);
+    }
+
+    textarea{min-height:100px;resize:vertical}
+
     .btn{
-      padding:14px 20px; border:none; border-radius:12px; font-weight:800;
-      cursor:pointer; transition: .2s; width: 100%; margin-top: 10px;
+      border:none;
+      border-radius:14px;
+      padding:13px 18px;
+      font-weight:800;
+      cursor:pointer;
+      transition:.2s ease;
+      text-decoration:none;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:8px;
     }
-    .btn-primary{ background: linear-gradient(135deg,var(--gold2),var(--gold)); color:#143140; }
-    .btn-dark{ background: var(--navy); color:#fff; }
-    .msg{ padding:12px; border-radius:10px; margin-top:15px; font-weight:bold; display:none; text-align:center; }
-    .msg.error{ background:#fff1ef; color:var(--danger); border:1px solid #f4c8c2; }
-    
-    /* Layout App */
-    .app-shell{ display:none; }
-    .topbar{ background:var(--navy); color:#fff; padding:15px; display:flex; justify-content:space-between; align-items:center; }
-    .app-content{ display:grid; grid-template-columns: 250px 1fr; gap:20px; padding:20px; max-width:1400px; margin:auto; }
-    .side{ background:#fff; border-radius:20px; padding:15px; height: fit-content; box-shadow: var(--shadow); }
-    .panel{ background:#fff; border-radius:20px; padding:30px; box-shadow: var(--shadow); min-height: 400px; }
+
+    .btn:hover{transform:translateY(-1px)}
+    .btn-primary{color:#143140;background:linear-gradient(135deg,var(--gold2),var(--gold));box-shadow:0 10px 20px rgba(201,153,82,.26)}
+    .btn-dark{color:#fff;background:linear-gradient(135deg,var(--navy2),var(--navy));box-shadow:0 10px 20px rgba(20,77,99,.24)}
+    .btn-soft{color:#fff;background:linear-gradient(135deg,#6b7b84,#52626c)}
+    .btn-danger{color:#fff;background:linear-gradient(135deg,#b43e36,#8b2f2a)}
+    .btn-ok{color:#fff;background:linear-gradient(135deg,#37956c,#2d7b57)}
+
+    .auth-actions,.row{display:flex;gap:12px;flex-wrap:wrap;align-items:center}
+
+    .msg{
+      display:none;
+      margin-top:10px;
+      padding:12px 14px;
+      border-radius:12px;
+      font-weight:700;
+    }
+    .msg.error{background:#fff1ef;color:var(--danger);border:1px solid #f4c8c2}
+    .msg.ok{background:#edf8f1;color:var(--ok);border:1px solid #cbe9d6}
+
+    .app-shell{display:none;min-height:100vh}
+
+    .hero{
+      position:relative;
+      min-height:190px;
+      background:
+        linear-gradient(rgba(7,25,35,.35), rgba(7,25,35,.35)),
+        url("barner.png") center/cover no-repeat;
+      box-shadow:0 8px 24px rgba(0,0,0,.14);
+    }
+
+    .hero-inner{
+      width:min(1380px,calc(100% - 24px));
+      margin:0 auto;
+      color:#fff;
+      padding:24px 0 26px;
+    }
+
+    .hero-title{
+      font-size:clamp(2rem,4vw,3.5rem);
+      font-weight:900;
+      text-transform:uppercase;
+      letter-spacing:2px;
+      margin-top:10px;
+      text-shadow:0 4px 12px rgba(0,0,0,.25);
+    }
+
+    .topbar{
+      position:sticky;top:0;z-index:1000;
+      background:rgba(12,38,52,.95);
+      backdrop-filter:blur(10px);
+      border-bottom:1px solid rgba(255,255,255,.08);
+      box-shadow:0 6px 18px rgba(0,0,0,.12);
+    }
+
+    .topbar-inner{
+      width:min(1380px,calc(100% - 24px));
+      margin:0 auto;
+      display:flex;
+      gap:14px;
+      justify-content:space-between;
+      align-items:center;
+      padding:10px 0;
+    }
+
+    .user-badge{
+      display:flex;align-items:center;gap:12px;color:#fff;min-width:0;
+    }
+
+    .avatar,.mini-avatar,.profile-big{
+      border-radius:50%;
+      overflow:hidden;
+      background:linear-gradient(135deg,#f1c17a,#c99952);
+      display:grid;
+      place-items:center;
+      font-weight:900;
+      color:#143140;
+      flex:0 0 auto;
+    }
+
+    .avatar{width:48px;height:48px}
+    .mini-avatar{width:56px;height:56px}
+    .profile-big{width:90px;height:90px;font-size:2rem}
+
+    .avatar img,.mini-avatar img,.profile-big img{
+      width:100%;height:100%;object-fit:cover;display:block;
+    }
+
+    .user-meta small{
+      display:block;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      opacity:.72;
+      font-weight:700;
+      margin-bottom:4px;
+    }
+
+    .user-meta strong{
+      display:block;
+      font-size:1rem;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    .user-meta span{
+      display:block;
+      margin-top:4px;
+      color:rgba(255,255,255,.82);
+      font-size:.9rem;
+    }
+
+    .top-actions{display:flex;gap:10px;flex-wrap:wrap}
+
+    .app{
+      width:min(1380px,calc(100% - 24px));
+      margin:18px auto 30px;
+      display:grid;
+      grid-template-columns:300px 1fr;
+      gap:18px;
+    }
+
+    .side,.panel{
+      background:linear-gradient(180deg,rgba(255,255,255,.96),rgba(255,255,255,.9));
+      border:1px solid rgba(255,255,255,.7);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+    }
+
+    .side{
+      padding:16px;
+      position:sticky;
+      top:76px;
+      align-self:start;
+    }
+
+    .nav-list{display:grid;gap:10px}
+    .nav-btn{
+      width:100%;
+      border:none;
+      border-radius:16px;
+      padding:14px 16px;
+      text-align:left;
+      font-weight:800;
+      cursor:pointer;
+      color:var(--ink);
+      background:#fff;
+      border:1px solid #e8edef;
+      transition:.2s ease;
+    }
+    .nav-btn:hover{transform:translateY(-1px);box-shadow:0 10px 18px rgba(0,0,0,.06)}
+    .nav-btn.active{
+      color:#143140;
+      background:linear-gradient(135deg,var(--gold2),var(--gold));
+      border-color:transparent;
+    }
+
+    .notif-box{
+      margin-top:16px;
+      padding:14px;
+      border-radius:16px;
+      background:#fff;
+      border:1px solid #e8edef;
+    }
+
+    .notif-item{padding:10px 0;border-bottom:1px solid #eef2f4}
+    .notif-item:last-child{border-bottom:none}
+
+    .panel-header{
+      padding:22px 24px 18px;
+      border-bottom:1px solid var(--line);
+      background:
+        radial-gradient(circle at top right, rgba(201,153,82,.14), transparent 28%),
+        linear-gradient(180deg, rgba(20,77,99,.03), transparent);
+    }
+
+    .panel-kicker{
+      display:inline-flex;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:.78rem;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:1.8px;
+      background:#f7ead3;
+      color:#8e6230;
+      margin-bottom:10px;
+    }
+
+    .panel-body{padding:22px 24px 24px}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+
+    .card{
+      background:#fff;
+      border:1px solid #e8edef;
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .muted{color:var(--muted)}
+
+    .profile-banner{
+      display:flex;
+      gap:16px;
+      align-items:center;
+      flex-wrap:wrap;
+    }
+
+    .msg-list,.file-list{
+      background:#fff;
+      border:1px solid #e3e8eb;
+      border-radius:16px;
+      padding:14px;
+      min-height:200px;
+      max-height:430px;
+      overflow:auto;
+    }
+
+    .msg-item,.file-item,.user-item{
+      padding:12px;
+      border:1px solid #e8edef;
+      border-radius:14px;
+      margin-bottom:10px;
+      background:#f9fbfc;
+    }
+
+    .msg-item.mine{
+      background:#edf7fb;
+      border-color:#cfe5ef;
+    }
+
+    .msg-meta,.file-meta{
+      font-size:.82rem;
+      color:var(--muted);
+      margin-bottom:6px;
+      font-weight:700;
+    }
+
+    .msg-text{white-space:pre-wrap;line-height:1.5}
+
+    .user-grid{
+      display:grid;
+      grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+      gap:14px;
+    }
+
+    .user-card{
+      background:#fff;
+      border:1px solid #e8edef;
+      border-radius:18px;
+      padding:16px;
+    }
+
+    .user-card-top{
+      display:flex;
+      gap:12px;
+      align-items:center;
+      margin-bottom:10px;
+    }
+
+    .pill{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:6px 10px;
+      border-radius:999px;
+      font-size:.75rem;
+      font-weight:800;
+      text-transform:uppercase;
+      letter-spacing:1px;
+      background:#edf5f7;
+      color:#244e66;
+    }
+    .pill.off{background:#fff1ef;color:#b43e36}
+    .pill.on{background:#edf8f1;color:#2d7b57}
+
+    .modal-backdrop{
+      display:none;
+      position:fixed;
+      inset:0;
+      z-index:3000;
+      background:rgba(0,0,0,.55);
+      backdrop-filter:blur(3px);
+      justify-content:center;
+      align-items:center;
+      padding:20px;
+    }
+
+    .modal{
+      width:min(820px,100%);
+      max-height:90vh;
+      overflow:auto;
+      background:#fff;
+      border-radius:26px;
+      box-shadow:0 18px 40px rgba(0,0,0,.16);
+      padding:24px;
+    }
+
+    .debug{
+      margin-top:8px;
+      padding:10px 12px;
+      border-radius:12px;
+      background:#fff7e7;
+      color:#7a5a1a;
+      border:1px solid #f1dfaf;
+      font-size:.9rem;
+      display:none;
+    }
+
+    @media (max-width:980px){
+      .app{grid-template-columns:1fr}
+      .side{position:static}
+      .grid-2,.field-grid{grid-template-columns:1fr}
+    }
   </style>
 </head>
 <body>
 
   <section id="auth-screen" class="auth-screen">
     <div class="auth-card">
-      <h2 style="margin-top:0">⚓ Médico Pirata</h2>
-      <p id="auth-subtitle">Introduce tu usuario o correo para embarcar.</p>
+      <div class="kicker">⚓ Acceso a la comunidad</div>
+      <h2>Médico Pirata</h2>
+      <p id="auth-subtitle">Inicia sesión con tu correo o nombre de usuario y contraseña.</p>
+
+      <div class="row" style="margin-bottom:16px;">
+        <button class="btn btn-primary" onclick="showAuthMode('login')">Entrar</button>
+        <button class="btn btn-dark" onclick="showAuthMode('register')">Crear cuenta</button>
+      </div>
 
       <div id="login-form">
-        <input id="login-id" type="text" placeholder="Usuario (91143) o Correo" />
-        <input id="login-pass" type="password" placeholder="Contraseña" />
-        <button class="btn btn-primary" onclick="login()">Entrar</button>
-        <button class="btn" style="background:none; color:var(--muted)" onclick="showAuthMode('register')">¿No tienes cuenta? Regístrate</button>
+        <input id="login-identifier" type="text" placeholder="Correo electrónico o nombre de usuario" />
+        <input id="login-password" type="password" placeholder="Contraseña" />
+        <div class="auth-actions">
+          <button class="btn btn-primary" onclick="login()">Entrar</button>
+          <button class="btn btn-soft" onclick="sendReset()">Restablecer contraseña</button>
+        </div>
       </div>
 
       <div id="register-form" class="hidden">
-        <input id="reg-username" placeholder="Nombre de usuario (ej: 91143)" />
-        <input id="reg-email" type="email" placeholder="Tu correo personal" />
-        <input id="reg-pass" type="password" placeholder="Contraseña (mín. 6)" />
-        <button class="btn btn-dark" onclick="register()">Crear mi cuenta</button>
-        <button class="btn" style="background:none; color:var(--muted)" onclick="showAuthMode('login')">Ya tengo cuenta</button>
+        <div class="field-grid">
+          <input id="reg-username" placeholder="Nombre de usuario público" />
+          <input id="reg-curso" placeholder="Curso que estudia" />
+          <input id="reg-nombre" placeholder="Nombre" />
+          <input id="reg-apellidos" placeholder="Apellidos" />
+          <input id="reg-email" class="field-full" type="email" placeholder="Correo electrónico" />
+          <input id="reg-telefono" placeholder="Teléfono" />
+          <input id="reg-password" type="password" placeholder="Contraseña" />
+          <textarea id="reg-bio" class="field-full" placeholder="Pequeña descripción pública (opcional)"></textarea>
+        </div>
+        <div class="auth-actions">
+          <button class="btn btn-primary" onclick="register()">Crear cuenta</button>
+        </div>
       </div>
 
       <div id="auth-error" class="msg error"></div>
+      <div id="auth-ok" class="msg ok"></div>
     </div>
   </section>
 
   <div id="app-shell" class="app-shell">
-    <header class="topbar">
-      <div style="font-weight:900; letter-spacing:1px">MÉDICO PIRATA</div>
-      <div id="user-info" style="font-size:0.9rem"></div>
-      <button class="btn btn-primary" style="width:auto; padding:8px 15px" onclick="logout()">Salir</button>
+    <header class="hero">
+      <div class="hero-inner">
+        <div class="kicker" style="background:rgba(255,255,255,.14);color:#fff;border:1px solid rgba(255,255,255,.14);">⚓ Comunidad académica · Bahía de Cádiz</div>
+        <div class="hero-title">Médico Pirata</div>
+        <p style="max-width:840px;color:rgba(255,255,255,.92);margin-top:10px;">Perfiles públicos, sala común, mensajes privados, archivos compartidos y gestión de acceso por aprobación.</p>
+      </div>
     </header>
 
-    <main class="app-content">
+    <div class="topbar">
+      <div class="topbar-inner">
+        <div class="user-badge">
+          <div class="avatar" id="top-avatar">M</div>
+          <div class="user-meta">
+            <small>Cuenta activa</small>
+            <strong id="top-name">Usuario</strong>
+            <span id="top-line">correo@ejemplo.com</span>
+          </div>
+        </div>
+
+        <div class="top-actions">
+          <button class="btn btn-dark" onclick="openPasswordModal()">🔑 Cambiar contraseña</button>
+          <button class="btn btn-soft" onclick="signOutUser()">⛵ Cerrar sesión</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="app">
       <aside class="side">
-        <p><b>Menú</b></p>
-        <div style="display:grid; gap:10px">
-          <button class="btn btn-dark" onclick="openView('home')">Inicio</button>
-          <button id="admin-btn" class="btn btn-primary hidden" onclick="openView('admin')">Panel Admin</button>
+        <div class="nav-list">
+          <button class="nav-btn active" data-view="home" onclick="openView('home')">🏠 Inicio</button>
+          <button class="nav-btn" data-view="profile" onclick="openView('profile')">👤 Mi perfil</button>
+          <button class="nav-btn" data-view="profiles" onclick="openView('profiles')">🌍 Perfiles públicos</button>
+          <button class="nav-btn" data-view="common" onclick="openView('common')">💬 Sala común</button>
+          <button class="nav-btn" data-view="private" onclick="openView('private')">✉️ Mensajes privados</button>
+          <button class="nav-btn" data-view="files" onclick="openView('files')">📚 Compartir archivos</button>
+          <button class="nav-btn hidden" id="admin-nav-btn" data-view="admin" onclick="openView('admin')">🛡️ Panel privado</button>
+        </div>
+
+        <div class="notif-box">
+          <h4 style="margin-bottom:10px;">Notificaciones</h4>
+          <div id="notif-private" class="notif-item hidden">
+            <strong>Mensajes privados sin leer</strong>
+            <div id="notif-private-text" class="muted"></div>
+            <button class="btn btn-dark" style="width:100%;margin-top:8px;" onclick="openView('private')">Abrir privados</button>
+          </div>
+          <div id="notif-common" class="notif-item hidden">
+            <strong>Sala común con mensajes nuevos</strong>
+            <div id="notif-common-text" class="muted"></div>
+            <button class="btn btn-primary" style="width:100%;margin-top:8px;" onclick="openView('common')">Ir a sala común</button>
+          </div>
+          <div id="notif-none" class="muted">No hay notificaciones nuevas.</div>
         </div>
       </aside>
 
       <section class="panel">
-        <div id="view-blank" class="hidden">
-            <h2 style="color:var(--muted); text-align:center; margin-top:50px;">Registrado correctamente. Espera instrucciones.</h2>
+        <div id="view-home">
+          <div class="panel-header">
+            <div class="panel-kicker">Inicio</div>
+            <h3>Bienvenido a bordo</h3>
+            <p>Tu cuenta quedará visible en la comunidad cuando esté aprobada y con tu perfil público actualizado.</p>
+          </div>
+          <div class="panel-body">
+            <div id="approval-box" class="card"></div>
+            <div class="grid-2" style="margin-top:16px;">
+              <div class="card">
+                <h4>Accesos rápidos</h4>
+                <div class="row">
+                  <button class="btn btn-primary" onclick="openView('common')">Sala común</button>
+                  <button class="btn btn-dark" onclick="openView('private')">Mensajes privados</button>
+                  <button class="btn btn-soft" onclick="openView('files')">Archivos compartidos</button>
+                </div>
+              </div>
+              <div class="card">
+                <h4>Tu espacio público</h4>
+                <p>Otros usuarios podrán ver tu nombre de usuario, curso, bio, foto y archivos compartidos.</p>
+                <button class="btn btn-primary" onclick="openView('profile')">Editar mi perfil y cuenta</button>
+              </div>
+            </div>
+          </div>
         </div>
 
-        <div id="view-home">
-          <h3>¡Bienvenido a bordo!</h3>
-          <p>Has iniciado sesión correctamente.</p>
+        <div id="view-profile" class="hidden">
+          <div class="panel-header">
+            <div class="panel-kicker">Mi perfil y cuenta</div>
+            <h3>Datos públicos y datos de cuenta</h3>
+            <p>Puedes modificar tu nombre de usuario, nombre, apellidos, curso, correo, teléfono y bio en cualquier momento.</p>
+          </div>
+          <div class="panel-body">
+            <div class="profile-banner card" style="margin-bottom:16px;">
+              <div class="profile-big" id="profile-photo-preview">M</div>
+              <div>
+                <h4 id="profile-title-name">Mi perfil</h4>
+                <p id="profile-title-sub">@usuario</p>
+              </div>
+            </div>
+
+            <div class="field-grid">
+              <input id="profile-username" placeholder="Nombre de usuario público" />
+              <input id="profile-curso" placeholder="Curso que estudia" />
+              <input id="profile-nombre" placeholder="Nombre" />
+              <input id="profile-apellidos" placeholder="Apellidos" />
+              <input id="profile-email" class="field-full" placeholder="Correo electrónico" />
+              <input id="profile-telefono" placeholder="Teléfono" />
+              <input id="profile-photo-file" type="file" accept="image/*" />
+              <textarea id="profile-bio" class="field-full" placeholder="Descripción pública"></textarea>
+            </div>
+
+            <div class="row">
+              <button class="btn btn-primary" onclick="saveProfile()">Guardar cambios</button>
+              <button class="btn btn-dark" onclick="uploadProfilePhoto()">Subir foto de perfil</button>
+            </div>
+            <div id="profile-debug" class="debug"></div>
+          </div>
+        </div>
+
+        <div id="view-profiles" class="hidden">
+          <div class="panel-header">
+            <div class="panel-kicker">Perfiles públicos</div>
+            <h3>Usuarios de la comunidad</h3>
+            <p>Busca perfiles públicos aprobados y entra en su espacio visible.</p>
+          </div>
+          <div class="panel-body">
+            <div class="row" style="margin-bottom:16px;">
+              <input id="profiles-search" style="flex:1 1 240px;" placeholder="Buscar por nombre de usuario o nombre" oninput="loadPublicProfiles()" />
+              <input id="profiles-course-filter" style="flex:1 1 180px;" placeholder="Filtrar por curso" oninput="loadPublicProfiles()" />
+              <select id="profiles-sort" style="flex:0 0 180px;" onchange="loadPublicProfiles()">
+                <option value="alpha">Orden alfabético</option>
+                <option value="recent">Más recientes</option>
+              </select>
+            </div>
+            <div id="profiles-list" class="user-grid"></div>
+          </div>
+        </div>
+
+        <div id="view-common" class="hidden">
+          <div class="panel-header">
+            <div class="panel-kicker">Sala común</div>
+            <h3>Taberna de la tripulación</h3>
+            <p>Mensajes visibles para toda la comunidad. Se actualiza cada 10 segundos mientras estés aquí.</p>
+          </div>
+          <div class="panel-body">
+            <div id="common-list" class="msg-list"></div>
+            <textarea id="common-input" class="panel-textarea" placeholder="Escribe tu mensaje..."></textarea>
+            <div class="row">
+              <button class="btn btn-primary" onclick="sendCommonMessage()">Enviar a sala común</button>
+              <button class="btn btn-soft" onclick="loadCommonMessages(true)">Recargar</button>
+            </div>
+            <div id="common-debug" class="debug"></div>
+          </div>
+        </div>
+
+        <div id="view-private" class="hidden">
+          <div class="panel-header">
+            <div class="panel-kicker">Mensajes privados</div>
+            <h3>Conversaciones entre usuarios</h3>
+            <p>Elige destinatario y habla con otro usuario usando su nombre de usuario.</p>
+          </div>
+          <div class="panel-body">
+            <select id="private-user-select" class="panel-select" onchange="loadPrivateMessages(true)"></select>
+            <div id="private-list" class="msg-list"></div>
+            <textarea id="private-input" class="panel-textarea" placeholder="Escribe tu mensaje privado..."></textarea>
+            <div class="row">
+              <button class="btn btn-primary" onclick="sendPrivateMessage()">Enviar mensaje privado</button>
+              <button class="btn btn-soft" onclick="loadPrivateMessages(true)">Recargar</button>
+            </div>
+            <div id="private-debug" class="debug"></div>
+          </div>
+        </div>
+
+        <div id="view-files" class="hidden">
+          <div class="panel-header">
+            <div class="panel-kicker">Compartir archivos</div>
+            <h3>Apuntes, documentos y recursos</h3>
+            <p>Sube archivos para compartir con la comunidad aprobada. Los archivos pasan por moderación.</p>
+          </div>
+          <div class="panel-body">
+            <div class="field-grid">
+              <input id="upload-title" placeholder="Título del archivo" />
+              <input id="upload-file" type="file" />
+              <textarea id="upload-description" class="field-full" placeholder="Descripción del archivo"></textarea>
+            </div>
+            <div class="row">
+              <button class="btn btn-primary" onclick="uploadSharedFile()">Subir archivo</button>
+              <button class="btn btn-soft" onclick="loadSharedFiles()">Recargar lista</button>
+            </div>
+
+            <div style="height:16px"></div>
+
+            <div class="grid-2">
+              <div>
+                <h4>Archivos compartidos visibles</h4>
+                <div id="files-list" class="file-list"></div>
+              </div>
+              <div>
+                <h4>Mis archivos</h4>
+                <div id="my-files-list" class="file-list"></div>
+              </div>
+            </div>
+
+            <div id="files-debug" class="debug"></div>
+          </div>
         </div>
 
         <div id="view-admin" class="hidden">
-          <h3>🛡️ Zona de Administración</h3>
-          <p>Solo Santiago Díaz tiene acceso aquí.</p>
+          <div class="panel-header">
+            <div class="panel-kicker">Panel privado</div>
+            <h3>Moderación y gestión</h3>
+            <p>Aprueba o bloquea usuarios, modera archivos, limpia mensajes y revisa conversaciones privadas.</p>
+          </div>
+          <div class="panel-body">
+            <div class="card" style="margin-bottom:16px;">
+              <h4>Usuarios</h4>
+              <div id="admin-users-list"></div>
+            </div>
+
+            <div class="card" style="margin-bottom:16px;">
+              <h4>Moderación de archivos</h4>
+              <div id="admin-files-list"></div>
+            </div>
+
+            <div class="card" style="margin-bottom:16px;">
+              <h4>Moderación de sala común</h4>
+              <div id="admin-common-list"></div>
+            </div>
+
+            <div class="card">
+              <h4>Moderación de mensajes privados</h4>
+              <div class="row" style="margin-bottom:12px;">
+                <select id="admin-private-user-a" class="panel-select" style="flex:1 1 220px;"></select>
+                <select id="admin-private-user-b" class="panel-select" style="flex:1 1 220px;"></select>
+                <button class="btn btn-dark" onclick="loadAdminPrivateConversation()">Cargar conversación</button>
+              </div>
+              <div id="admin-private-list"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="view-wait" class="hidden">
+          <div class="card" style="margin:24px;">
+            <h3>Tu cuenta está pendiente de aprobación</h3>
+            <p>Puedes editar tu perfil y tus datos de cuenta, pero el acceso a la comunidad, perfiles, chats y archivos depende de que el administrador active tu cuenta.</p>
+          </div>
         </div>
       </section>
-    </main>
+    </div>
+  </div>
+
+  <div id="profile-modal-backdrop" class="modal-backdrop">
+    <div class="modal">
+      <div class="row" style="justify-content:space-between;align-items:flex-start;">
+        <div>
+          <div class="panel-kicker">Perfil público</div>
+          <h3 id="modal-profile-name">Usuario</h3>
+          <p id="modal-profile-sub">@usuario</p>
+        </div>
+        <button class="btn btn-soft" onclick="closeProfileModal()">Cerrar</button>
+      </div>
+
+      <div class="profile-banner card" style="margin:12px 0 16px;">
+        <div class="profile-big" id="modal-profile-photo">M</div>
+        <div>
+          <div><strong>Curso:</strong> <span id="modal-profile-course"></span></div>
+          <div><strong>Nombre:</strong> <span id="modal-profile-fullname"></span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <h4>Sobre este usuario</h4>
+        <p id="modal-profile-bio"></p>
+      </div>
+
+      <div style="height:16px"></div>
+
+      <div class="card">
+        <h4>Archivos compartidos</h4>
+        <div id="modal-profile-files"></div>
+      </div>
+    </div>
+  </div>
+
+  <div id="password-modal-backdrop" class="modal-backdrop">
+    <div class="modal" style="max-width:520px;">
+      <h3>Cambiar contraseña</h3>
+      <p>Introduce tu contraseña actual y la nueva.</p>
+
+      <input id="pwd-current" class="panel-input" type="password" placeholder="Contraseña actual" />
+      <input id="pwd-new" class="panel-input" type="password" placeholder="Nueva contraseña" />
+      <input id="pwd-confirm" class="panel-input" type="password" placeholder="Repite la nueva contraseña" />
+
+      <div id="pwd-error" class="msg error"></div>
+      <div id="pwd-ok" class="msg ok"></div>
+
+      <div class="row">
+        <button class="btn btn-primary" onclick="changePassword()">Guardar nueva contraseña</button>
+        <button class="btn btn-soft" onclick="closePasswordModal()">Cancelar</button>
+      </div>
+    </div>
   </div>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
-    import { getDatabase, ref, get, set, update } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import {
+      getAuth,
+      onAuthStateChanged,
+      createUserWithEmailAndPassword,
+      signInWithEmailAndPassword,
+      signOut,
+      sendPasswordResetEmail,
+      updatePassword,
+      updateEmail,
+      EmailAuthProvider,
+      reauthenticateWithCredential
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-auth.js";
+    import {
+      getDatabase,
+      ref as dbRef,
+      get,
+      set,
+      update,
+      push,
+      remove
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    import {
+      getStorage,
+      ref as storageRef,
+      uploadBytes,
+      getDownloadURL,
+      deleteObject
+    } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-storage.js";
 
     const firebaseConfig = {
       apiKey: "AIzaSyAKughV5w2XAKRm3rWuUmhVldwU2bjj0zY",
@@ -118,96 +807,1158 @@
       projectId: "portal-estudio-medicina",
       storageBucket: "portal-estudio-medicina.firebasestorage.app",
       messagingSenderId: "536326985694",
-      appId: "1:536326985694:web:ee2428d39421653be26f4f"
+      appId: "1:536326985694:web:ee2428d39421653be26f4f",
+      measurementId: "G-52KKQDCFXD"
     };
 
     const app = initializeApp(firebaseConfig);
     const auth = getAuth(app);
     const db = getDatabase(app);
+    const storage = getStorage(app);
 
-    const ADMIN_EMAILS = ["santiagodiazf@gmail.com"];
-    let justRegistered = false;
+    const ADMIN_EMAILS = [
+      "TU_CORREO_ADMIN@EJEMPLO.COM"
+    ];
 
-    // --- LÓGICA DE ACCESO ---
-    window.login = async () => {
-      const id = document.getElementById("login-id").value.trim();
-      const pass = document.getElementById("login-pass").value;
+    let currentUser = null;
+    let currentProfile = null;
+    let commonInterval = null;
+    let notifInterval = null;
+
+    function slugifyUsername(str) {
+      return String(str || "")
+        .trim()
+        .toLowerCase()
+        .normalize("NFD")
+        .replace(/[\u0300-\u036f]/g, "")
+        .replace(/[^a-z0-9._-]/g, "");
+    }
+
+    function isApproved() {
+      return !!currentProfile?.approved || currentProfile?.role === "admin";
+    }
+
+    function isAdmin() {
+      return currentProfile?.role === "admin";
+    }
+
+    function showAuthMode(mode) {
+      document.getElementById("login-form").classList.toggle("hidden", mode !== "login");
+      document.getElementById("register-form").classList.toggle("hidden", mode !== "register");
+      document.getElementById("auth-subtitle").textContent =
+        mode === "login"
+          ? "Inicia sesión con tu correo o nombre de usuario y contraseña."
+          : "Crea tu cuenta con tus datos académicos.";
+      clearAuthMsgs();
+    }
+    window.showAuthMode = showAuthMode;
+
+    function setAuthError(msg) {
+      const el = document.getElementById("auth-error");
+      const ok = document.getElementById("auth-ok");
+      ok.style.display = "none";
+      el.style.display = "block";
+      el.textContent = msg;
+    }
+
+    function setAuthOk(msg) {
+      const el = document.getElementById("auth-ok");
       const err = document.getElementById("auth-error");
       err.style.display = "none";
+      el.style.display = "block";
+      el.textContent = msg;
+    }
+
+    function clearAuthMsgs() {
+      document.getElementById("auth-error").style.display = "none";
+      document.getElementById("auth-ok").style.display = "none";
+    }
+
+    async function usernameAvailable(usernameSlug, currentUid = null) {
+      const snap = await get(dbRef(db, "usernames/" + usernameSlug));
+      if (!snap.exists()) return true;
+      return snap.val() === currentUid;
+    }
+
+    async function resolveEmailFromIdentifier(identifier) {
+      const value = identifier.trim();
+      if (!value) return "";
+      if (value.includes("@")) return value;
+
+      const usernameSlug = slugifyUsername(value);
+      const snap = await get(dbRef(db, "usernames/" + usernameSlug));
+      if (!snap.exists()) throw new Error("Nombre de usuario no encontrado.");
+
+      const uid = snap.val();
+      const profileSnap = await get(dbRef(db, "profiles/" + uid));
+      if (!profileSnap.exists()) throw new Error("No se encontró el perfil de ese usuario.");
+
+      const profile = profileSnap.val();
+      if (!profile.email) throw new Error("Ese usuario no tiene correo asociado.");
+      return profile.email;
+    }
+
+    async function login() {
+      clearAuthMsgs();
+      const identifier = document.getElementById("login-identifier").value.trim();
+      const password = document.getElementById("login-password").value;
+
+      if (!identifier || !password) {
+        setAuthError("Introduce correo o nombre de usuario, y contraseña.");
+        return;
+      }
 
       try {
-        let email = id;
-        // Si no es un email, lo buscamos por nombre de usuario
-        if (!id.includes("@")) {
-          const slug = id.toLowerCase().replace(/[^a-z0-9]/g, "");
-          const snap = await get(ref(db, `usernames/${slug}`));
-          
-          if (!snap.exists()) throw new Error("El usuario '" + id + "' no está registrado.");
-          
-          const uid = snap.val();
-          const prof = await get(ref(db, `profiles/${uid}`));
-          email = prof.val().email;
+        const email = await resolveEmailFromIdentifier(identifier);
+        await signInWithEmailAndPassword(auth, email, password);
+      } catch (e) {
+        setAuthError(e?.message || "No se pudo iniciar sesión.");
+      }
+    }
+    window.login = login;
+
+    async function sendReset() {
+      clearAuthMsgs();
+      const identifier = document.getElementById("login-identifier").value.trim();
+      if (!identifier) {
+        setAuthError("Escribe tu correo o nombre de usuario para restablecer la contraseña.");
+        return;
+      }
+      try {
+        const email = await resolveEmailFromIdentifier(identifier);
+        await sendPasswordResetEmail(auth, email);
+        setAuthOk("Correo de restablecimiento enviado.");
+      } catch (e) {
+        setAuthError(e?.message || "No se pudo enviar el correo.");
+      }
+    }
+    window.sendReset = sendReset;
+
+    async function register() {
+      clearAuthMsgs();
+
+      const username = document.getElementById("reg-username").value.trim();
+      const usernameSlug = slugifyUsername(username);
+      const curso = document.getElementById("reg-curso").value.trim();
+      const nombre = document.getElementById("reg-nombre").value.trim();
+      const apellidos = document.getElementById("reg-apellidos").value.trim();
+      const email = document.getElementById("reg-email").value.trim();
+      const telefono = document.getElementById("reg-telefono").value.trim();
+      const password = document.getElementById("reg-password").value;
+      const bio = document.getElementById("reg-bio").value.trim();
+
+      if (!username || !curso || !nombre || !apellidos || !email || !telefono || !password) {
+        setAuthError("Completa todos los campos obligatorios.");
+        return;
+      }
+
+      if (usernameSlug.length < 3) {
+        setAuthError("El nombre de usuario debe tener al menos 3 caracteres válidos.");
+        return;
+      }
+
+      if (password.length < 6) {
+        setAuthError("La contraseña debe tener al menos 6 caracteres.");
+        return;
+      }
+
+      try {
+        const available = await usernameAvailable(usernameSlug);
+        if (!available) {
+          setAuthError("Ese nombre de usuario ya existe.");
+          return;
         }
-        await signInWithEmailAndPassword(auth, email, pass);
+
+        const cred = await createUserWithEmailAndPassword(auth, email, password);
+        const uid = cred.user.uid;
+        const admin = ADMIN_EMAILS.includes(email);
+
+        const profile = {
+          uid,
+          username,
+          usernameSlug,
+          nombre,
+          apellidos,
+          curso,
+          email,
+          telefono,
+          bio,
+          photoURL: "",
+          approved: !!admin,
+          role: admin ? "admin" : "user",
+          canUpload: true,
+          createdAt: new Date().toISOString(),
+          publicVisible: true
+        };
+
+        await set(dbRef(db, "profiles/" + uid), profile);
+        await set(dbRef(db, "usernames/" + usernameSlug), uid);
+        setAuthOk("Cuenta creada correctamente.");
+      } catch (e) {
+        setAuthError(e?.message || "No se pudo crear la cuenta.");
+      }
+    }
+    window.register = register;
+
+    async function signOutUser() {
+      stopCommonAuto();
+      stopNotifAuto();
+      await signOut(auth);
+    }
+    window.signOutUser = signOutUser;
+
+    function setTopUser(profile) {
+      document.getElementById("top-name").textContent = profile?.username || "Usuario";
+      document.getElementById("top-line").textContent = `${profile?.email || ""} · ${profile?.curso || ""}`;
+      const avatar = document.getElementById("top-avatar");
+      if (profile?.photoURL) {
+        avatar.innerHTML = `<img src="${profile.photoURL}" alt="avatar">`;
+      } else {
+        avatar.textContent = (profile?.username || "U").charAt(0).toUpperCase();
+      }
+    }
+
+    function setApprovalBox(profile) {
+      const box = document.getElementById("approval-box");
+      box.innerHTML = `
+        <div class="row" style="justify-content:space-between;align-items:center;">
+          <div>
+            <h4 style="margin-bottom:6px;">Estado de acceso</h4>
+            <p>${profile.approved ? "Tu cuenta está activa y aprobada." : "Tu cuenta está pendiente de aprobación por el administrador."}</p>
+          </div>
+          <span class="pill ${profile.approved ? "on" : "off"}">${profile.approved ? "Acceso activo" : "Pendiente"}</span>
+        </div>
+        <div class="row" style="margin-top:10px;">
+          <span class="pill ${profile.canUpload ? "on" : "off"}">${profile.canUpload ? "Puede subir archivos" : "Subidas bloqueadas"}</span>
+          <span class="pill ${profile.publicVisible !== false ? "on" : "off"}">${profile.publicVisible !== false ? "Perfil público visible" : "Perfil oculto"}</span>
+        </div>
+      `;
+    }
+
+    async function loadProfile(uid) {
+      const snap = await get(dbRef(db, "profiles/" + uid));
+      return snap.exists() ? snap.val() : null;
+    }
+
+    function fillProfileForm(profile) {
+      document.getElementById("profile-username").value = profile?.username || "";
+      document.getElementById("profile-curso").value = profile?.curso || "";
+      document.getElementById("profile-nombre").value = profile?.nombre || "";
+      document.getElementById("profile-apellidos").value = profile?.apellidos || "";
+      document.getElementById("profile-email").value = profile?.email || "";
+      document.getElementById("profile-telefono").value = profile?.telefono || "";
+      document.getElementById("profile-bio").value = profile?.bio || "";
+
+      document.getElementById("profile-title-name").textContent =
+        `${profile?.nombre || ""} ${profile?.apellidos || ""}`.trim() || "Mi perfil";
+      document.getElementById("profile-title-sub").textContent = "@" + (profile?.username || "usuario");
+
+      const preview = document.getElementById("profile-photo-preview");
+      if (profile?.photoURL) {
+        preview.innerHTML = `<img src="${profile.photoURL}" alt="foto">`;
+      } else {
+        preview.textContent = (profile?.username || "U").charAt(0).toUpperCase();
+      }
+    }
+
+    async function saveProfile() {
+      if (!currentUser || !currentProfile) return;
+
+      const newUsername = document.getElementById("profile-username").value.trim();
+      const newUsernameSlug = slugifyUsername(newUsername);
+      const curso = document.getElementById("profile-curso").value.trim();
+      const nombre = document.getElementById("profile-nombre").value.trim();
+      const apellidos = document.getElementById("profile-apellidos").value.trim();
+      const newEmail = document.getElementById("profile-email").value.trim();
+      const telefono = document.getElementById("profile-telefono").value.trim();
+      const bio = document.getElementById("profile-bio").value.trim();
+      const debug = document.getElementById("profile-debug");
+
+      debug.style.display = "none";
+
+      if (!newUsername || !curso || !nombre || !apellidos || !telefono || !newEmail) {
+        debug.style.display = "block";
+        debug.textContent = "Completa todos los campos obligatorios del perfil.";
+        return;
+      }
+
+      try {
+        if (!(await usernameAvailable(newUsernameSlug, currentUser.uid))) {
+          debug.style.display = "block";
+          debug.textContent = "Ese nombre de usuario ya está ocupado.";
+          return;
+        }
+
+        if (newEmail !== currentProfile.email) {
+          debug.style.display = "block";
+          debug.textContent = "Para cambiar el correo, primero inicia sesión de nuevo si Firebase lo solicita.";
+          await updateEmail(currentUser, newEmail);
+        }
+
+        const updates = {
+          username: newUsername,
+          usernameSlug: newUsernameSlug,
+          curso,
+          nombre,
+          apellidos,
+          email: newEmail,
+          telefono,
+          bio,
+          updatedAt: new Date().toISOString()
+        };
+
+        await update(dbRef(db, "profiles/" + currentUser.uid), updates);
+
+        if (newUsernameSlug !== currentProfile.usernameSlug) {
+          await set(dbRef(db, "usernames/" + newUsernameSlug), currentUser.uid);
+          await remove(dbRef(db, "usernames/" + currentProfile.usernameSlug));
+        }
+
+        currentProfile = { ...currentProfile, ...updates };
+        setTopUser(currentProfile);
+        fillProfileForm(currentProfile);
+        setApprovalBox(currentProfile);
+        debug.style.display = "block";
+        debug.textContent = "Datos de cuenta y perfil guardados correctamente.";
+        await loadPublicProfiles();
+        await populatePrivateUsers();
+      } catch (e) {
+        console.error(e);
+        debug.style.display = "block";
+        debug.textContent = e?.message || "No se pudo guardar el perfil.";
+      }
+    }
+    window.saveProfile = saveProfile;
+
+    async function uploadProfilePhoto() {
+      if (!currentUser) return;
+
+      const fileInput = document.getElementById("profile-photo-file");
+      const file = fileInput.files[0];
+      const debug = document.getElementById("profile-debug");
+
+      if (!file) {
+        debug.style.display = "block";
+        debug.textContent = "Selecciona una imagen.";
+        return;
+      }
+
+      try {
+        const path = `profilePhotos/${currentUser.uid}/${Date.now()}_${file.name}`;
+        const sRef = storageRef(storage, path);
+        await uploadBytes(sRef, file);
+        const url = await getDownloadURL(sRef);
+
+        await update(dbRef(db, "profiles/" + currentUser.uid), {
+          photoURL: url,
+          updatedAt: new Date().toISOString()
+        });
+
+        currentProfile.photoURL = url;
+        setTopUser(currentProfile);
+        fillProfileForm(currentProfile);
+        debug.style.display = "block";
+        debug.textContent = "Foto subida correctamente.";
+        await loadPublicProfiles();
+      } catch (e) {
+        console.error(e);
+        debug.style.display = "block";
+        debug.textContent = "No se pudo subir la foto.";
+      }
+    }
+    window.uploadProfilePhoto = uploadProfilePhoto;
+
+    async function loadPublicProfiles() {
+      const wrap = document.getElementById("profiles-list");
+      wrap.innerHTML = "<div class='card'>Cargando perfiles...</div>";
+
+      try {
+        const snap = await get(dbRef(db, "profiles"));
+        const data = snap.exists() ? snap.val() : {};
+        let users = Object.values(data)
+          .filter(p => p.publicVisible !== false && p.approved);
+
+        const search = document.getElementById("profiles-search").value.trim().toLowerCase();
+        const courseFilter = document.getElementById("profiles-course-filter").value.trim().toLowerCase();
+        const sort = document.getElementById("profiles-sort").value;
+
+        if (search) {
+          users = users.filter(u =>
+            String(u.username || "").toLowerCase().includes(search) ||
+            String(u.nombre || "").toLowerCase().includes(search) ||
+            String(u.apellidos || "").toLowerCase().includes(search)
+          );
+        }
+
+        if (courseFilter) {
+          users = users.filter(u => String(u.curso || "").toLowerCase().includes(courseFilter));
+        }
+
+        if (sort === "recent") {
+          users.sort((a,b) => Number(new Date(b.createdAt || 0)) - Number(new Date(a.createdAt || 0)));
+        } else {
+          users.sort((a,b) => String(a.username || "").localeCompare(String(b.username || ""), "es"));
+        }
+
+        if (!users.length) {
+          wrap.innerHTML = "<div class='card'>No hay perfiles públicos disponibles con ese filtro.</div>";
+          return;
+        }
+
+        wrap.innerHTML = users.map(user => `
+          <div class="user-card">
+            <div class="user-card-top">
+              <div class="mini-avatar">
+                ${user.photoURL ? `<img src="${user.photoURL}" alt="avatar">` : escapeHtml((user.username || "U").charAt(0).toUpperCase())}
+              </div>
+              <div>
+                <strong>@${escapeHtml(user.username || "")}</strong>
+                <div class="muted">${escapeHtml(user.nombre || "")} ${escapeHtml(user.apellidos || "")}</div>
+              </div>
+            </div>
+            <div class="muted" style="margin-bottom:8px;">Curso: ${escapeHtml(user.curso || "")}</div>
+            <p>${escapeHtml((user.bio || "").slice(0, 120))}${(user.bio || "").length > 120 ? "..." : ""}</p>
+            <button class="btn btn-primary" onclick="openProfileModal('${user.uid}')">Ver perfil</button>
+          </div>
+        `).join("");
+      } catch (e) {
+        console.error(e);
+        wrap.innerHTML = "<div class='card'>No se pudieron cargar los perfiles.</div>";
+      }
+    }
+
+    async function openProfileModal(uid) {
+      const profile = await loadProfile(uid);
+      if (!profile) return;
+
+      document.getElementById("modal-profile-name").textContent = profile.username || "Usuario";
+      document.getElementById("modal-profile-sub").textContent = `@${profile.username || ""}`;
+      document.getElementById("modal-profile-course").textContent = profile.curso || "—";
+      document.getElementById("modal-profile-fullname").textContent = `${profile.nombre || ""} ${profile.apellidos || ""}`.trim() || "—";
+      document.getElementById("modal-profile-bio").textContent = profile.bio || "Sin descripción.";
+
+      const photo = document.getElementById("modal-profile-photo");
+      if (profile.photoURL) {
+        photo.innerHTML = `<img src="${profile.photoURL}" alt="foto">`;
+      } else {
+        photo.textContent = (profile.username || "U").charAt(0).toUpperCase();
+      }
+
+      const fileBox = document.getElementById("modal-profile-files");
+      fileBox.innerHTML = "Cargando archivos...";
+      try {
+        const snap = await get(dbRef(db, "sharedFiles"));
+        const data = snap.exists() ? snap.val() : {};
+        const files = Object.values(data).filter(f => f.ownerUid === uid && f.approved && f.visible !== false);
+        if (!files.length) {
+          fileBox.innerHTML = "<p class='muted'>Este usuario no ha compartido archivos visibles todavía.</p>";
+        } else {
+          fileBox.innerHTML = files.map(f => `
+            <div class="file-item">
+              <div class="file-meta">${escapeHtml(f.title || "Archivo")} · ${escapeHtml(formatDateTime(f.createdAt))}</div>
+              <div style="margin-bottom:8px;">${escapeHtml(f.description || "")}</div>
+              <a class="btn btn-dark" href="${f.url}" target="_blank" rel="noopener noreferrer">Abrir archivo</a>
+            </div>
+          `).join("");
+        }
+      } catch {
+        fileBox.innerHTML = "<p class='muted'>No se pudieron cargar los archivos.</p>";
+      }
+
+      document.getElementById("profile-modal-backdrop").style.display = "flex";
+    }
+    window.openProfileModal = openProfileModal;
+
+    function closeProfileModal() {
+      document.getElementById("profile-modal-backdrop").style.display = "none";
+    }
+    window.closeProfileModal = closeProfileModal;
+
+    function openPasswordModal() {
+      document.getElementById("pwd-current").value = "";
+      document.getElementById("pwd-new").value = "";
+      document.getElementById("pwd-confirm").value = "";
+      document.getElementById("pwd-error").style.display = "none";
+      document.getElementById("pwd-ok").style.display = "none";
+      document.getElementById("password-modal-backdrop").style.display = "flex";
+    }
+    window.openPasswordModal = openPasswordModal;
+
+    function closePasswordModal() {
+      document.getElementById("password-modal-backdrop").style.display = "none";
+    }
+    window.closePasswordModal = closePasswordModal;
+
+    async function changePassword() {
+      const current = document.getElementById("pwd-current").value;
+      const next = document.getElementById("pwd-new").value;
+      const confirm = document.getElementById("pwd-confirm").value;
+      const err = document.getElementById("pwd-error");
+      const ok = document.getElementById("pwd-ok");
+
+      err.style.display = "none";
+      ok.style.display = "none";
+
+      if (!current || !next || !confirm) {
+        err.style.display = "block";
+        err.textContent = "Completa todos los campos.";
+        return;
+      }
+
+      if (next !== confirm) {
+        err.style.display = "block";
+        err.textContent = "La nueva contraseña no coincide.";
+        return;
+      }
+
+      try {
+        const credential = EmailAuthProvider.credential(currentUser.email, current);
+        await reauthenticateWithCredential(currentUser, credential);
+        await updatePassword(currentUser, next);
+        ok.style.display = "block";
+        ok.textContent = "Contraseña cambiada correctamente.";
       } catch (e) {
         err.style.display = "block";
-        err.textContent = e.message.includes("auth/") ? "Contraseña incorrecta o usuario no encontrado." : e.message;
+        err.textContent = e?.message || "No se pudo cambiar la contraseña.";
       }
-    };
+    }
+    window.changePassword = changePassword;
 
-    window.register = async () => {
-      const user = document.getElementById("reg-username").value.trim();
-      const email = document.getElementById("reg-email").value.trim();
-      const pass = document.getElementById("reg-pass").value;
-      const slug = user.toLowerCase().replace(/[^a-z0-9]/g, "");
+    async function populatePrivateUsers() {
+      const select = document.getElementById("private-user-select");
+      const snap = await get(dbRef(db, "profiles"));
+      const data = snap.exists() ? snap.val() : {};
+      const profiles = Object.values(data)
+        .filter(p => p.uid !== currentUser.uid && p.approved)
+        .sort((a,b) => String(a.username || "").localeCompare(String(b.username || ""), "es"));
+
+      if (!profiles.length) {
+        select.innerHTML = `<option value="">No hay otros usuarios</option>`;
+        return;
+      }
+
+      const previous = select.value;
+      select.innerHTML = profiles.map(p => `<option value="${p.uid}">@${escapeHtml(p.username || "")} · ${escapeHtml(p.curso || "")}</option>`).join("");
+      if (profiles.some(p => p.uid === previous)) select.value = previous;
+    }
+
+    async function getUserState() {
+      if (!currentUser) return {};
+      const snap = await get(dbRef(db, "userState/" + currentUser.uid));
+      return snap.exists() ? (snap.val() || {}) : {};
+    }
+
+    async function markCommonRead(timestamp = 0) {
+      if (!currentUser) return;
+      await update(dbRef(db, "userState/" + currentUser.uid), {
+        commonLastRead: Number(timestamp || 0)
+      });
+    }
+
+    async function markPrivateRead(otherUid, timestamp = 0) {
+      if (!currentUser || !otherUid) return;
+      await update(dbRef(db, "userState/" + currentUser.uid + "/privateLastRead"), {
+        [otherUid]: Number(timestamp || 0)
+      });
+    }
+
+    async function loadCommonMessages(markAsRead = true) {
+      const box = document.getElementById("common-list");
+      const debug = document.getElementById("common-debug");
+      debug.style.display = "none";
 
       try {
-        const cred = await createUserWithEmailAndPassword(auth, email, pass);
-        const isAdmin = ADMIN_EMAILS.includes(email);
-        
-        await set(ref(db, `profiles/${cred.user.uid}`), {
-          uid: cred.user.uid, username: user, email,
-          role: isAdmin ? "admin" : "user", createdAt: new Date().toISOString()
+        const snapshot = await get(dbRef(db, "commonRoom"));
+        const data = snapshot.exists() ? snapshot.val() : {};
+        const messages = Object.entries(data).map(([id,val]) => ({ id, ...val }));
+        messages.sort((a,b) => Number(a.timestamp || 0) - Number(b.timestamp || 0));
+        const last = messages.slice(-100);
+
+        if (!last.length) {
+          box.innerHTML = `<div class="msg-item"><div class="msg-meta">Sin mensajes</div><div class="msg-text">Aún no hay mensajes en la sala común.</div></div>`;
+          if (markAsRead) {
+            await markCommonRead(0);
+            await renderNotifications();
+          }
+          return;
+        }
+
+        box.innerHTML = last.map(msg => `
+          <div class="msg-item ${msg.fromUid === currentUser.uid ? "mine" : ""}">
+            <div class="msg-meta">@${escapeHtml(msg.fromUsername || "usuario")} · ${escapeHtml(formatDateTime(msg.createdAt))}</div>
+            <div class="msg-text">${escapeHtml(msg.text || "")}</div>
+          </div>
+        `).join("");
+
+        box.scrollTop = box.scrollHeight;
+
+        if (markAsRead) {
+          const latestTs = Number(last[last.length - 1]?.timestamp || 0);
+          await markCommonRead(latestTs);
+          await renderNotifications();
+        }
+      } catch (e) {
+        console.error(e);
+        box.innerHTML = `<div class="msg-item"><div class="msg-meta">Error</div><div class="msg-text">No se pudieron cargar los mensajes.</div></div>`;
+        debug.style.display = "block";
+        debug.textContent = e?.message || "Error al cargar sala común.";
+      }
+    }
+    window.loadCommonMessages = loadCommonMessages;
+
+    async function sendCommonMessage() {
+      if (!isApproved()) return;
+      const input = document.getElementById("common-input");
+      const text = input.value.trim();
+      if (!text) return;
+
+      try {
+        await push(dbRef(db, "commonRoom"), {
+          fromUid: currentUser.uid,
+          fromUsername: currentProfile.username,
+          text,
+          createdAt: new Date().toISOString(),
+          timestamp: Date.now()
         });
-        await set(ref(db, `usernames/${slug}`), cred.user.uid);
-        justRegistered = true;
-      } catch (e) { alert(e.message); }
-    };
+        input.value = "";
+        await loadCommonMessages(true);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    window.sendCommonMessage = sendCommonMessage;
 
-    window.showAuthMode = (mode) => {
-      document.getElementById("login-form").classList.toggle("hidden", mode !== 'login');
-      document.getElementById("register-form").classList.toggle("hidden", mode !== 'register');
-    };
+    async function loadPrivateMessages(markAsRead = true) {
+      const select = document.getElementById("private-user-select");
+      const otherUid = select.value;
+      const box = document.getElementById("private-list");
+      const debug = document.getElementById("private-debug");
+      debug.style.display = "none";
 
-    window.openView = (name) => {
-      document.querySelectorAll('.panel > div').forEach(v => v.classList.add('hidden'));
-      document.getElementById('view-' + name).classList.remove('hidden');
-    };
+      if (!otherUid) {
+        box.innerHTML = `<div class="msg-item"><div class="msg-meta">Sin destinatario</div><div class="msg-text">No hay otro usuario disponible.</div></div>`;
+        return;
+      }
 
-    window.logout = () => signOut(auth).then(() => location.reload());
+      try {
+        const convoId = getConversationId(currentUser.uid, otherUid);
+        const snapshot = await get(dbRef(db, "privateMessages/" + convoId));
+        const data = snapshot.exists() ? snapshot.val() : {};
+        const messages = Object.entries(data).map(([id,val]) => ({ id, ...val }));
+        messages.sort((a,b) => Number(a.timestamp || 0) - Number(b.timestamp || 0));
+        const last = messages.slice(-100);
 
-    // --- OBSERVADOR Y AUTO-REPARACIÓN ---
+        if (!last.length) {
+          box.innerHTML = `<div class="msg-item"><div class="msg-meta">Sin mensajes</div><div class="msg-text">Todavía no hay conversación con este usuario.</div></div>`;
+          if (markAsRead) {
+            await markPrivateRead(otherUid, 0);
+            await renderNotifications();
+          }
+          return;
+        }
+
+        box.innerHTML = last.map(msg => `
+          <div class="msg-item ${msg.fromUid === currentUser.uid ? "mine" : ""}">
+            <div class="msg-meta">@${escapeHtml(msg.fromUsername || "usuario")} · ${escapeHtml(formatDateTime(msg.createdAt))}</div>
+            <div class="msg-text">${escapeHtml(msg.text || "")}</div>
+          </div>
+        `).join("");
+
+        box.scrollTop = box.scrollHeight;
+
+        if (markAsRead) {
+          const latestTs = Number(last[last.length - 1]?.timestamp || 0);
+          await markPrivateRead(otherUid, latestTs);
+          await renderNotifications();
+        }
+      } catch (e) {
+        console.error(e);
+        box.innerHTML = `<div class="msg-item"><div class="msg-meta">Error</div><div class="msg-text">No se pudo cargar la conversación.</div></div>`;
+        debug.style.display = "block";
+        debug.textContent = e?.message || "Error al cargar conversación privada.";
+      }
+    }
+    window.loadPrivateMessages = loadPrivateMessages;
+
+    async function sendPrivateMessage() {
+      if (!isApproved()) return;
+      const select = document.getElementById("private-user-select");
+      const otherUid = select.value;
+      const input = document.getElementById("private-input");
+      const text = input.value.trim();
+
+      if (!otherUid || !text) return;
+
+      try {
+        const convoId = getConversationId(currentUser.uid, otherUid);
+        await push(dbRef(db, "privateMessages/" + convoId), {
+          fromUid: currentUser.uid,
+          fromUsername: currentProfile.username,
+          toUid: otherUid,
+          text,
+          createdAt: new Date().toISOString(),
+          timestamp: Date.now()
+        });
+        input.value = "";
+        await loadPrivateMessages(true);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    window.sendPrivateMessage = sendPrivateMessage;
+
+    function stopCommonAuto() {
+      if (commonInterval) {
+        clearInterval(commonInterval);
+        commonInterval = null;
+      }
+    }
+
+    function startCommonAuto() {
+      stopCommonAuto();
+      commonInterval = setInterval(async () => {
+        const commonView = document.getElementById("view-common");
+        if (!commonView.classList.contains("hidden")) {
+          await loadCommonMessages(false);
+        }
+      }, 10000);
+    }
+
+    function stopNotifAuto() {
+      if (notifInterval) {
+        clearInterval(notifInterval);
+        notifInterval = null;
+      }
+    }
+
+    function startNotifAuto() {
+      stopNotifAuto();
+      notifInterval = setInterval(renderNotifications, 15000);
+    }
+
+    async function renderNotifications() {
+      if (!currentUser) return;
+
+      const privateBox = document.getElementById("notif-private");
+      const commonBox = document.getElementById("notif-common");
+      const none = document.getElementById("notif-none");
+
+      privateBox.classList.add("hidden");
+      commonBox.classList.add("hidden");
+
+      try {
+        const state = await getUserState();
+
+        const commonSnap = await get(dbRef(db, "commonRoom"));
+        const commonData = commonSnap.exists() ? commonSnap.val() : {};
+        const commonMessages = Object.values(commonData || {});
+        const commonUnread = commonMessages.filter(m =>
+          Number(m.timestamp || 0) > Number(state.commonLastRead || 0) &&
+          m.fromUid !== currentUser.uid
+        ).length;
+
+        if (commonUnread > 0) {
+          commonBox.classList.remove("hidden");
+          document.getElementById("notif-common-text").textContent = `Tienes ${commonUnread} mensaje(s) nuevos en la sala común.`;
+        }
+
+        const privateSnap = await get(dbRef(db, "privateMessages"));
+        const privateAll = privateSnap.exists() ? privateSnap.val() : {};
+        const lastRead = state.privateLastRead || {};
+        let privateUnread = 0;
+
+        Object.entries(privateAll).forEach(([convoId, convo]) => {
+          if (!convoId.includes(currentUser.uid)) return;
+          const otherUid = convoId.split("__").find(x => x !== currentUser.uid);
+          const readTs = Number(lastRead?.[otherUid] || 0);
+          Object.values(convo || {}).forEach(msg => {
+            if (msg.toUid === currentUser.uid && Number(msg.timestamp || 0) > readTs) {
+              privateUnread++;
+            }
+          });
+        });
+
+        if (privateUnread > 0) {
+          privateBox.classList.remove("hidden");
+          document.getElementById("notif-private-text").textContent = `Tienes ${privateUnread} mensaje(s) privado(s) sin leer.`;
+        }
+
+        none.classList.toggle("hidden", commonUnread > 0 || privateUnread > 0);
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    async function uploadSharedFile() {
+      if (!currentUser || !isApproved()) return;
+
+      const title = document.getElementById("upload-title").value.trim();
+      const description = document.getElementById("upload-description").value.trim();
+      const file = document.getElementById("upload-file").files[0];
+      const debug = document.getElementById("files-debug");
+
+      debug.style.display = "none";
+
+      if (!currentProfile.canUpload) {
+        debug.style.display = "block";
+        debug.textContent = "Tus subidas han sido bloqueadas por el administrador.";
+        return;
+      }
+
+      if (!title || !file) {
+        debug.style.display = "block";
+        debug.textContent = "Pon un título y selecciona un archivo.";
+        return;
+      }
+
+      try {
+        const path = `sharedFiles/${currentUser.uid}/${Date.now()}_${file.name}`;
+        const sRef = storageRef(storage, path);
+        await uploadBytes(sRef, file);
+        const url = await getDownloadURL(sRef);
+
+        const newRef = push(dbRef(db, "sharedFiles"));
+        await set(newRef, {
+          id: newRef.key,
+          ownerUid: currentUser.uid,
+          ownerUsername: currentProfile.username,
+          title,
+          description,
+          fileName: file.name,
+          url,
+          storagePath: path,
+          createdAt: new Date().toISOString(),
+          timestamp: Date.now(),
+          approved: isAdmin(),
+          visible: true
+        });
+
+        document.getElementById("upload-title").value = "";
+        document.getElementById("upload-description").value = "";
+        document.getElementById("upload-file").value = "";
+        debug.style.display = "block";
+        debug.textContent = isAdmin() ? "Archivo subido y visible." : "Archivo subido y pendiente de moderación.";
+        await loadSharedFiles();
+      } catch (e) {
+        console.error(e);
+        debug.style.display = "block";
+        debug.textContent = "No se pudo subir el archivo.";
+      }
+    }
+    window.uploadSharedFile = uploadSharedFile;
+
+    async function deleteSharedFile(fileId) {
+      try {
+        const snap = await get(dbRef(db, "sharedFiles/" + fileId));
+        if (!snap.exists()) return;
+        const file = snap.val();
+
+        if (!isAdmin() && file.ownerUid !== currentUser.uid) return;
+
+        if (file.storagePath) {
+          try {
+            await deleteObject(storageRef(storage, file.storagePath));
+          } catch {}
+        }
+        await remove(dbRef(db, "sharedFiles/" + fileId));
+        await loadSharedFiles();
+        if (isAdmin()) await loadAdminFiles();
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    window.deleteSharedFile = deleteSharedFile;
+
+    async function setFileModeration(fileId, updates) {
+      await update(dbRef(db, "sharedFiles/" + fileId), updates);
+      await loadSharedFiles();
+      await loadAdminFiles();
+    }
+    window.setFileModeration = setFileModeration;
+
+    async function loadSharedFiles() {
+      const box = document.getElementById("files-list");
+      const myBox = document.getElementById("my-files-list");
+      box.innerHTML = "Cargando archivos...";
+      myBox.innerHTML = "Cargando archivos...";
+
+      try {
+        const snap = await get(dbRef(db, "sharedFiles"));
+        const data = snap.exists() ? snap.val() : {};
+        const files = Object.values(data || {}).sort((a,b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
+
+        const visible = files.filter(f => f.visible !== false && f.approved);
+        const mine = files.filter(f => f.ownerUid === currentUser.uid);
+
+        box.innerHTML = visible.length ? visible.map(f => `
+          <div class="file-item">
+            <div class="file-meta">@${escapeHtml(f.ownerUsername || "usuario")} · ${escapeHtml(formatDateTime(f.createdAt))}</div>
+            <strong>${escapeHtml(f.title || "Archivo")}</strong>
+            <div style="margin:8px 0;">${escapeHtml(f.description || "")}</div>
+            <a class="btn btn-dark" href="${f.url}" target="_blank" rel="noopener noreferrer">Abrir / descargar</a>
+          </div>
+        `).join("") : `<div class="file-item"><div class="file-meta">Sin archivos</div><div>No hay archivos visibles todavía.</div></div>`;
+
+        myBox.innerHTML = mine.length ? mine.map(f => `
+          <div class="file-item">
+            <div class="file-meta">${escapeHtml(formatDateTime(f.createdAt))}</div>
+            <strong>${escapeHtml(f.title || "Archivo")}</strong>
+            <div style="margin:8px 0;">${escapeHtml(f.description || "")}</div>
+            <div class="row">
+              <span class="pill ${f.approved ? "on" : "off"}">${f.approved ? "Aprobado" : "Pendiente"}</span>
+              <span class="pill ${f.visible !== false ? "on" : "off"}">${f.visible !== false ? "Visible" : "Oculto"}</span>
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <a class="btn btn-dark" href="${f.url}" target="_blank" rel="noopener noreferrer">Abrir</a>
+              <button class="btn btn-danger" onclick="deleteSharedFile('${f.id}')">Borrar</button>
+            </div>
+          </div>
+        `).join("") : `<div class="file-item"><div class="file-meta">Sin archivos propios</div><div>Todavía no has subido archivos.</div></div>`;
+      } catch (e) {
+        console.error(e);
+        box.innerHTML = "No se pudieron cargar los archivos.";
+        myBox.innerHTML = "No se pudieron cargar tus archivos.";
+      }
+    }
+
+    async function loadAdminUsers() {
+      const box = document.getElementById("admin-users-list");
+      const snap = await get(dbRef(db, "profiles"));
+      const data = snap.exists() ? snap.val() : {};
+      const users = Object.values(data || {}).sort((a,b) => Number(new Date(b.createdAt || 0)) - Number(new Date(a.createdAt || 0)));
+
+      box.innerHTML = users.length ? users.map(user => `
+        <div class="user-item">
+          <div class="row" style="justify-content:space-between;align-items:flex-start;">
+            <div>
+              <strong>@${escapeHtml(user.username || "")}</strong>
+              <div class="muted">${escapeHtml(user.nombre || "")} ${escapeHtml(user.apellidos || "")}</div>
+              <div class="muted">${escapeHtml(user.email || "")}</div>
+              <div class="muted">${escapeHtml(user.curso || "")} · ${escapeHtml(user.telefono || "")}</div>
+            </div>
+            <div class="row">
+              <span class="pill ${user.approved ? "on" : "off"}">${user.approved ? "Aprobado" : "Bloqueado"}</span>
+              <span class="pill ${user.canUpload ? "on" : "off"}">${user.canUpload ? "Puede subir" : "Subida bloqueada"}</span>
+            </div>
+          </div>
+          <div class="row" style="margin-top:12px;">
+            <button class="btn ${user.approved ? "btn-danger" : "btn-ok"}" onclick="toggleAccess('${user.uid}', ${user.approved ? "false" : "true"})">
+              ${user.approved ? "Quitar acceso" : "Dar acceso"}
+            </button>
+            <button class="btn ${user.canUpload ? "btn-danger" : "btn-ok"}" onclick="toggleUpload('${user.uid}', ${user.canUpload ? "false" : "true"})">
+              ${user.canUpload ? "Bloquear subidas" : "Permitir subidas"}
+            </button>
+            <button class="btn btn-soft" onclick="togglePublicProfile('${user.uid}', ${user.publicVisible !== false ? "false" : "true"})">
+              ${user.publicVisible !== false ? "Ocultar perfil" : "Mostrar perfil"}
+            </button>
+          </div>
+        </div>
+      `).join("") : "<div class='card'>No hay usuarios registrados.</div>";
+    }
+
+    async function toggleAccess(uid, value) {
+      await update(dbRef(db, "profiles/" + uid), {
+        approved: value,
+        reviewedAt: new Date().toISOString(),
+        reviewedBy: currentUser.uid
+      });
+      await loadAdminUsers();
+    }
+    window.toggleAccess = toggleAccess;
+
+    async function toggleUpload(uid, value) {
+      await update(dbRef(db, "profiles/" + uid), {
+        canUpload: value,
+        uploadReviewedAt: new Date().toISOString()
+      });
+      await loadAdminUsers();
+    }
+    window.toggleUpload = toggleUpload;
+
+    async function togglePublicProfile(uid, value) {
+      await update(dbRef(db, "profiles/" + uid), {
+        publicVisible: value
+      });
+      await loadAdminUsers();
+      await loadPublicProfiles();
+    }
+    window.togglePublicProfile = togglePublicProfile;
+
+    async function loadAdminFiles() {
+      const box = document.getElementById("admin-files-list");
+      const snap = await get(dbRef(db, "sharedFiles"));
+      const data = snap.exists() ? snap.val() : {};
+      const files = Object.values(data || {}).sort((a,b) => Number(b.timestamp || 0) - Number(a.timestamp || 0));
+
+      box.innerHTML = files.length ? files.map(f => `
+        <div class="file-item">
+          <div class="file-meta">@${escapeHtml(f.ownerUsername || "usuario")} · ${escapeHtml(formatDateTime(f.createdAt))}</div>
+          <strong>${escapeHtml(f.title || "Archivo")}</strong>
+          <div style="margin:8px 0;">${escapeHtml(f.description || "")}</div>
+          <div class="row">
+            <span class="pill ${f.approved ? "on" : "off"}">${f.approved ? "Aprobado" : "Pendiente"}</span>
+            <span class="pill ${f.visible !== false ? "on" : "off"}">${f.visible !== false ? "Visible" : "Oculto"}</span>
+          </div>
+          <div class="row" style="margin-top:10px;">
+            <a class="btn btn-dark" href="${f.url}" target="_blank" rel="noopener noreferrer">Abrir</a>
+            <button class="btn ${f.approved ? "btn-soft" : "btn-ok"}" onclick="setFileModeration('${f.id}', { approved: ${f.approved ? "false" : "true"} })">
+              ${f.approved ? "Quitar aprobación" : "Aprobar"}
+            </button>
+            <button class="btn ${f.visible !== false ? "btn-soft" : "btn-ok"}" onclick="setFileModeration('${f.id}', { visible: ${f.visible !== false ? "false" : "true"} })">
+              ${f.visible !== false ? "Ocultar" : "Mostrar"}
+            </button>
+            <button class="btn btn-danger" onclick="deleteSharedFile('${f.id}')">Borrar</button>
+          </div>
+        </div>
+      `).join("") : "<div class='card'>No hay archivos.</div>";
+    }
+
+    async function loadAdminCommonMessages() {
+      const box = document.getElementById("admin-common-list");
+      const snap = await get(dbRef(db, "commonRoom"));
+      const data = snap.exists() ? snap.val() : {};
+      const messages = Object.entries(data || {})
+        .map(([id,val]) => ({ id, ...val }))
+        .sort((a,b) => Number(b.timestamp || 0) - Number(a.timestamp || 0))
+        .slice(0, 100);
+
+      box.innerHTML = messages.length ? messages.map(m => `
+        <div class="msg-item">
+          <div class="msg-meta">@${escapeHtml(m.fromUsername || "usuario")} · ${escapeHtml(formatDateTime(m.createdAt))}</div>
+          <div class="msg-text">${escapeHtml(m.text || "")}</div>
+          <div class="row" style="margin-top:10px;">
+            <button class="btn btn-danger" onclick="deleteCommonMessage('${m.id}')">Borrar mensaje</button>
+          </div>
+        </div>
+      `).join("") : "<div class='card'>No hay mensajes en la sala común.</div>";
+    }
+
+    async function deleteCommonMessage(id) {
+      await remove(dbRef(db, "commonRoom/" + id));
+      await loadAdminCommonMessages();
+      await loadCommonMessages(false);
+    }
+    window.deleteCommonMessage = deleteCommonMessage;
+
+    async function populateAdminPrivateUsers() {
+      const a = document.getElementById("admin-private-user-a");
+      const b = document.getElementById("admin-private-user-b");
+      const snap = await get(dbRef(db, "profiles"));
+      const data = snap.exists() ? snap.val() : {};
+      const users = Object.values(data || {}).sort((x,y) => String(x.username || "").localeCompare(String(y.username || ""), "es"));
+      const html = users.map(u => `<option value="${u.uid}">@${escapeHtml(u.username || "")}</option>`).join("");
+      a.innerHTML = html;
+      b.innerHTML = html;
+    }
+
+    async function loadAdminPrivateConversation() {
+      const a = document.getElementById("admin-private-user-a").value;
+      const b = document.getElementById("admin-private-user-b").value;
+      const box = document.getElementById("admin-private-list");
+      if (!a || !b || a === b) {
+        box.innerHTML = "<div class='card'>Selecciona dos usuarios distintos.</div>";
+        return;
+      }
+
+      const convoId = getConversationId(a, b);
+      const snap = await get(dbRef(db, "privateMessages/" + convoId));
+      const data = snap.exists() ? snap.val() : {};
+      const messages = Object.entries(data || {})
+        .map(([id,val]) => ({ id, ...val }))
+        .sort((x,y) => Number(y.timestamp || 0) - Number(x.timestamp || 0));
+
+      box.innerHTML = messages.length ? messages.map(m => `
+        <div class="msg-item">
+          <div class="msg-meta">@${escapeHtml(m.fromUsername || "usuario")} · ${escapeHtml(formatDateTime(m.createdAt))}</div>
+          <div class="msg-text">${escapeHtml(m.text || "")}</div>
+          <div class="row" style="margin-top:10px;">
+            <button class="btn btn-danger" onclick="deletePrivateMessage('${convoId}','${m.id}')">Borrar mensaje</button>
+          </div>
+        </div>
+      `).join("") : "<div class='card'>No hay mensajes en esa conversación.</div>";
+    }
+    window.loadAdminPrivateConversation = loadAdminPrivateConversation;
+
+    async function deletePrivateMessage(convoId, messageId) {
+      await remove(dbRef(db, "privateMessages/" + convoId + "/" + messageId));
+      await loadAdminPrivateConversation();
+    }
+    window.deletePrivateMessage = deletePrivateMessage;
+
+    function hideViews() {
+      ["home","profile","profiles","common","private","files","admin","wait"].forEach(name => {
+        const el = document.getElementById("view-" + name);
+        if (el) el.classList.add("hidden");
+      });
+      document.querySelectorAll(".nav-btn[data-view]").forEach(btn => btn.classList.remove("active"));
+      stopCommonAuto();
+    }
+
+    async function openView(name) {
+      hideViews();
+
+      if (!isApproved() && !["home","profile"].includes(name)) {
+        document.getElementById("view-wait").classList.remove("hidden");
+        return;
+      }
+
+      if (name === "admin" && !isAdmin()) {
+        document.getElementById("view-home").classList.remove("hidden");
+        return;
+      }
+
+      const target = document.getElementById("view-" + name);
+      if (target) target.classList.remove("hidden");
+
+      const nav = document.querySelector(`.nav-btn[data-view="${name}"]`);
+      if (nav) nav.classList.add("active");
+
+      if (name === "profiles") await loadPublicProfiles();
+      if (name === "common") { await loadCommonMessages(true); startCommonAuto(); }
+      if (name === "private") { await populatePrivateUsers(); await loadPrivateMessages(true); }
+      if (name === "files") await loadSharedFiles();
+      if (name === "admin") {
+        await loadAdminUsers();
+        await loadAdminFiles();
+        await loadAdminCommonMessages();
+        await populateAdminPrivateUsers();
+        document.getElementById("admin-private-list").innerHTML = "<div class='card'>Selecciona dos usuarios y pulsa cargar conversación.</div>";
+      }
+    }
+    window.openView = openView;
+
     onAuthStateChanged(auth, async (user) => {
-      if (user) {
-        const snap = await get(ref(db, `profiles/${user.uid}`));
-        const profile = snap.val();
+      currentUser = user;
 
-        // Mapeo automático de seguridad (para que tu usuario 91143 funcione siempre)
-        const slug = profile.username.toLowerCase().replace(/[^a-z0-9]/g, "");
-        await set(ref(db, `usernames/${slug}`), user.uid);
-
-        document.getElementById("auth-screen").classList.add("hidden");
-        document.getElementById("app-shell").style.display = "block";
-        document.getElementById("user-info").innerHTML = `<b>${profile.username}</b> (${profile.email})`;
-
-        if (profile.role === "admin") document.getElementById("admin-btn").classList.remove("hidden");
-        
-        if (justRegistered) openView('blank'); else openView('home');
-      } else {
+      if (!user) {
+        stopCommonAuto();
+        stopNotifAuto();
         document.getElementById("auth-screen").classList.remove("hidden");
         document.getElementById("app-shell").style.display = "none";
+        return;
       }
+
+      document.getElementById("auth-screen").classList.add("hidden");
+      document.getElementById("app-shell").style.display = "block";
+
+      currentProfile = await loadProfile(user.uid);
+      if (!currentProfile) {
+        await signOut(auth);
+        return;
+      }
+
+      document.getElementById("admin-nav-btn").classList.toggle("hidden", !isAdmin());
+
+      setTopUser(currentProfile);
+      setApprovalBox(currentProfile);
+      fillProfileForm(currentProfile);
+
+      await renderNotifications();
+      startNotifAuto();
+      openView("home");
     });
+
+    showAuthMode("login");
   </script>
 </body>
 </html>
