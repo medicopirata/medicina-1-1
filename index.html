@@ -885,9 +885,11 @@
       return [a, b].sort().join("__");
     }
 
-    function isAdminProfile(profile) {
-      return profile?.role === "admin" || String(profile?.email || "").trim().toLowerCase() === ADMIN_EMAIL;
-    }
+   function isAdminProfile(profile) {
+  const email = String(profile?.email || "").trim().toLowerCase();
+  const role = String(profile?.role || "").trim().toLowerCase();
+  return role === "admin" || email === ADMIN_EMAIL;
+}
 
     function isAdmin() {
       return isAdminProfile(currentProfile);
@@ -935,56 +937,85 @@
     }
 
     async function resolveEmailFromIdentifier(identifier) {
-      const value = identifier.trim();
-      if (!value) return "";
-      if (value.includes("@")) return value.toLowerCase();
+  const value = String(identifier || "").trim();
+  if (!value) return "";
 
-      const usernameSlug = slugifyUsername(value);
-      const snap = await get(dbRef(db, "usernames/" + usernameSlug));
-      if (!snap.exists()) throw new Error("Nombre de usuario no encontrado.");
+  if (value.includes("@")) {
+    return value.toLowerCase();
+  }
 
-      const uid = snap.val();
-      const profileSnap = await get(dbRef(db, "profiles/" + uid));
-      if (!profileSnap.exists()) throw new Error("No se encontró el perfil de ese usuario.");
+  const usernameSlug = slugifyUsername(value);
+  const usernameRef = dbRef(db, "usernames/" + usernameSlug);
+  const usernameSnap = await get(usernameRef);
 
-      const profile = profileSnap.val();
-      if (!profile.email) throw new Error("Ese usuario no tiene correo asociado.");
-      return String(profile.email).toLowerCase();
-    }
+  if (!usernameSnap.exists()) {
+    throw new Error("Nombre de usuario no encontrado.");
+  }
 
-    async function login() {
-      clearAuthMsgs();
-      const identifier = document.getElementById("login-identifier").value.trim();
-      const password = document.getElementById("login-password").value;
+  const uid = usernameSnap.val();
+  if (!uid) {
+    throw new Error("Ese nombre de usuario no tiene UID asociado.");
+  }
 
-      if (!identifier || !password) {
-        setAuthError("Introduce correo o nombre de usuario, y contraseña.");
-        return;
-      }
+  const profileRef = dbRef(db, "profiles/" + uid);
+  const profileSnap = await get(profileRef);
 
-      try {
-        const email = await resolveEmailFromIdentifier(identifier);
-        await signInWithEmailAndPassword(auth, email, password);
-      } catch (e) {
-        setAuthError(e?.message || "No se pudo iniciar sesión.");
-      }
-    }
+  if (!profileSnap.exists()) {
+    throw new Error("No se encontró el perfil de ese usuario.");
+  }
 
-    async function sendReset() {
-      clearAuthMsgs();
-      const identifier = document.getElementById("login-identifier").value.trim();
-      if (!identifier) {
-        setAuthError("Escribe tu correo o nombre de usuario para restablecer la contraseña.");
-        return;
-      }
-      try {
-        const email = await resolveEmailFromIdentifier(identifier);
-        await sendPasswordResetEmail(auth, email);
-        setAuthOk("Correo de restablecimiento enviado. Revisa también la carpeta de spam o correo no deseado.");
-      } catch (e) {
-        setAuthError(e?.message || "No se pudo enviar el correo.");
-      }
-    }
+  const profile = profileSnap.val();
+  const email = String(profile?.email || "").trim().toLowerCase();
+
+  if (!email) {
+    throw new Error("Ese usuario no tiene correo asociado.");
+  }
+
+  return email;
+}
+
+  async function login() {
+  clearAuthMsgs();
+
+  const identifierEl = document.getElementById("login-identifier");
+  const passwordEl = document.getElementById("login-password");
+
+  const identifier = String(identifierEl?.value || "").trim();
+  const password = String(passwordEl?.value || "");
+
+  if (!identifier || !password) {
+    setAuthError("Introduce correo o nombre de usuario, y contraseña.");
+    return;
+  }
+
+  try {
+    const email = await resolveEmailFromIdentifier(identifier);
+    await signInWithEmailAndPassword(auth, email, password);
+  } catch (e) {
+    console.error("Error en login:", e);
+    setAuthError(e?.message || "No se pudo iniciar sesión.");
+  }
+}
+
+  async function sendReset() {
+  clearAuthMsgs();
+
+  const identifier = String(document.getElementById("login-identifier")?.value || "").trim();
+
+  if (!identifier) {
+    setAuthError("Escribe tu correo o nombre de usuario para restablecer la contraseña.");
+    return;
+  }
+
+  try {
+    const email = await resolveEmailFromIdentifier(identifier);
+    await sendPasswordResetEmail(auth, email);
+    setAuthOk("Correo de restablecimiento enviado. Revisa también la carpeta de spam o correo no deseado.");
+  } catch (e) {
+    console.error("Error en reset:", e);
+    setAuthError(e?.message || "No se pudo enviar el correo.");
+  }
+}
 
     async function register() {
       clearAuthMsgs();
@@ -1981,73 +2012,97 @@
       }
     }
 
-    onAuthStateChanged(auth, async (user) => {
-      currentUser = user;
+  onAuthStateChanged(auth, async (user) => {
+  try {
+    currentUser = user;
 
-      if (!user) {
-        stopCommonAuto();
-        stopNotifAuto();
-        document.getElementById("auth-screen").classList.remove("hidden");
-        document.getElementById("app-shell").style.display = "none";
-        return;
-      }
+    if (!user) {
+      stopCommonAuto();
+      stopNotifAuto();
 
-      document.getElementById("auth-screen").classList.add("hidden");
-      document.getElementById("app-shell").style.display = "block";
+      const authScreen = document.getElementById("auth-screen");
+      const appShell = document.getElementById("app-shell");
 
-      currentProfile = await loadProfile(user.uid);
-      if (!currentProfile) {
-        await signOut(auth);
-        return;
-      }
+      if (authScreen) authScreen.classList.remove("hidden");
+      if (appShell) appShell.style.display = "none";
+      return;
+    }
 
-      if (String(currentProfile.email || "").trim().toLowerCase() === ADMIN_EMAIL && currentProfile.role !== "admin") {
-        await update(dbRef(db, "profiles/" + user.uid), { role: "admin", approved: true });
-        currentProfile.role = "admin";
-        currentProfile.approved = true;
-      }
+    const authScreen = document.getElementById("auth-screen");
+    const appShell = document.getElementById("app-shell");
 
-      document.getElementById("admin-nav-btn").classList.toggle("hidden", !isAdmin());
+    if (authScreen) authScreen.classList.add("hidden");
+    if (appShell) appShell.style.display = "block";
 
-      setTopUser(currentProfile);
-      setApprovalBox(currentProfile);
-      fillProfileForm(currentProfile);
+    currentProfile = await loadProfile(user.uid);
 
-      await renderNotifications();
-      startNotifAuto();
-      openView("home");
-    });
+    if (!currentProfile) {
+      console.error("No existe perfil para este usuario:", user.uid);
+      await signOut(auth);
+      return;
+    }
+
+    const email = String(currentProfile.email || "").trim().toLowerCase();
+
+    if (email === ADMIN_EMAIL && currentProfile.role !== "admin") {
+      await update(dbRef(db, "profiles/" + user.uid), {
+        role: "admin",
+        approved: true
+      });
+      currentProfile.role = "admin";
+      currentProfile.approved = true;
+    }
+
+    const adminBtn = document.getElementById("admin-nav-btn");
+    if (adminBtn) {
+      adminBtn.classList.toggle("hidden", !isAdmin());
+    }
+
+    setTopUser(currentProfile);
+    setApprovalBox(currentProfile);
+    fillProfileForm(currentProfile);
+
+    await renderNotifications();
+    startNotifAuto();
+    await openView("home");
+  } catch (e) {
+    console.error("Error en onAuthStateChanged:", e);
+    alert("Error cargando la sesión. Mira la consola del navegador.");
+  }
+});
 
     window.showAuthMode = showAuthMode;
-    window.login = login;
-    window.register = register;
-    window.sendReset = sendReset;
-    window.signOutUser = signOutUser;
-    window.saveProfile = saveProfile;
-    window.uploadProfilePhoto = uploadProfilePhoto;
-    window.loadPublicProfiles = loadPublicProfiles;
-    window.openProfileModal = openProfileModal;
-    window.closeProfileModal = closeProfileModal;
-    window.openPasswordModal = openPasswordModal;
-    window.closePasswordModal = closePasswordModal;
-    window.changePassword = changePassword;
-    window.loadCommonMessages = loadCommonMessages;
-    window.sendCommonMessage = sendCommonMessage;
-    window.loadPrivateMessages = loadPrivateMessages;
-    window.sendPrivateMessage = sendPrivateMessage;
-    window.uploadSharedFile = uploadSharedFile;
-    window.loadSharedFiles = loadSharedFiles;
-    window.deleteSharedFile = deleteSharedFile;
-    window.setFileModeration = setFileModeration;
-    window.toggleAccess = toggleAccess;
-    window.toggleUpload = toggleUpload;
-    window.togglePublicProfile = togglePublicProfile;
-    window.deleteCommonMessage = deleteCommonMessage;
-    window.loadAdminPrivateConversation = loadAdminPrivateConversation;
-    window.deletePrivateMessage = deletePrivateMessage;
-    window.openView = openView;
+window.login = login;
+window.register = register;
+window.sendReset = sendReset;
+window.signOutUser = signOutUser;
+window.saveProfile = saveProfile;
+window.uploadProfilePhoto = uploadProfilePhoto;
+window.loadPublicProfiles = loadPublicProfiles;
+window.openProfileModal = openProfileModal;
+window.closeProfileModal = closeProfileModal;
+window.openPasswordModal = openPasswordModal;
+window.closePasswordModal = closePasswordModal;
+window.changePassword = changePassword;
+window.loadCommonMessages = loadCommonMessages;
+window.sendCommonMessage = sendCommonMessage;
+window.loadPrivateMessages = loadPrivateMessages;
+window.sendPrivateMessage = sendPrivateMessage;
+window.uploadSharedFile = uploadSharedFile;
+window.loadSharedFiles = loadSharedFiles;
+window.deleteSharedFile = deleteSharedFile;
+window.setFileModeration = setFileModeration;
+window.toggleAccess = toggleAccess;
+window.toggleUpload = toggleUpload;
+window.togglePublicProfile = togglePublicProfile;
+window.deleteCommonMessage = deleteCommonMessage;
+window.loadAdminPrivateConversation = loadAdminPrivateConversation;
+window.deletePrivateMessage = deletePrivateMessage;
+window.openView = openView;
 
-    showAuthMode("login");
+console.log("Script cargado correctamente");
+showAuthMode("login");
+
   </script>
 </body>
 </html>
