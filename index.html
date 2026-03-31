@@ -20,8 +20,6 @@
       --ok:#2d7b57;
       --curso1-color:#244e66;
       --curso2-color:#cf6a1c;
-      --curso3-color:#7a4ba5;
-      --curso4-color:#25885f;
       --privado-color:#b43e36;
       --shadow:0 12px 30px rgba(0,0,0,.09);
       --shadow-2:0 18px 40px rgba(0,0,0,.16);
@@ -62,7 +60,7 @@
       border:1px solid rgba(255,255,255,.65);
     }
 
-    .kicker,.panel-kicker,.deck-kicker,.login-kicker,.nav-label,.pill{
+    .kicker,.panel-kicker,.deck-kicker,.nav-label,.pill{
       display:inline-flex;
       align-items:center;
       justify-content:center;
@@ -148,19 +146,18 @@
     .topbar-inner{width:min(1380px,calc(100% - 24px));margin:0 auto;display:flex;gap:14px;justify-content:space-between;align-items:center;padding:10px 0}
     .user-badge{display:flex;align-items:center;gap:12px;color:#fff;min-width:0}
 
-    .avatar,.mini-avatar,.profile-big,.crew-avatar{
+    .avatar,.mini-avatar,.profile-big{
       border-radius:50%;overflow:hidden;background:linear-gradient(135deg,#f1c17a,#c99952);
       display:grid;place-items:center;font-weight:900;color:#143140;flex:0 0 auto;
     }
     .avatar{width:48px;height:48px}
     .mini-avatar{width:56px;height:56px}
     .profile-big{width:90px;height:90px;font-size:2rem}
-    .crew-avatar{width:42px;height:42px}
     .avatar img,.mini-avatar img,.profile-big img{width:100%;height:100%;object-fit:cover;display:block}
 
-    .user-meta small,.crew-info small{display:block;text-transform:uppercase;letter-spacing:1px;opacity:.72;font-weight:700;margin-bottom:4px}
-    .user-meta strong,.crew-info strong{display:block;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
-    .user-meta span,#rank-info{display:block;margin-top:4px;color:rgba(255,255,255,.82);font-size:.9rem}
+    .user-meta small{display:block;text-transform:uppercase;letter-spacing:1px;opacity:.72;font-weight:700;margin-bottom:4px}
+    .user-meta strong{display:block;font-size:1rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+    .user-meta span{display:block;margin-top:4px;color:rgba(255,255,255,.82);font-size:.9rem}
     .top-actions{display:flex;gap:10px;flex-wrap:wrap}
 
     .app{width:min(1380px,calc(100% - 24px));margin:18px auto 30px;display:grid;grid-template-columns:300px 1fr;gap:18px}
@@ -207,7 +204,6 @@
     .semester-card::before{content:"";position:absolute;inset:0 auto auto 0;width:100%;height:6px;background:currentColor;opacity:.9}
     .semester-card::after{content:"";position:absolute;right:-32px;bottom:-32px;width:110px;height:110px;border-radius:50%;background:radial-gradient(circle, rgba(201,153,82,.18), transparent 70%)}
     .semester-card:hover{transform:translateY(-5px);box-shadow:0 18px 32px rgba(0,0,0,.10);border-color:rgba(23,49,64,.16)}
-    .semester-card:active{transform:translateY(-2px)}
     .card-topline{display:flex;justify-content:space-between;align-items:center;gap:12px}
     .icon{font-size:2rem;line-height:1}
     .nav-label{font-size:.76rem;padding:7px 10px}
@@ -376,8 +372,7 @@
           <div class="panel-header">
             <div class="panel-kicker">Inicio</div>
             <h3>Bienvenido a bordo</h3>
-            <p>Explora la bitácora, visita la taberna pirata, comparte tesoros académicos y pon rumbo hacia el aprobado.
-Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
+            <p>Explora la bitácora, visita la taberna pirata, comparte tesoros académicos y pon rumbo hacia el aprobado. Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
           </div>
           <div class="panel-body">
             <div class="grid-2" style="margin-top:16px;">
@@ -386,12 +381,14 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
                 <div class="row">
                   <button class="btn btn-primary" onclick="openView('study')">Bitácora de estudio</button>
                   <button class="btn btn-dark" onclick="openView('common')">Taberna pirata</button>
-                  <button class="btn btn-soft" onclick="openView('files')">Archivos compartidos</button>
+                  <button class="btn btn-soft" onclick="openView('profile')">Mi perfil</button>
+                  <a href="https://medicina.uca.es/" target="_blank" rel="noopener noreferrer" class="btn btn-primary">🌐 Web Facultad de Medicina</a>
+                  <a href="https://oficinadelestudiante.uca.es/notas-y-actas/" target="_blank" rel="noopener noreferrer" class="btn btn-dark">📄 Expediente académico</a>
                 </div>
               </div>
               <div class="card">
                 <h4>Tu espacio público</h4>
-                <p>Tu perfil, tu foto y tus archivos se integran ahora con la zona de comunidad.</p>
+                <p>Tu perfil, tu foto y tus archivos se integran con la zona de comunidad. Los nuevos usuarios quedan pendientes de aprobación por el administrador.</p>
                 <button class="btn btn-primary" onclick="openView('profile')">Editar mi perfil y cuenta</button>
               </div>
             </div>
@@ -469,12 +466,12 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
           </div>
         </div>
 
-        <div id="view-profile" class="hidden"> ...PROFILE_VIEW_PLACEHOLDER... </div>
-        <div id="view-profiles" class="hidden"> ...PROFILES_VIEW_PLACEHOLDER... </div>
-        <div id="view-common" class="hidden"> ...COMMON_VIEW_PLACEHOLDER... </div>
-        <div id="view-private" class="hidden"> ...PRIVATE_VIEW_PLACEHOLDER... </div>
-        <div id="view-files" class="hidden"> ...FILES_VIEW_PLACEHOLDER... </div>
-        <div id="view-admin" class="hidden"> ...ADMIN_VIEW_PLACEHOLDER... </div>
+        <div id="view-profile" class="hidden"></div>
+        <div id="view-profiles" class="hidden"></div>
+        <div id="view-common" class="hidden"></div>
+        <div id="view-private" class="hidden"></div>
+        <div id="view-files" class="hidden"></div>
+        <div id="view-admin" class="hidden"></div>
         <div id="view-wait" class="hidden"><div class="card" style="margin:24px;"><h3>Tu cuenta está pendiente de aprobación</h3><p>Puedes editar tu perfil y tus datos de cuenta, pero el acceso a la comunidad depende de la activación del administrador. La bitácora básica sigue accesible si tú eres admin.</p></div></div>
       </section>
     </div>
@@ -541,7 +538,7 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
     async function countSessionVisit(uid){ try{ const key="session_counted_for_"+uid; if(!sessionStorage.getItem(key)){ await update(dbRef(db,"visitas/"+uid), { total: increment(1) }); sessionStorage.setItem(key,"true"); } }catch(e){ console.log("Error contando visita", e); } }
     async function updateRankInfoUI(){ const rankInfo=document.getElementById("rank-info"); if(!rankInfo || !currentUser || !currentProfile) return; const visits=await getUserVisitCount(currentUser.uid); const rankData=getRankData(visits,isAdmin()); if(isAdmin()){ rankInfo.textContent="Rango: Almirante · Acceso exclusivo"; return; } if(!rankData.nextRank){ rankInfo.textContent=`Rango: ${rankData.rank} · Máximo rango público alcanzado`; return; } rankInfo.textContent=`Rango: ${rankData.rank} · Te faltan ${formatNumber(rankData.remaining)} visitas para ascender a ${rankData.nextRank}`; }
 
-    function setStudyAdminZoneHtml(statsHtml){ const anchor=document.getElementById("study-admin-zone-anchor"); if(!anchor) return; const old=document.getElementById("study-admin-zone"); if(old) old.remove(); if(!isAdmin()) return; anchor.insertAdjacentHTML("beforebegin", `
+    function setStudyAdminZoneHtml(){ const anchor=document.getElementById("study-admin-zone-anchor"); if(!anchor) return; const old=document.getElementById("study-admin-zone"); if(old) old.remove(); if(!isAdmin()) return; anchor.insertAdjacentHTML("beforebegin", `
       <div class="course-section" id="study-admin-zone">
         <div class="course-title" style="color: var(--privado-color); border-left: 6px solid var(--privado-color);">Zona del capitán</div>
         <div class="semester-grid">
@@ -561,22 +558,97 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
       </div>
     `); }
 
-    async function renderStudyAdminZone(){ if(!isAdmin()) return; setStudyAdminZoneHtml(""); await loadAdminVisits(); }
+    async function renderStudyAdminZone(){ setStudyAdminZoneHtml(); if(isAdmin()) await loadAdminVisits(); }
 
-    async function loadAdminVisits(){ const box=document.getElementById("admin-visits-list"); if(!box) return; let listaContadores = "<ul><li>Cargando datos...</li></ul>"; try{ const snapshot=await get(dbRef(db,"visitas")); const datos=snapshot.exists()?snapshot.val():{}; const profilesSnap=await get(dbRef(db,"profiles")); const profiles=profilesSnap.exists()?profilesSnap.val():{}; let items=""; Object.values(profiles).sort((a,b)=>String(a.username||"").localeCompare(String(b.username||""),"es")).forEach(usuario=>{ const visitas=datos?.[usuario.uid]?.total || 0; const aliasSeguro=isAdminProfile(usuario)?"Almirante":(usuario.username||"Tripulante"); items += `<li style="padding:10px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:16px;"><strong>${escapeHtml(aliasSeguro)}</strong><span>${formatNumber(visitas)} visitas</span></li>`; }); if(!items) items = "<li><em>Sin datos todavía</em></li>"; listaContadores = `<ul style="list-style:none;padding:0;margin:0;">${items}</ul>`; }catch(e){ listaContadores = "<ul style=\"list-style:none;padding:0;margin:0;\"><li><em>Error al cargar estadísticas</em></li></ul>"; } box.innerHTML = listaContadores; }
+    async function loadAdminVisits(){ const box=document.getElementById("admin-visits-list"); if(!box) return; let listaContadores = "<ul><li>Cargando datos...</li></ul>"; try{ const snapshot=await get(dbRef(db,"visitas")); const datos=snapshot.exists()?snapshot.val():{}; const profilesSnap=await get(dbRef(db,"profiles")); const profiles=profilesSnap.exists()?profilesSnap.val():{}; let items=""; Object.values(profiles).sort((a,b)=>String(a.username||"").localeCompare(String(b.username||""),"es")).forEach(usuario=>{ const visitas=datos?.[usuario.uid]?.total || 0; const aliasSeguro=isAdminProfile(usuario)?"Administrador":(usuario.username||"Tripulante"); items += `<li style="padding:10px 0;border-bottom:1px solid #eee;display:flex;justify-content:space-between;gap:16px;"><strong>${escapeHtml(aliasSeguro)}</strong><span>${formatNumber(visitas)} visitas</span></li>`; }); if(!items) items = "<li><em>Sin datos todavía</em></li>"; listaContadores = `<ul style="list-style:none;padding:0;margin:0;">${items}</ul>`; }catch(e){ listaContadores = "<ul style=\"list-style:none;padding:0;margin:0;\"><li><em>Error al cargar estadísticas</em></li></ul>"; } box.innerHTML = listaContadores; }
 
-    function showAuthMode(mode){ document.getElementById("login-form").classList.toggle("hidden", mode !== "login"); document.getElementById("register-form").classList.toggle("hidden", mode !== "register"); document.getElementById("auth-subtitle").textContent = mode === "login" ? "Inicia sesión con tu correo o nombre de usuario y contraseña." : "Crea tu cuenta con tus datos académicos."; clearAuthMsgs(); }
+    function showAuthMode(mode){ document.getElementById("login-form").classList.toggle("hidden", mode !== "login"); document.getElementById("register-form").classList.toggle("hidden", mode !== "register"); document.getElementById("auth-subtitle").textContent = mode === "login" ? "Inicia sesión con tu correo o nombre de usuario y contraseña." : "Crea tu cuenta con tus datos académicos. Quedará pendiente de aprobación salvo la cuenta del administrador."; clearAuthMsgs(); }
     function setAuthError(msg){ const el=document.getElementById("auth-error"); const ok=document.getElementById("auth-ok"); ok.style.display="none"; el.style.display="block"; el.textContent=msg; }
     function setAuthOk(msg){ const el=document.getElementById("auth-ok"); const err=document.getElementById("auth-error"); err.style.display="none"; el.style.display="block"; el.textContent=msg; }
     function clearAuthMsgs(){ document.getElementById("auth-error").style.display="none"; document.getElementById("auth-ok").style.display="none"; }
     async function usernameAvailable(usernameSlug,currentUid=null){ const snap=await get(dbRef(db,"usernames/"+usernameSlug)); if(!snap.exists()) return true; return snap.val()===currentUid; }
-    async function resolveEmailFromIdentifier(identifier){ const value=String(identifier||"").trim(); if(!value) return ""; if(value.includes("@")) return value.toLowerCase(); const usernameSlug=slugifyUsername(value); const usernameSnap=await get(dbRef(db,"usernames/"+usernameSlug)); if(!usernameSnap.exists()) throw new Error("Nombre de usuario no encontrado."); const uid=usernameSnap.val(); const profileSnap=await get(dbRef(db,"profiles/"+uid)); if(!profileSnap.exists()) throw new Error("No se encontró el perfil de ese usuario."); const email=String(profileSnap.val()?.email || "").trim().toLowerCase(); if(!email) throw new Error("Ese usuario no tiene correo asociado."); return email; }
 
-    async function login(){ clearAuthMsgs(); const identifier=String(document.getElementById("login-identifier")?.value||"").trim(); const password=String(document.getElementById("login-password")?.value||""); if(!identifier||!password){ setAuthError("Introduce correo o nombre de usuario, y contraseña."); return; } try{ const email=await resolveEmailFromIdentifier(identifier); await signInWithEmailAndPassword(auth,email,password); }catch(e){ console.error(e); setAuthError(e?.message || "No se pudo iniciar sesión."); } }
-    async function sendReset(){ clearAuthMsgs(); const identifier=String(document.getElementById("login-identifier")?.value||"").trim(); if(!identifier){ setAuthError("Escribe tu correo o nombre de usuario para restablecer la contraseña."); return; } try{ const email=await resolveEmailFromIdentifier(identifier); await sendPasswordResetEmail(auth,email); setAuthOk("Correo de restablecimiento enviado. Revisa también la carpeta de spam o correo no deseado."); }catch(e){ console.error(e); setAuthError(e?.message || "No se pudo enviar el correo."); } }
+    async function resolveEmailFromIdentifier(identifier){
+      const value=String(identifier||"").trim();
+      if(!value) return "";
+      if(value.includes("@")) return value.toLowerCase();
+      const usernameSlug=slugifyUsername(value);
+      const usernameSnap=await get(dbRef(db,"usernames/"+usernameSlug));
+      if(!usernameSnap.exists()) throw new Error("Nombre de usuario no encontrado.");
+      const uid=usernameSnap.val();
+      const profileSnap=await get(dbRef(db,"profiles/"+uid));
+      if(!profileSnap.exists()) throw new Error("No se encontró el perfil de ese usuario.");
+      const email=String(profileSnap.val()?.email || "").trim().toLowerCase();
+      if(!email) throw new Error("Ese usuario no tiene correo asociado.");
+      return email;
+    }
 
-    async function register(){ clearAuthMsgs(); const username=document.getElementById("reg-username").value.trim(); const usernameSlug=slugifyUsername(username); const curso=document.getElementById("reg-curso").value.trim(); const nombre=document.getElementById("reg-nombre").value.trim(); const apellidos=document.getElementById("reg-apellidos").value.trim(); const email=document.getElementById("reg-email").value.trim().toLowerCase(); const telefono=document.getElementById("reg-telefono").value.trim(); const password=document.getElementById("reg-password").value; const bio=document.getElementById("reg-bio").value.trim(); if(!username||!curso||!nombre||!apellidos||!email||!telefono||!password){ setAuthError("Completa todos los campos obligatorios."); return; } if(usernameSlug.length<3){ setAuthError("El nombre de usuario debe tener al menos 3 caracteres válidos."); return; } if(password.length<6){ setAuthError("La contraseña debe tener al menos 6 caracteres."); return; }
-      try{ const available=await usernameAvailable(usernameSlug); if(!available){ setAuthError("Ese nombre de usuario ya existe."); return; } const cred=await createUserWithEmailAndPassword(auth,email,password); const uid=cred.user.uid; const admin=email===ADMIN_EMAIL; const profile={ uid, username, usernameSlug, nombre, apellidos, curso, email, telefono, bio, photoURL:"", approved:!!admin, role:admin?"admin":"user", canUpload:true, createdAt:new Date().toISOString(), publicVisible:true }; await set(dbRef(db,"profiles/"+uid),profile); await set(dbRef(db,"usernames/"+usernameSlug),uid); setAuthOk("Cuenta creada correctamente."); }catch(e){ console.error(e); setAuthError(e?.message || "No se pudo crear la cuenta."); } }
+    async function login(){
+      clearAuthMsgs();
+      const identifier=String(document.getElementById("login-identifier")?.value||"").trim();
+      const password=String(document.getElementById("login-password")?.value||"");
+      if(!identifier||!password){ setAuthError("Introduce correo o nombre de usuario, y contraseña."); return; }
+      try{ const email=await resolveEmailFromIdentifier(identifier); await signInWithEmailAndPassword(auth,email,password); }
+      catch(e){ console.error(e); setAuthError(e?.message || "No se pudo iniciar sesión."); }
+    }
+
+    async function sendReset(){
+      clearAuthMsgs();
+      const identifier=String(document.getElementById("login-identifier")?.value||"").trim();
+      if(!identifier){ setAuthError("Escribe tu correo o nombre de usuario para restablecer la contraseña."); return; }
+      try{ const email=await resolveEmailFromIdentifier(identifier); await sendPasswordResetEmail(auth,email); setAuthOk("Correo de restablecimiento enviado. Revisa también la carpeta de spam o correo no deseado."); }
+      catch(e){ console.error(e); setAuthError(e?.message || "No se pudo enviar el correo."); }
+    }
+
+    async function register(){
+      clearAuthMsgs();
+      const username=document.getElementById("reg-username").value.trim();
+      const usernameSlug=slugifyUsername(username);
+      const curso=document.getElementById("reg-curso").value.trim();
+      const nombre=document.getElementById("reg-nombre").value.trim();
+      const apellidos=document.getElementById("reg-apellidos").value.trim();
+      const email=document.getElementById("reg-email").value.trim().toLowerCase();
+      const telefono=document.getElementById("reg-telefono").value.trim();
+      const password=document.getElementById("reg-password").value;
+      const bio=document.getElementById("reg-bio").value.trim();
+
+      if(!username||!curso||!nombre||!apellidos||!email||!telefono||!password){ setAuthError("Completa todos los campos obligatorios."); return; }
+      if(usernameSlug.length<3){ setAuthError("El nombre de usuario debe tener al menos 3 caracteres válidos."); return; }
+      if(password.length<6){ setAuthError("La contraseña debe tener al menos 6 caracteres."); return; }
+
+      try{
+        const available=await usernameAvailable(usernameSlug);
+        if(!available){ setAuthError("Ese nombre de usuario ya existe."); return; }
+
+        const cred=await createUserWithEmailAndPassword(auth,email,password);
+        const uid=cred.user.uid;
+        const admin=email===ADMIN_EMAIL;
+
+        const profile={
+          uid, username, usernameSlug, nombre, apellidos, curso, email, telefono, bio,
+          photoURL:"",
+          approved: !!admin,
+          role: admin ? "admin" : "user",
+          canUpload:true,
+          createdAt:new Date().toISOString(),
+          publicVisible:true
+        };
+
+        await set(dbRef(db,"profiles/"+uid),profile);
+        await set(dbRef(db,"usernames/"+usernameSlug),uid);
+        await update(dbRef(db,"userState/"+uid),{ commonLastRead: 0 });
+        await update(dbRef(db,"visitas/"+uid),{ total: 0 });
+
+        setAuthOk(admin ? "Cuenta de administrador creada correctamente." : "Cuenta creada correctamente. Queda pendiente de aprobación por el administrador.");
+      }catch(e){
+        console.error("ERROR EN REGISTER", e);
+        if(e?.code === "auth/email-already-in-use") return setAuthError("Ese correo ya está registrado.");
+        if(e?.code === "auth/invalid-email") return setAuthError("El correo no es válido.");
+        if(e?.code === "auth/weak-password") return setAuthError("La contraseña es demasiado débil.");
+        if(String(e?.message || "").includes("Permission denied")) return setAuthError("Firebase Database está rechazando la escritura. Hay que revisar las reglas.");
+        setAuthError(e?.message || "No se pudo crear la cuenta.");
+      }
+    }
 
     async function signOutUser(){ stopCommonAuto(); stopNotifAuto(); await signOut(auth); }
     function setTopUser(profile){ document.getElementById("top-name").textContent=profile?.username || "Usuario"; document.getElementById("top-line").textContent=`${profile?.email || ""} · ${profile?.curso || ""}`; const avatar=document.getElementById("top-avatar"); if(profile?.photoURL) avatar.innerHTML=`<img src="${profile.photoURL}" alt="avatar">`; else avatar.textContent=getAvatarText(profile); }
@@ -584,7 +656,6 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
     function setApprovalBox(profile){
       const box = document.getElementById("approval-box");
       if (!box) return;
-
       box.innerHTML = `
         <div class="row" style="justify-content:space-between;align-items:center;">
           <div>
@@ -606,7 +677,7 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
     function ensureBigViewsMarkup(){
       document.getElementById('view-profile').innerHTML = `<div class="panel-header"><div class="panel-kicker">Mi perfil y cuenta</div><h3>Datos públicos y datos de cuenta</h3><p>Puedes modificar tu nombre de usuario, nombre, apellidos, curso, correo, teléfono y bio en cualquier momento.</p></div><div class="panel-body"><div id="approval-box" class="card" style="margin-bottom:16px;"></div><div class="profile-banner card" style="margin-bottom:16px;"><div class="profile-big" id="profile-photo-preview">M</div><div><h4 id="profile-title-name">Mi perfil</h4><p id="profile-title-sub">@usuario</p></div></div><div class="field-grid"><input id="profile-username" placeholder="Nombre de usuario público" /><input id="profile-curso" placeholder="Curso que estudia" /><input id="profile-nombre" placeholder="Nombre" /><input id="profile-apellidos" placeholder="Apellidos" /><input id="profile-email" class="field-full" placeholder="Correo electrónico" /><input id="profile-telefono" placeholder="Teléfono" /><input id="profile-photo-file" type="file" accept="image/*" /><textarea id="profile-bio" class="field-full" placeholder="Descripción pública"></textarea></div><div class="row"><button class="btn btn-primary" onclick="saveProfile()">Guardar cambios</button><button class="btn btn-dark" onclick="uploadProfilePhoto()">Subir foto de perfil</button></div><div id="profile-debug" class="debug"></div></div>`;
       document.getElementById('view-profiles').innerHTML = `<div class="panel-header"><div class="panel-kicker">Perfiles públicos</div><h3>Usuarios de la comunidad</h3><p>Busca perfiles públicos aprobados y entra en su espacio visible.</p></div><div class="panel-body"><div class="row" style="margin-bottom:16px;"><input id="profiles-search" style="flex:1 1 240px;" placeholder="Buscar por nombre de usuario o nombre" oninput="loadPublicProfiles()" /><input id="profiles-course-filter" style="flex:1 1 180px;" placeholder="Filtrar por curso" oninput="loadPublicProfiles()" /><select id="profiles-sort" style="flex:0 0 180px;" onchange="loadPublicProfiles()"><option value="alpha">Orden alfabético</option><option value="recent">Más recientes</option></select></div><div id="profiles-list" class="user-grid"></div></div>`;
-      document.getElementById('view-common').innerHTML = `<div class="panel-header"><div class="panel-kicker">Taberna pirata</div><h3>Taberna de la tripulación</h3><p>Mensajes visibles para toda la comunidad. Se actualiza cada 10 segundos mientras estés aquí.</p></div><div class="panel-body"><div id="common-list" class="msg-list"></div><textarea id="common-input" placeholder="Escribe tu mensaje..."></textarea><div class="row"><button class="btn btn-primary" onclick="sendCommonMessage()">Enviar a sala común</button><button class="btn btn-soft" onclick="loadCommonMessages(true)">Recargar</button></div><div id="common-debug" class="debug"></div></div>`;
+      document.getElementById('view-common').innerHTML = `<div class="panel-header"><div class="panel-kicker">Taberna pirata</div><h3>Taberna de la tripulación</h3><p>Mensajes visibles para toda la comunidad. Se actualiza cada 10 segundos mientras estés aquí.</p></div><div class="panel-body"><div id="common-list" class="msg-list"></div><textarea id="common-input" placeholder="Escribe tu mensaje..."></textarea><div class="row"><button class="btn btn-primary" onclick="sendCommonMessage()">Enviar a la taberna</button><button class="btn btn-soft" onclick="loadCommonMessages(true)">Recargar</button></div><div id="common-debug" class="debug"></div></div>`;
       document.getElementById('view-private').innerHTML = `<div class="panel-header"><div class="panel-kicker">Mensajes privados</div><h3>Conversaciones entre usuarios</h3><p>Elige destinatario y habla con otro usuario usando su nombre de usuario.</p></div><div class="panel-body"><select id="private-user-select" onchange="loadPrivateMessages(true)"></select><div id="private-list" class="msg-list"></div><textarea id="private-input" placeholder="Escribe tu mensaje privado..."></textarea><div class="row"><button class="btn btn-primary" onclick="sendPrivateMessage()">Enviar mensaje privado</button><button class="btn btn-soft" onclick="loadPrivateMessages(true)">Recargar</button></div><div id="private-debug" class="debug"></div></div>`;
       document.getElementById('view-files').innerHTML = `<div class="panel-header"><div class="panel-kicker">Compartir archivos</div><h3>Apuntes, documentos y recursos</h3><p>Sube archivos para compartir con la comunidad aprobada. Los archivos pasan por moderación.</p></div><div class="panel-body"><div class="field-grid"><input id="upload-title" class="field-full" placeholder="Título del archivo" /><select id="upload-course"><option value="">Curso</option><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select><select id="upload-semester"><option value="">Cuatrimestre</option><option value="1">1</option><option value="2">2</option></select><select id="upload-subject" class="field-full"><option value="">Asignatura</option><option value="Biología Celular">Biología Celular</option><option value="Anatomía 1">Anatomía 1</option><option value="Anatomía 2">Anatomía 2</option><option value="Comunicación Médica">Comunicación Médica</option><option value="Física Médica">Física Médica</option><option value="Sociología Sanitaria">Sociología Sanitaria</option><option value="Bioquímica de los Nutrientes">Bioquímica de los Nutrientes</option><option value="Bioquímica Médica">Bioquímica Médica</option><option value="Bioquímica Humana">Bioquímica Humana</option><option value="Fisiología Celular y Tisular 1">Fisiología Celular y Tisular 1</option><option value="Embriología e Histología 1">Embriología e Histología 1</option><option value="Bioestadística">Bioestadística</option></select><select id="upload-category"><option value="">Tipo de material</option><option value="Apuntes / Resumen / Esquema">Apuntes / Resumen / Esquema</option><option value="Libro">Libro</option><option value="Actividades">Actividades</option></select><input id="upload-file" type="file" /><textarea id="upload-description" class="field-full" placeholder="Descripción del archivo"></textarea></div><div class="row"><button class="btn btn-primary" onclick="uploadSharedFile()">Subir archivo</button><button class="btn btn-soft" onclick="loadSharedFiles()">Recargar lista</button></div><div style="height:16px"></div><div class="grid-2"><div><h4>Archivos compartidos visibles</h4><div id="files-list" class="file-list"></div></div><div><h4>Mis archivos</h4><div id="my-files-list" class="file-list"></div></div></div><div id="files-debug" class="debug"></div></div>`;
       document.getElementById('view-admin').innerHTML = `<div class="panel-header"><div class="panel-kicker">Parte privada</div><h3>Moderación y control</h3><p>Aquí el administrador puede controlar usuarios, archivos, sala común y mensajes privados.</p></div><div class="panel-body"><div class="card" style="margin-bottom:16px;"><h4>Usuarios</h4><div id="admin-users-list"></div></div><div class="card" style="margin-bottom:16px;"><h4>Registro global en la nube</h4><div id="admin-visits-list"></div><div class="muted" style="margin-top:10px;">Estas estadísticas se actualizan una vez por sesión iniciada.</div></div><div class="card" style="margin-bottom:16px;"><h4>Moderación de archivos</h4><div id="admin-files-list"></div></div><div class="card" style="margin-bottom:16px;"><h4>Moderación de sala común</h4><div id="admin-common-list"></div></div><div class="card"><h4>Moderación de mensajes privados</h4><div class="row" style="margin-bottom:12px;"><select id="admin-private-user-a" style="flex:1 1 220px;"></select><select id="admin-private-user-b" style="flex:1 1 220px;"></select><button class="btn btn-dark" onclick="loadAdminPrivateConversation()">Cargar conversación</button></div><div id="admin-private-list"></div></div></div>`;
@@ -632,7 +703,7 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
     async function markCommonRead(timestamp=0){ if(!currentUser) return; await update(dbRef(db,"userState/"+currentUser.uid),{ commonLastRead:Number(timestamp||0) }); }
     async function markPrivateRead(otherUid,timestamp=0){ if(!currentUser||!otherUid) return; await update(dbRef(db,"userState/"+currentUser.uid+"/privateLastRead"),{ [otherUid]: Number(timestamp||0) }); }
 
-    async function loadCommonMessages(markAsRead=true){ const box=document.getElementById("common-list"); if(!box) return; const debug=document.getElementById("common-debug"); debug.style.display="none"; try{ const snapshot=await get(dbRef(db,"commonRoom")); const data=snapshot.exists()?snapshot.val():{}; const messages=Object.entries(data).map(([id,val])=>({id,...val})).sort((a,b)=>Number(a.timestamp||0)-Number(b.timestamp||0)); const last=messages.slice(-100); if(!last.length){ box.innerHTML=`<div class="msg-item"><div class="msg-meta">Sin mensajes</div><div class="msg-text">Aún no hay mensajes en la sala común.</div></div>`; if(markAsRead){ await markCommonRead(0); await renderNotifications(); } return; } box.innerHTML=last.map(msg=>`<div class="msg-item ${msg.fromUid===currentUser.uid?"mine":""}"><div class="msg-meta">@${escapeHtml(msg.fromUsername||"usuario")} · ${escapeHtml(formatDateTime(msg.createdAt))}</div><div class="msg-text">${escapeHtml(msg.text||"")}</div></div>`).join(""); box.scrollTop=box.scrollHeight; if(markAsRead){ const latestTs=Number(last[last.length-1]?.timestamp||0); await markCommonRead(latestTs); await renderNotifications(); } }catch(e){ console.error(e); box.innerHTML=`<div class="msg-item"><div class="msg-meta">Error</div><div class="msg-text">No se pudieron cargar los mensajes.</div></div>`; debug.style.display="block"; debug.textContent=e?.message || "Error al cargar sala común."; } }
+    async function loadCommonMessages(markAsRead=true){ const box=document.getElementById("common-list"); if(!box) return; const debug=document.getElementById("common-debug"); debug.style.display="none"; try{ const snapshot=await get(dbRef(db,"commonRoom")); const data=snapshot.exists()?snapshot.val():{}; const messages=Object.entries(data).map(([id,val])=>({id,...val})).sort((a,b)=>Number(a.timestamp||0)-Number(b.timestamp||0)); const last=messages.slice(-100); if(!last.length){ box.innerHTML=`<div class="msg-item"><div class="msg-meta">Sin mensajes</div><div class="msg-text">Aún no hay mensajes en la taberna.</div></div>`; if(markAsRead){ await markCommonRead(0); await renderNotifications(); } return; } box.innerHTML=last.map(msg=>`<div class="msg-item ${msg.fromUid===currentUser.uid?"mine":""}"><div class="msg-meta">@${escapeHtml(msg.fromUsername||"usuario")} · ${escapeHtml(formatDateTime(msg.createdAt))}</div><div class="msg-text">${escapeHtml(msg.text||"")}</div></div>`).join(""); box.scrollTop=box.scrollHeight; if(markAsRead){ const latestTs=Number(last[last.length-1]?.timestamp||0); await markCommonRead(latestTs); await renderNotifications(); } }catch(e){ console.error(e); box.innerHTML=`<div class="msg-item"><div class="msg-meta">Error</div><div class="msg-text">No se pudieron cargar los mensajes.</div></div>`; debug.style.display="block"; debug.textContent=e?.message || "Error al cargar taberna."; } }
     async function sendCommonMessage(){ if(!isApproved()) return; const input=document.getElementById("common-input"); const text=input.value.trim(); if(!text) return; try{ await push(dbRef(db,"commonRoom"),{ fromUid:currentUser.uid, fromUsername:currentProfile.username, text, createdAt:new Date().toISOString(), timestamp:Date.now() }); input.value=""; await loadCommonMessages(true); }catch(e){ console.error(e); } }
 
     async function loadPrivateMessages(markAsRead=true){ const select=document.getElementById("private-user-select"); const otherUid=select?.value; const box=document.getElementById("private-list"); if(!box) return; const debug=document.getElementById("private-debug"); debug.style.display="none"; if(!otherUid){ box.innerHTML=`<div class="msg-item"><div class="msg-meta">Sin destinatario</div><div class="msg-text">No hay otro usuario disponible.</div></div>`; return; } try{ const convoId=getConversationId(currentUser.uid,otherUid); const snapshot=await get(dbRef(db,"privateMessages/"+convoId)); const data=snapshot.exists()?snapshot.val():{}; const messages=Object.entries(data).map(([id,val])=>({id,...val})).sort((a,b)=>Number(a.timestamp||0)-Number(b.timestamp||0)); const last=messages.slice(-100); if(!last.length){ box.innerHTML=`<div class="msg-item"><div class="msg-meta">Sin mensajes</div><div class="msg-text">Todavía no hay conversación con este usuario.</div></div>`; if(markAsRead){ await markPrivateRead(otherUid,0); await renderNotifications(); } return; } box.innerHTML=last.map(msg=>`<div class="msg-item ${msg.fromUid===currentUser.uid?"mine":""}"><div class="msg-meta">@${escapeHtml(msg.fromUsername||"usuario")} · ${escapeHtml(formatDateTime(msg.createdAt))}</div><div class="msg-text">${escapeHtml(msg.text||"")}</div></div>`).join(""); box.scrollTop=box.scrollHeight; if(markAsRead){ const latestTs=Number(last[last.length-1]?.timestamp||0); await markPrivateRead(otherUid,latestTs); await renderNotifications(); } }catch(e){ console.error(e); box.innerHTML=`<div class="msg-item"><div class="msg-meta">Error</div><div class="msg-text">No se pudo cargar la conversación.</div></div>`; debug.style.display="block"; debug.textContent=e?.message || "Error al cargar conversación privada."; } }
@@ -654,7 +725,7 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
     async function toggleUpload(uid,value){ await update(dbRef(db,"profiles/"+uid),{ canUpload:value, uploadReviewedAt:new Date().toISOString() }); await loadAdminUsers(); }
     async function togglePublicProfile(uid,value){ await update(dbRef(db,"profiles/"+uid),{ publicVisible:value }); await loadAdminUsers(); await loadPublicProfiles(); }
     async function loadAdminFiles(){ const box=document.getElementById("admin-files-list"); if(!box) return; const snap=await get(dbRef(db,"sharedFiles")); const data=snap.exists()?snap.val():{}; const files=Object.values(data||{}).sort((a,b)=>Number(b.timestamp||0)-Number(a.timestamp||0)); box.innerHTML=files.length ? files.map(f=>`<div class="file-item"><div class="file-meta">@${escapeHtml(f.ownerUsername||"usuario")} · ${escapeHtml(formatDateTime(f.createdAt))}</div><strong>${escapeHtml(f.title||"Archivo")}</strong><div style="margin:8px 0;"><strong>Curso:</strong> ${escapeHtml(f.course||"—")} · <strong>Cuatrimestre:</strong> ${escapeHtml(f.semester||"—")} · <strong>Asignatura:</strong> ${escapeHtml(f.subject||"—")} · <strong>Tipo:</strong> ${escapeHtml(f.category||"—")}</div><div style="margin:8px 0;">${escapeHtml(f.description||"")}</div><div class="row"><span class="pill ${f.approved?"on":"off"}">${f.approved?"Aprobado":"Pendiente"}</span><span class="pill ${f.visible!==false?"on":"off"}">${f.visible!==false?"Visible":"Oculto"}</span></div><div class="row" style="margin-top:10px;"><a class="btn btn-dark" href="${f.url}" target="_blank" rel="noopener noreferrer">Abrir</a><button class="btn ${f.approved?"btn-soft":"btn-ok"}" onclick="setFileModeration('${f.id}', { approved: ${f.approved?"false":"true"} })">${f.approved?"Quitar aprobación":"Aprobar"}</button><button class="btn ${f.visible!==false?"btn-soft":"btn-ok"}" onclick="setFileModeration('${f.id}', { visible: ${f.visible!==false?"false":"true"} })">${f.visible!==false?"Ocultar":"Mostrar"}</button><button class="btn btn-danger" onclick="deleteSharedFile('${f.id}')">Borrar</button></div></div>`).join("") : "<div class='card'>No hay archivos.</div>"; }
-    async function loadAdminCommonMessages(){ const box=document.getElementById("admin-common-list"); if(!box) return; const snap=await get(dbRef(db,"commonRoom")); const data=snap.exists()?snap.val():{}; const messages=Object.entries(data||{}).map(([id,val])=>({id,...val})).sort((a,b)=>Number(b.timestamp||0)-Number(a.timestamp||0)).slice(0,100); box.innerHTML=messages.length ? messages.map(m=>`<div class="msg-item"><div class="msg-meta">@${escapeHtml(m.fromUsername||"usuario")} · ${escapeHtml(formatDateTime(m.createdAt))}</div><div class="msg-text">${escapeHtml(m.text||"")}</div><div class="row" style="margin-top:10px;"><button class="btn btn-danger" onclick="deleteCommonMessage('${m.id}')">Borrar mensaje</button></div></div>`).join("") : "<div class='card'>No hay mensajes en la sala común.</div>"; }
+    async function loadAdminCommonMessages(){ const box=document.getElementById("admin-common-list"); if(!box) return; const snap=await get(dbRef(db,"commonRoom")); const data=snap.exists()?snap.val():{}; const messages=Object.entries(data||{}).map(([id,val])=>({id,...val})).sort((a,b)=>Number(b.timestamp||0)-Number(a.timestamp||0)).slice(0,100); box.innerHTML=messages.length ? messages.map(m=>`<div class="msg-item"><div class="msg-meta">@${escapeHtml(m.fromUsername||"usuario")} · ${escapeHtml(formatDateTime(m.createdAt))}</div><div class="msg-text">${escapeHtml(m.text||"")}</div><div class="row" style="margin-top:10px;"><button class="btn btn-danger" onclick="deleteCommonMessage('${m.id}')">Borrar mensaje</button></div></div>`).join("") : "<div class='card'>No hay mensajes en la taberna.</div>"; }
     async function deleteCommonMessage(id){ await remove(dbRef(db,"commonRoom/"+id)); await loadAdminCommonMessages(); await loadCommonMessages(false); }
     async function populateAdminPrivateUsers(){ const a=document.getElementById("admin-private-user-a"); const b=document.getElementById("admin-private-user-b"); if(!a||!b) return; const snap=await get(dbRef(db,"profiles")); const data=snap.exists()?snap.val():{}; const users=Object.values(data||{}).sort((x,y)=>String(x.username||"").localeCompare(String(y.username||""),"es")); const html=users.map(u=>`<option value="${u.uid}">@${escapeHtml(u.username||"")}</option>`).join(""); a.innerHTML=html; b.innerHTML=html; }
     async function loadAdminPrivateConversation(){ const a=document.getElementById("admin-private-user-a")?.value; const b=document.getElementById("admin-private-user-b")?.value; const box=document.getElementById("admin-private-list"); if(!box) return; if(!a||!b||a===b){ box.innerHTML="<div class='card'>Selecciona dos usuarios distintos.</div>"; return; } const convoId=getConversationId(a,b); const snap=await get(dbRef(db,"privateMessages/"+convoId)); const data=snap.exists()?snap.val():{}; const messages=Object.entries(data||{}).map(([id,val])=>({id,...val})).sort((x,y)=>Number(y.timestamp||0)-Number(x.timestamp||0)); box.innerHTML=messages.length ? messages.map(m=>`<div class="msg-item"><div class="msg-meta">@${escapeHtml(m.fromUsername||"usuario")} · ${escapeHtml(formatDateTime(m.createdAt))}</div><div class="msg-text">${escapeHtml(m.text||"")}</div><div class="row" style="margin-top:10px;"><button class="btn btn-danger" onclick="deletePrivateMessage('${convoId}','${m.id}')">Borrar mensaje</button></div></div>`).join("") : "<div class='card'>No hay mensajes en esa conversación.</div>"; }
@@ -681,6 +752,7 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
       const target=document.getElementById("view-"+name);
       if(target) target.classList.remove("hidden");
       setActiveNavState(name);
+      if(name==="profile") setApprovalBox(currentProfile);
       if(name==="profiles") await loadPublicProfiles();
       if(name==="common"){ await loadCommonMessages(true); startCommonAuto(); }
       if(name==="private"){ await populatePrivateUsers(); await loadPrivateMessages(true); }
@@ -704,7 +776,6 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
       const studyView = document.getElementById("view-study");
       if(studyView && studyView.classList.contains("hidden")) openView("study");
     }
-
     function openInWorkspace(url,title="Zona de trabajo"){
       const frame=document.getElementById("workspace-frame");
       const empty=document.getElementById("workspace-empty");
@@ -717,7 +788,6 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
       setActiveNavState("study");
       window.scrollTo({top:0,behavior:"smooth"});
     }
-
     function reloadWorkspace(){ const frame=document.getElementById("workspace-frame"); if(frame&&frame.src){ try{ frame.contentWindow.location.reload(); }catch{ frame.src=frame.src; } } }
     function goBackWorkspace(){ const frame=document.getElementById("workspace-frame"); if(!frame||!frame.src) return; try{ frame.contentWindow.history.back(); }catch{ console.warn("No se pudo navegar atrás dentro del iframe."); } }
 
@@ -726,113 +796,27 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
     onAuthStateChanged(auth, async (user) => {
       try{
         currentUser=user;
-        if(!user){
-          stopCommonAuto();
-          stopNotifAuto();
-          document.getElementById("auth-screen").classList.remove("hidden");
-          document.getElementById("app-shell").style.display="none";
-          return;
-        }
-
-        document.getElementById("auth-screen").classList.add("hidden");
-        document.getElementById("app-shell").style.display="block";
-
+        if(!user){ stopCommonAuto(); stopNotifAuto(); document.getElementById("auth-screen").classList.remove("hidden"); document.getElementById("app-shell").style.display="none"; return; }
+        document.getElementById("auth-screen").classList.add("hidden"); document.getElementById("app-shell").style.display="block";
         currentProfile=await loadProfile(user.uid);
-
         if(!currentProfile){
           const email=String(user.email||"").trim().toLowerCase();
-          const usernameBase=email===ADMIN_EMAIL ? "Medico pirata" : (email.split("@")[0] || "usuario");
+          const usernameBase=email===ADMIN_EMAIL ? "medicopirata" : (email.split("@")[0] || "usuario");
           const usernameSlug=slugifyUsername(usernameBase);
           const admin=email===ADMIN_EMAIL;
-
-          currentProfile={
-            uid:user.uid,
-            username:usernameBase,
-            usernameSlug,
-            nombre:admin?"Santiago":"",
-            apellidos:admin?"Díaz":"",
-            curso:"",
-            email,
-            telefono:"",
-            bio:"",
-            photoURL:"",
-            approved:admin,
-            role:admin?"admin":"user",
-            canUpload:true,
-            createdAt:new Date().toISOString(),
-            publicVisible:true
-          };
-
+          currentProfile={ uid:user.uid, username:usernameBase, usernameSlug, nombre:admin?"Santiago":"", apellidos:admin?"Díaz":"", curso:"", email, telefono:"", bio:"", photoURL:"", approved:admin, role:admin?"admin":"user", canUpload:true, createdAt:new Date().toISOString(), publicVisible:true };
           await set(dbRef(db,"profiles/"+user.uid),currentProfile);
           const usernameRef=dbRef(db,"usernames/"+usernameSlug);
           const usernameSnap=await get(usernameRef);
           if(!usernameSnap.exists()) await set(usernameRef,user.uid);
         }
-
         const authEmail=String(user.email||"").trim().toLowerCase();
         const profileEmail=String(currentProfile.email||"").trim().toLowerCase();
         const shouldBeAdmin=authEmail===ADMIN_EMAIL || profileEmail===ADMIN_EMAIL;
-
-        if(shouldBeAdmin){
-          await update(dbRef(db,"profiles/"+user.uid),{ role:"admin", approved:true, email:authEmail || profileEmail });
-          currentProfile.role="admin";
-          currentProfile.approved=true;
-          currentProfile.email=authEmail || profileEmail;
-        }
-
-        setTopUser(currentProfile);
-        fillProfileForm(currentProfile);
-        setApprovalBox(currentProfile);
-        document.getElementById("admin-nav-btn").classList.toggle("hidden", !isAdmin());
-
-        await countSessionVisit(currentUser.uid);
-        await updateRankInfoUI();
-        await renderNotifications();
-        startNotifAuto();
-        await renderStudyAdminZone();
-        await openView("home");
-      }catch(e){
-        console.error("Error en onAuthStateChanged:",e);
-        alert("Error cargando la sesión. Mira la consola del navegador.");
-      }
+        if(shouldBeAdmin){ await update(dbRef(db,"profiles/"+user.uid),{ role:"admin", approved:true, email:authEmail || profileEmail }); currentProfile.role="admin"; currentProfile.approved=true; currentProfile.email=authEmail || profileEmail; }
+        setTopUser(currentProfile); fillProfileForm(currentProfile); setApprovalBox(currentProfile); document.getElementById("admin-nav-btn").classList.toggle("hidden", !isAdmin()); await countSessionVisit(currentUser.uid); await updateRankInfoUI(); await renderNotifications(); startNotifAuto(); await renderStudyAdminZone(); await openView("home");
+      }catch(e){ console.error("Error en onAuthStateChanged:",e); alert("Error cargando la sesión. Mira la consola del navegador."); }
     });
 
     window.setActiveNavState=setActiveNavState;
-    window.showAuthMode=showAuthMode;
-    window.login=login;
-    window.register=register;
-    window.sendReset=sendReset;
-    window.signOutUser=signOutUser;
-    window.saveProfile=saveProfile;
-    window.uploadProfilePhoto=uploadProfilePhoto;
-    window.loadPublicProfiles=loadPublicProfiles;
-    window.openProfileModal=openProfileModal;
-    window.closeProfileModal=closeProfileModal;
-    window.openPasswordModal=openPasswordModal;
-    window.closePasswordModal=closePasswordModal;
-    window.changePassword=changePassword;
-    window.loadCommonMessages=loadCommonMessages;
-    window.sendCommonMessage=sendCommonMessage;
-    window.loadPrivateMessages=loadPrivateMessages;
-    window.sendPrivateMessage=sendPrivateMessage;
-    window.uploadSharedFile=uploadSharedFile;
-    window.loadSharedFiles=loadSharedFiles;
-    window.deleteSharedFile=deleteSharedFile;
-    window.setFileModeration=setFileModeration;
-    window.toggleAccess=toggleAccess;
-    window.toggleUpload=toggleUpload;
-    window.togglePublicProfile=togglePublicProfile;
-    window.deleteCommonMessage=deleteCommonMessage;
-    window.loadAdminPrivateConversation=loadAdminPrivateConversation;
-    window.deletePrivateMessage=deletePrivateMessage;
-    window.loadAdminVisits=loadAdminVisits;
-    window.openView=openView;
-    window.openInWorkspace=openInWorkspace;
-    window.goToMainMenu=goToMainMenu;
-    window.reloadWorkspace=reloadWorkspace;
-    window.goBackWorkspace=goBackWorkspace;
-
-    showAuthMode("login");
-  </script>
-</body>
-</html>
+    window.showAuthMode=showAuthMode; window.login=login; window.register=register; window.sendReset=sendReset; window.signOutUser=signOutUser; window.saveProfile=saveProfile; window.uploadProfilePhoto=uploadProfilePhoto; window.loadPublicProfiles=loadPublicProfiles; window.openProfileModal=openProfileModal; window.closeProfileModal=closeProfileModal; window.openPasswordModal=openPasswordModal; window.closePasswordModal=closePasswordModal; window.changePassword=changePassword; window.loadCommonMessages=loadCommonMessages; window.sendCommonMessage=sendCommonMessage; window.loadPrivateMessages=loadPrivateMessages; window.sendPrivateMessage=sendPrivateMessage; window.uploadSharedFile=uploadSharedFile; window.loadSharedFiles=loadSharedFiles; window.deleteSharedFile=deleteSharedFile; window.setFileModeration=setFileModeration; window.toggleAccess=toggleAccess; window.toggleUpload=toggleUpload; window.togglePublicProfile=togglePublicProfile; window.deleteCommonMessage=deleteCommonMessage; window.loadAdminPrivateConversation=loadAdminPrivateConversation; window.deletePrivateMessage=deletePrivateMessage; window.loadAdminVisits=loadAdminVisits; window.openView=openView; window.openInWorkspace=openInWorkspace; window.goToMainMenu=goToMainMenu; window.reloadWorkspace=reloadWorkspace; window.goBackWorkspace=g
