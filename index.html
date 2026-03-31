@@ -1907,37 +1907,71 @@
       }
     }
 
-    function openInWorkspace(url,title="Zona de trabajo"){
-      const frame=document.getElementById("workspace-frame");
-      const empty=document.getElementById("workspace-empty");
-      document.getElementById("workspace-title").textContent=title;
+    function openInWorkspace(url, title = "Zona de trabajo"){
+  const frame = document.getElementById("workspace-frame");
+  const empty = document.getElementById("workspace-empty");
+  const workspaceTitle = document.getElementById("workspace-title");
 
-      frame.onload = () => {
-        try{
-          const doc = frame.contentDocument || frame.contentWindow.document;
-          const text = (doc?.body?.innerText || "").trim().toLowerCase();
+  workspaceTitle.textContent = title;
 
-          if(text.includes("404") || text.includes("not found") || text.includes("no se ha encontrado")){
-            empty.innerHTML = "<div><strong>Archivo no encontrado</strong>La ruta configurada no coincide con ningún archivo HTML real.</div>";
-            empty.style.display = "grid";
-            frame.style.display = "none";
-            return;
-          }
+  try{
+    const fullUrl = new URL(url, window.location.href).href;
 
-          sanitizeWorkspaceFrame();
-        }catch(e){
-          console.log("No se pudo revisar el contenido del iframe", e);
+    frame.onload = () => {
+      try{
+        const doc = frame.contentDocument || frame.contentWindow.document;
+        const bodyText = (doc?.body?.innerText || "").trim().toLowerCase();
+        const bodyHtml = (doc?.body?.innerHTML || "").trim().toLowerCase();
+
+        const looksLike404 =
+          bodyText.includes("404") ||
+          bodyText.includes("not found") ||
+          bodyText.includes("no se ha encontrado") ||
+          bodyText.includes("cannot get") ||
+          bodyHtml.includes("404");
+
+        if(looksLike404){
+          empty.innerHTML = `
+            <div>
+              <strong>Archivo no encontrado</strong>
+              La ruta configurada no coincide con ningún archivo HTML real:<br>
+              <span style="color:#8e6230;font-weight:700;">${escapeHtml(url)}</span>
+            </div>
+          `;
+          empty.style.display = "grid";
+          frame.style.display = "none";
+          return;
         }
-      };
 
-      frame.src=url;
-      frame.style.display="block";
-      empty.style.display="none";
-      document.getElementById("main-menu-view").classList.add("hidden");
-      document.getElementById("workspace-view").classList.remove("hidden");
-      setActiveNavState("study");
-      window.scrollTo({top:0,behavior:"smooth"});
-    }
+        sanitizeWorkspaceFrame();
+      }catch(e){
+        console.log("No se pudo revisar el contenido del iframe", e);
+      }
+    };
+
+    frame.src = fullUrl;
+    frame.style.display = "block";
+    empty.style.display = "none";
+    document.getElementById("main-menu-view").classList.add("hidden");
+    document.getElementById("workspace-view").classList.remove("hidden");
+    setActiveNavState("study");
+    window.scrollTo({ top: 0, behavior: "smooth" });
+
+  }catch(e){
+    console.error("Error abriendo ruta:", e);
+    empty.innerHTML = `
+      <div>
+        <strong>No se pudo abrir la ruta</strong>
+        Revisa que el archivo exista exactamente con este nombre:<br>
+        <span style="color:#8e6230;font-weight:700;">${escapeHtml(url)}</span>
+      </div>
+    `;
+    empty.style.display = "grid";
+    frame.style.display = "none";
+    document.getElementById("main-menu-view").classList.add("hidden");
+    document.getElementById("workspace-view").classList.remove("hidden");
+  }
+}
 
     function reloadWorkspace(){
       const frame=document.getElementById("workspace-frame");
