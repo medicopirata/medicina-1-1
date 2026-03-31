@@ -646,7 +646,6 @@
           <div class="panel-body">
             <div class="field-grid">
               <input id="upload-title" class="field-full" placeholder="Título del archivo" />
-              
               <select id="upload-course">
                 <option value="">Curso</option>
                 <option value="1">1</option>
@@ -656,13 +655,11 @@
                 <option value="5">5</option>
                 <option value="6">6</option>
               </select>
-
               <select id="upload-semester">
                 <option value="">Cuatrimestre</option>
                 <option value="1">1</option>
                 <option value="2">2</option>
               </select>
-
               <select id="upload-subject" class="field-full">
                 <option value="">Asignatura</option>
                 <option value="Biología Celular">Biología Celular</option>
@@ -678,14 +675,12 @@
                 <option value="Embriología e Histología 1">Embriología e Histología 1</option>
                 <option value="Bioestadística">Bioestadística</option>
               </select>
-
               <select id="upload-category">
                 <option value="">Tipo de material</option>
                 <option value="Apuntes / Resumen / Esquema">Apuntes / Resumen / Esquema</option>
                 <option value="Libro">Libro</option>
                 <option value="Actividades">Actividades</option>
               </select>
-
               <input id="upload-file" type="file" />
               <textarea id="upload-description" class="field-full" placeholder="Descripción del archivo"></textarea>
             </div>
@@ -794,9 +789,9 @@
       <h3>Cambiar contraseña</h3>
       <p>Introduce tu contraseña actual y la nueva.</p>
 
-      <input id="pwd-current" class="panel-input" type="password" placeholder="Contraseña actual" />
-      <input id="pwd-new" class="panel-input" type="password" placeholder="Nueva contraseña" />
-      <input id="pwd-confirm" class="panel-input" type="password" placeholder="Repite la nueva contraseña" />
+      <input id="pwd-current" type="password" placeholder="Contraseña actual" />
+      <input id="pwd-new" type="password" placeholder="Nueva contraseña" />
+      <input id="pwd-confirm" type="password" placeholder="Repite la nueva contraseña" />
 
       <div id="pwd-error" class="msg error"></div>
       <div id="pwd-ok" class="msg ok"></div>
@@ -855,7 +850,7 @@
     const db = getDatabase(app);
     const storage = getStorage(app);
 
-    const ADMIN_EMAILS = ["santiagodiaz@gmail.com"];
+    const ADMIN_EMAIL = "santiagodiaz@gmail.com";
 
     let currentUser = null;
     let currentProfile = null;
@@ -890,9 +885,12 @@
       return [a, b].sort().join("__");
     }
 
+    function isAdminProfile(profile) {
+      return profile?.role === "admin" || String(profile?.email || "").trim().toLowerCase() === ADMIN_EMAIL;
+    }
+
     function isAdmin() {
-      return currentProfile?.role === "admin" ||
-             String(currentProfile?.email || "").toLowerCase() === "santiagodiaz@gmail.com";
+      return isAdminProfile(currentProfile);
     }
 
     function isApproved() {
@@ -908,7 +906,6 @@
           : "Crea tu cuenta con tus datos académicos.";
       clearAuthMsgs();
     }
-    window.showAuthMode = showAuthMode;
 
     function setAuthError(msg) {
       const el = document.getElementById("auth-error");
@@ -972,7 +969,6 @@
         setAuthError(e?.message || "No se pudo iniciar sesión.");
       }
     }
-    window.login = login;
 
     async function sendReset() {
       clearAuthMsgs();
@@ -989,7 +985,6 @@
         setAuthError(e?.message || "No se pudo enviar el correo.");
       }
     }
-    window.sendReset = sendReset;
 
     async function register() {
       clearAuthMsgs();
@@ -1028,7 +1023,7 @@
 
         const cred = await createUserWithEmailAndPassword(auth, email, password);
         const uid = cred.user.uid;
-        const admin = email === "santiagodiaz@gmail.com";
+        const admin = email === ADMIN_EMAIL;
 
         const profile = {
           uid,
@@ -1055,24 +1050,19 @@
         setAuthError(e?.message || "No se pudo crear la cuenta.");
       }
     }
-    window.register = register;
 
     async function signOutUser() {
       stopCommonAuto();
       stopNotifAuto();
       await signOut(auth);
     }
-    window.signOutUser = signOutUser;
 
     function setTopUser(profile) {
       document.getElementById("top-name").textContent = profile?.username || "Usuario";
       document.getElementById("top-line").textContent = `${profile?.email || ""} · ${profile?.curso || ""}`;
       const avatar = document.getElementById("top-avatar");
-      if (profile?.photoURL) {
-        avatar.innerHTML = `<img src="${profile.photoURL}" alt="avatar">`;
-      } else {
-        avatar.textContent = (profile?.username || "U").charAt(0).toUpperCase();
-      }
+      if (profile?.photoURL) avatar.innerHTML = `<img src="${profile.photoURL}" alt="avatar">`;
+      else avatar.textContent = (profile?.username || "U").charAt(0).toUpperCase();
     }
 
     function setApprovalBox(profile) {
@@ -1112,11 +1102,8 @@
       document.getElementById("profile-title-sub").textContent = "@" + (profile?.username || "usuario");
 
       const preview = document.getElementById("profile-photo-preview");
-      if (profile?.photoURL) {
-        preview.innerHTML = `<img src="${profile.photoURL}" alt="foto">`;
-      } else {
-        preview.textContent = (profile?.username || "U").charAt(0).toUpperCase();
-      }
+      if (profile?.photoURL) preview.innerHTML = `<img src="${profile.photoURL}" alt="foto">`;
+      else preview.textContent = (profile?.username || "U").charAt(0).toUpperCase();
     }
 
     async function saveProfile() {
@@ -1163,7 +1150,7 @@
           updatedAt: new Date().toISOString()
         };
 
-        if (newEmail === "santiagodiaz@gmail.com") {
+        if (newEmail === ADMIN_EMAIL) {
           updates.role = "admin";
           updates.approved = true;
         }
@@ -1190,11 +1177,9 @@
         debug.textContent = e?.message || "No se pudo guardar el perfil.";
       }
     }
-    window.saveProfile = saveProfile;
 
     async function uploadProfilePhoto() {
       if (!currentUser) return;
-
       const fileInput = document.getElementById("profile-photo-file");
       const file = fileInput.files[0];
       const debug = document.getElementById("profile-debug");
@@ -1228,7 +1213,6 @@
         debug.textContent = "No se pudo subir la foto.";
       }
     }
-    window.uploadProfilePhoto = uploadProfilePhoto;
 
     async function loadPublicProfiles() {
       const wrap = document.getElementById("profiles-list");
@@ -1255,11 +1239,8 @@
           users = users.filter(u => String(u.curso || "").toLowerCase().includes(courseFilter));
         }
 
-        if (sort === "recent") {
-          users.sort((a,b) => Number(new Date(b.createdAt || 0)) - Number(new Date(a.createdAt || 0)));
-        } else {
-          users.sort((a,b) => String(a.username || "").localeCompare(String(b.username || ""), "es"));
-        }
+        if (sort === "recent") users.sort((a,b) => Number(new Date(b.createdAt || 0)) - Number(new Date(a.createdAt || 0)));
+        else users.sort((a,b) => String(a.username || "").localeCompare(String(b.username || ""), "es"));
 
         if (!users.length) {
           wrap.innerHTML = "<div class='card'>No hay perfiles públicos disponibles con ese filtro.</div>";
@@ -1299,11 +1280,8 @@
       document.getElementById("modal-profile-bio").textContent = profile.bio || "Sin descripción.";
 
       const photo = document.getElementById("modal-profile-photo");
-      if (profile.photoURL) {
-        photo.innerHTML = `<img src="${profile.photoURL}" alt="foto">`;
-      } else {
-        photo.textContent = (profile.username || "U").charAt(0).toUpperCase();
-      }
+      if (profile.photoURL) photo.innerHTML = `<img src="${profile.photoURL}" alt="foto">`;
+      else photo.textContent = (profile.username || "U").charAt(0).toUpperCase();
 
       const fileBox = document.getElementById("modal-profile-files");
       fileBox.innerHTML = "Cargando archivos...";
@@ -1334,12 +1312,10 @@
 
       document.getElementById("profile-modal-backdrop").style.display = "flex";
     }
-    window.openProfileModal = openProfileModal;
 
     function closeProfileModal() {
       document.getElementById("profile-modal-backdrop").style.display = "none";
     }
-    window.closeProfileModal = closeProfileModal;
 
     function openPasswordModal() {
       document.getElementById("pwd-current").value = "";
@@ -1349,12 +1325,10 @@
       document.getElementById("pwd-ok").style.display = "none";
       document.getElementById("password-modal-backdrop").style.display = "flex";
     }
-    window.openPasswordModal = openPasswordModal;
 
     function closePasswordModal() {
       document.getElementById("password-modal-backdrop").style.display = "none";
     }
-    window.closePasswordModal = closePasswordModal;
 
     async function changePassword() {
       const current = document.getElementById("pwd-current").value;
@@ -1389,7 +1363,6 @@
         err.textContent = e?.message || "No se pudo cambiar la contraseña.";
       }
     }
-    window.changePassword = changePassword;
 
     async function populatePrivateUsers() {
       const select = document.getElementById("private-user-select");
@@ -1471,7 +1444,6 @@
         debug.textContent = e?.message || "Error al cargar sala común.";
       }
     }
-    window.loadCommonMessages = loadCommonMessages;
 
     async function sendCommonMessage() {
       if (!isApproved()) return;
@@ -1493,7 +1465,6 @@
         console.error(e);
       }
     }
-    window.sendCommonMessage = sendCommonMessage;
 
     async function loadPrivateMessages(markAsRead = true) {
       const select = document.getElementById("private-user-select");
@@ -1545,7 +1516,6 @@
         debug.textContent = e?.message || "Error al cargar conversación privada.";
       }
     }
-    window.loadPrivateMessages = loadPrivateMessages;
 
     async function sendPrivateMessage() {
       if (!isApproved()) return;
@@ -1572,7 +1542,6 @@
         console.error(e);
       }
     }
-    window.sendPrivateMessage = sendPrivateMessage;
 
     function stopCommonAuto() {
       if (commonInterval) {
@@ -1724,7 +1693,6 @@
         debug.textContent = "No se pudo subir el archivo.";
       }
     }
-    window.uploadSharedFile = uploadSharedFile;
 
     async function deleteSharedFile(fileId) {
       try {
@@ -1744,14 +1712,12 @@
         console.error(e);
       }
     }
-    window.deleteSharedFile = deleteSharedFile;
 
     async function setFileModeration(fileId, updates) {
       await update(dbRef(db, "sharedFiles/" + fileId), updates);
       await loadSharedFiles();
       await loadAdminFiles();
     }
-    window.setFileModeration = setFileModeration;
 
     async function loadSharedFiles() {
       const box = document.getElementById("files-list");
@@ -1853,7 +1819,6 @@
       });
       await loadAdminUsers();
     }
-    window.toggleAccess = toggleAccess;
 
     async function toggleUpload(uid, value) {
       await update(dbRef(db, "profiles/" + uid), {
@@ -1862,7 +1827,6 @@
       });
       await loadAdminUsers();
     }
-    window.toggleUpload = toggleUpload;
 
     async function togglePublicProfile(uid, value) {
       await update(dbRef(db, "profiles/" + uid), {
@@ -1871,7 +1835,6 @@
       await loadAdminUsers();
       await loadPublicProfiles();
     }
-    window.togglePublicProfile = togglePublicProfile;
 
     async function loadAdminFiles() {
       const box = document.getElementById("admin-files-list");
@@ -1933,7 +1896,6 @@
       await loadAdminCommonMessages();
       await loadCommonMessages(false);
     }
-    window.deleteCommonMessage = deleteCommonMessage;
 
     async function populateAdminPrivateUsers() {
       const a = document.getElementById("admin-private-user-a");
@@ -1972,13 +1934,11 @@
         </div>
       `).join("") : "<div class='card'>No hay mensajes en esa conversación.</div>";
     }
-    window.loadAdminPrivateConversation = loadAdminPrivateConversation;
 
     async function deletePrivateMessage(convoId, messageId) {
       await remove(dbRef(db, "privateMessages/" + convoId + "/" + messageId));
       await loadAdminPrivateConversation();
     }
-    window.deletePrivateMessage = deletePrivateMessage;
 
     function hideViews() {
       ["home","profile","profiles","common","private","files","admin","wait"].forEach(name => {
@@ -2020,7 +1980,6 @@
         document.getElementById("admin-private-list").innerHTML = "<div class='card'>Selecciona dos usuarios y pulsa cargar conversación.</div>";
       }
     }
-    window.openView = openView;
 
     onAuthStateChanged(auth, async (user) => {
       currentUser = user;
@@ -2042,7 +2001,7 @@
         return;
       }
 
-      if (String(currentProfile.email || "").toLowerCase() === "santiagodiaz@gmail.com" && currentProfile.role !== "admin") {
+      if (String(currentProfile.email || "").trim().toLowerCase() === ADMIN_EMAIL && currentProfile.role !== "admin") {
         await update(dbRef(db, "profiles/" + user.uid), { role: "admin", approved: true });
         currentProfile.role = "admin";
         currentProfile.approved = true;
@@ -2058,6 +2017,35 @@
       startNotifAuto();
       openView("home");
     });
+
+    window.showAuthMode = showAuthMode;
+    window.login = login;
+    window.register = register;
+    window.sendReset = sendReset;
+    window.signOutUser = signOutUser;
+    window.saveProfile = saveProfile;
+    window.uploadProfilePhoto = uploadProfilePhoto;
+    window.loadPublicProfiles = loadPublicProfiles;
+    window.openProfileModal = openProfileModal;
+    window.closeProfileModal = closeProfileModal;
+    window.openPasswordModal = openPasswordModal;
+    window.closePasswordModal = closePasswordModal;
+    window.changePassword = changePassword;
+    window.loadCommonMessages = loadCommonMessages;
+    window.sendCommonMessage = sendCommonMessage;
+    window.loadPrivateMessages = loadPrivateMessages;
+    window.sendPrivateMessage = sendPrivateMessage;
+    window.uploadSharedFile = uploadSharedFile;
+    window.loadSharedFiles = loadSharedFiles;
+    window.deleteSharedFile = deleteSharedFile;
+    window.setFileModeration = setFileModeration;
+    window.toggleAccess = toggleAccess;
+    window.toggleUpload = toggleUpload;
+    window.togglePublicProfile = togglePublicProfile;
+    window.deleteCommonMessage = deleteCommonMessage;
+    window.loadAdminPrivateConversation = loadAdminPrivateConversation;
+    window.deletePrivateMessage = deletePrivateMessage;
+    window.openView = openView;
 
     showAuthMode("login");
   </script>
