@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>1º Medicina - 2º Cuatrimestre</title></script>
+    <title>1º Medicina - 2º Cuatrimestre</title>
     <style>
         :root {
             --primary: #2c3e50;
@@ -230,7 +230,7 @@
 
     <script type="module">
         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, update, increment, get } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+        import { getDatabase, ref, update, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
 
         const firebaseConfig = {
             apiKey: "AIzaSyAKughV5w2XAKRm3rWuUmhVldwU2bjj0zY",
@@ -291,46 +291,74 @@
             return userObj.alias || "Tripulante";
         }
 
-        async function registerQuarterAccess(userHash) {
-            const accessKey = `quarter_counted_${QUAD_ID}_${userHash}`;
+        function hasNewAccess() {
+            return (
+                sessionStorage.getItem("_auth_tkn_882") === "1" ||
+                sessionStorage.getItem("medico_pirata_access") === "1"
+            );
+        }
+
+        function getLegacyHash() {
+            return sessionStorage.getItem("_auth_hash") || "";
+        }
+
+        function getDisplayName() {
+            const legacyHash = getLegacyHash();
+            const legacyUser = findUserByHash(legacyHash);
+
+            if (legacyUser) return getSafeDisplayName(legacyUser);
+
+            const firebaseName =
+                sessionStorage.getItem("medico_pirata_username") ||
+                sessionStorage.getItem("medico_pirata_alias") ||
+                sessionStorage.getItem("medico_pirata_email") ||
+                "Tripulante";
+
+            return firebaseName;
+        }
+
+        async function registerQuarterAccess(userKey) {
+            const accessKey = `quarter_counted_${QUAD_ID}_${userKey}`;
             if (sessionStorage.getItem(accessKey)) return;
 
             const updates = {};
             updates[`navegacion/cuatrimestres/${QUAD_ID}/totalEntradas`] = increment(1);
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/usuarios/${userHash}/entradas`] = increment(1);
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/usuarios/${userHash}/nombre`] = getSafeDisplayName(findUserByHash(userHash));
+            updates[`navegacion/cuatrimestres/${QUAD_ID}/usuarios/${userKey}/entradas`] = increment(1);
+            updates[`navegacion/cuatrimestres/${QUAD_ID}/usuarios/${userKey}/nombre`] = getDisplayName();
             updates[`navegacion/cuatrimestres/${QUAD_ID}/meta/nombre`] = QUAD_NAME;
 
             await update(ref(db), updates);
             sessionStorage.setItem(accessKey, "1");
         }
 
-        async function registerSubjectClick(userHash, subjectId, subjectName) {
+        async function registerSubjectClick(userKey, subjectId, subjectName) {
             const updates = {};
             updates[`navegacion/cuatrimestres/${QUAD_ID}/asignaturas/${subjectId}/clics`] = increment(1);
             updates[`navegacion/cuatrimestres/${QUAD_ID}/asignaturas/${subjectId}/nombre`] = subjectName;
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/asignaturas/${subjectId}/usuarios/${userHash}`] = increment(1);
+            updates[`navegacion/cuatrimestres/${QUAD_ID}/asignaturas/${subjectId}/usuarios/${userKey}`] = increment(1);
 
             updates[`navegacion/asignaturas/${subjectId}/totalEntradas`] = increment(1);
             updates[`navegacion/asignaturas/${subjectId}/nombre`] = subjectName;
-            updates[`navegacion/asignaturas/${subjectId}/usuarios/${userHash}/entradas`] = increment(1);
+            updates[`navegacion/asignaturas/${subjectId}/usuarios/${userKey}/entradas`] = increment(1);
 
             await update(ref(db), updates);
         }
 
         async function initPage() {
-            const currentHash = sessionStorage.getItem("_auth_hash") || "";
-            const currentUser = findUserByHash(currentHash);
+            const legacyHash = getLegacyHash();
+            const legacyUser = findUserByHash(legacyHash);
+            const accessByNewIndex = hasNewAccess();
 
-            if (!currentHash || !currentUser) {
+            if (!accessByNewIndex && !legacyUser) {
                 window.location.replace("index.html");
                 return;
             }
 
-            document.getElementById("user-chip").textContent = `${getSafeDisplayName(currentUser)} · acceso activo`;
+            const userKey = legacyUser ? legacyHash : "firebase_user";
+            document.getElementById("user-chip").textContent = `${getDisplayName()} · acceso activo`;
 
             try {
-                await registerQuarterAccess(currentHash);
+                await registerQuarterAccess(userKey);
             } catch (error) {
                 console.log("No se pudo registrar el acceso al cuatrimestre.");
             }
@@ -341,7 +369,7 @@
                     const subjectName = this.dataset.subjectName || "Asignatura";
 
                     try {
-                        await registerSubjectClick(currentHash, subjectId, subjectName);
+                        await registerSubjectClick(userKey, subjectId, subjectName);
                     } catch (error) {
                         console.log("No se pudo registrar el acceso a la asignatura.");
                     }
