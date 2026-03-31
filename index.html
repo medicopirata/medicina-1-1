@@ -278,9 +278,6 @@
       .workspace-topbar{padding:14px}
       .workspace-title strong{font-size:1rem}
     }
-      .side{position:static}
-      .grid-2,.field-grid{grid-template-columns:1fr}
-    }
   </style>
 </head>
 <body>
@@ -387,7 +384,6 @@
 Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
           </div>
           <div class="panel-body">
-            <div id="approval-box" class="card"></div>
             <div class="grid-2" style="margin-top:16px;">
               <div class="card">
                 <h4>Accesos rápidos</h4>
@@ -588,11 +584,29 @@ Que no cunda el pánico: entre todos, este barco llega a puerto.</p>
 
     async function signOutUser(){ stopCommonAuto(); stopNotifAuto(); await signOut(auth); }
     function setTopUser(profile){ document.getElementById("top-name").textContent=profile?.username || "Usuario"; document.getElementById("top-line").textContent=`${profile?.email || ""} · ${profile?.curso || ""}`; const avatar=document.getElementById("top-avatar"); if(profile?.photoURL) avatar.innerHTML=`<img src="${profile.photoURL}" alt="avatar">`; else avatar.textContent=getAvatarText(profile); }
-    function setApprovalBox(profile){ const box=document.getElementById("approval-box"); box.innerHTML=`<div class="row" style="justify-content:space-between;align-items:center;"><div><h4 style="margin-bottom:6px;">Estado de acceso</h4><p>${isApproved() ? "Tu cuenta está activa y aprobada." : "Tu cuenta está pendiente de aprobación por el administrador."}</p></div><span class="pill ${isApproved()?"on":"off"}">${isApproved()?"Acceso activo":"Pendiente"}</span></div><div class="row" style="margin-top:10px;"><span class="pill ${profile.canUpload?"on":"off"}">${profile.canUpload?"Puede subir archivos":"Subidas bloqueadas"}</span><span class="pill ${profile.publicVisible!==false?"on":"off"}">${profile.publicVisible!==false?"Perfil público visible":"Perfil oculto"}</span>${isAdmin()?'<span class="pill on">Administrador</span>':''}</div>`; }
+    function setApprovalBox(profile){
+  const box = document.getElementById("approval-box");
+  if (!box) return;
+
+  box.innerHTML = `
+    <div class="row" style="justify-content:space-between;align-items:center;">
+      <div>
+        <h4 style="margin-bottom:6px;">Estado de acceso</h4>
+        <p>${isApproved() ? "Tu cuenta está activa y aprobada." : "Tu cuenta está pendiente de aprobación por el administrador."}</p>
+      </div>
+      <span class="pill ${isApproved() ? "on" : "off"}">${isApproved() ? "Acceso activo" : "Pendiente"}</span>
+    </div>
+    <div class="row" style="margin-top:10px;">
+      <span class="pill ${profile.canUpload ? "on" : "off"}">${profile.canUpload ? "Puede subir archivos" : "Subidas bloqueadas"}</span>
+      <span class="pill ${profile.publicVisible !== false ? "on" : "off"}">${profile.publicVisible !== false ? "Perfil público visible" : "Perfil oculto"}</span>
+      ${isAdmin() ? '<span class="pill on">Administrador</span>' : ''}
+    </div>
+  `;
+}
     async function loadProfile(uid){ const snap=await get(dbRef(db,"profiles/"+uid)); return snap.exists()?snap.val():null; }
 
     function ensureBigViewsMarkup(){
-      document.getElementById('view-profile').innerHTML = `<div class="panel-header"><div class="panel-kicker">Mi perfil y cuenta</div><h3>Datos públicos y datos de cuenta</h3><p>Puedes modificar tu nombre de usuario, nombre, apellidos, curso, correo, teléfono y bio en cualquier momento.</p></div><div class="panel-body"><div class="profile-banner card" style="margin-bottom:16px;"><div class="profile-big" id="profile-photo-preview">M</div><div><h4 id="profile-title-name">Mi perfil</h4><p id="profile-title-sub">@usuario</p></div></div><div class="field-grid"><input id="profile-username" placeholder="Nombre de usuario público" /><input id="profile-curso" placeholder="Curso que estudia" /><input id="profile-nombre" placeholder="Nombre" /><input id="profile-apellidos" placeholder="Apellidos" /><input id="profile-email" class="field-full" placeholder="Correo electrónico" /><input id="profile-telefono" placeholder="Teléfono" /><input id="profile-photo-file" type="file" accept="image/*" /><textarea id="profile-bio" class="field-full" placeholder="Descripción pública"></textarea></div><div class="row"><button class="btn btn-primary" onclick="saveProfile()">Guardar cambios</button><button class="btn btn-dark" onclick="uploadProfilePhoto()">Subir foto de perfil</button></div><div id="profile-debug" class="debug"></div></div>`;
+      document.getElementById('view-profile').innerHTML = `<div class="panel-header"><div class="panel-kicker">Mi perfil y cuenta</div><h3>Datos públicos y datos de cuenta</h3><p>Puedes modificar tu nombre de usuario, nombre, apellidos, curso, correo, teléfono y bio en cualquier momento.</p></div><div class="panel-body"><div id="approval-box" class="card" style="margin-bottom:16px;"></div><div class="profile-banner card" style="margin-bottom:16px;"><div class="profile-big" id="profile-photo-preview">M</div><div><h4 id="profile-title-name">Mi perfil</h4><p id="profile-title-sub">@usuario</p></div></div><div class="field-grid"><input id="profile-username" placeholder="Nombre de usuario público" /><input id="profile-curso" placeholder="Curso que estudia" /><input id="profile-nombre" placeholder="Nombre" /><input id="profile-apellidos" placeholder="Apellidos" /><input id="profile-email" class="field-full" placeholder="Correo electrónico" /><input id="profile-telefono" placeholder="Teléfono" /><input id="profile-photo-file" type="file" accept="image/*" /><textarea id="profile-bio" class="field-full" placeholder="Descripción pública"></textarea></div><div class="row"><button class="btn btn-primary" onclick="saveProfile()">Guardar cambios</button><button class="btn btn-dark" onclick="uploadProfilePhoto()">Subir foto de perfil</button></div><div id="profile-debug" class="debug"></div></div>`;
       document.getElementById('view-profiles').innerHTML = `<div class="panel-header"><div class="panel-kicker">Perfiles públicos</div><h3>Usuarios de la comunidad</h3><p>Busca perfiles públicos aprobados y entra en su espacio visible.</p></div><div class="panel-body"><div class="row" style="margin-bottom:16px;"><input id="profiles-search" style="flex:1 1 240px;" placeholder="Buscar por nombre de usuario o nombre" oninput="loadPublicProfiles()" /><input id="profiles-course-filter" style="flex:1 1 180px;" placeholder="Filtrar por curso" oninput="loadPublicProfiles()" /><select id="profiles-sort" style="flex:0 0 180px;" onchange="loadPublicProfiles()"><option value="alpha">Orden alfabético</option><option value="recent">Más recientes</option></select></div><div id="profiles-list" class="user-grid"></div></div>`;
       document.getElementById('view-common').innerHTML = `<div class="panel-header"><div class="panel-kicker">Taberna pirata</div><h3>Taberna de la tripulación</h3><p>Mensajes visibles para toda la comunidad. Se actualiza cada 10 segundos mientras estés aquí.</p></div><div class="panel-body"><div id="common-list" class="msg-list"></div><textarea id="common-input" placeholder="Escribe tu mensaje..."></textarea><div class="row"><button class="btn btn-primary" onclick="sendCommonMessage()">Enviar a sala común</button><button class="btn btn-soft" onclick="loadCommonMessages(true)">Recargar</button></div><div id="common-debug" class="debug"></div></div>`;
       document.getElementById('view-private').innerHTML = `<div class="panel-header"><div class="panel-kicker">Mensajes privados</div><h3>Conversaciones entre usuarios</h3><p>Elige destinatario y habla con otro usuario usando su nombre de usuario.</p></div><div class="panel-body"><select id="private-user-select" onchange="loadPrivateMessages(true)"></select><div id="private-list" class="msg-list"></div><textarea id="private-input" placeholder="Escribe tu mensaje privado..."></textarea><div class="row"><button class="btn btn-primary" onclick="sendPrivateMessage()">Enviar mensaje privado</button><button class="btn btn-soft" onclick="loadPrivateMessages(true)">Recargar</button></div><div id="private-debug" class="debug"></div></div>`;
