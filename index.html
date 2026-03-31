@@ -890,14 +890,12 @@
   const role = String(profile?.role || "").trim().toLowerCase();
   return role === "admin" || email === ADMIN_EMAIL;
 }
-
-    function isAdmin() {
-      return isAdminProfile(currentProfile);
-    }
-
-    function isApproved() {
-      return !!currentProfile?.approved || isAdmin();
-    }
+function isAdmin() {
+  return isAdminProfile(currentProfile) || String(currentUser?.email || "").trim().toLowerCase() === ADMIN_EMAIL;
+}
+function isApproved() {
+  return isAdmin() || !!currentProfile?.approved;
+}
 
     function showAuthMode(mode) {
       document.getElementById("login-form").classList.toggle("hidden", mode !== "login");
@@ -1197,7 +1195,10 @@
         setTopUser(currentProfile);
         fillProfileForm(currentProfile);
         setApprovalBox(currentProfile);
-        document.getElementById("admin-nav-btn").classList.toggle("hidden", !isAdmin());
+        const adminBtn = document.getElementById("admin-nav-btn");
+if (adminBtn) {
+  adminBtn.classList.toggle("hidden", !isAdmin());
+}
         debug.style.display = "block";
         debug.textContent = "Datos de cuenta y perfil guardados correctamente.";
         await loadPublicProfiles();
@@ -2035,30 +2036,21 @@
     if (appShell) appShell.style.display = "block";
 
     currentProfile = await loadProfile(user.uid);
+const authEmail = String(user.email || "").trim().toLowerCase();
+const profileEmail = String(currentProfile.email || "").trim().toLowerCase();
+const shouldBeAdmin = authEmail === ADMIN_EMAIL || profileEmail === ADMIN_EMAIL;
 
-if (!currentProfile) {
-  const email = String(user.email || "").trim().toLowerCase();
-  const usernameBase = email === ADMIN_EMAIL ? "Medico pirata" : (email.split("@")[0] || "usuario");
-  const usernameSlug = slugifyUsername(usernameBase);
-  const admin = email === ADMIN_EMAIL;
+if (shouldBeAdmin) {
+  await update(dbRef(db, "profiles/" + user.uid), {
+    role: "admin",
+    approved: true,
+    email: authEmail || profileEmail
+  });
 
-  currentProfile = {
-    uid: user.uid,
-    username: usernameBase,
-    usernameSlug,
-    nombre: admin ? "Santiago" : "",
-    apellidos: admin ? "Díaz" : "",
-    curso: "",
-    email,
-    telefono: "",
-    bio: "",
-    photoURL: "",
-    approved: admin,
-    role: admin ? "admin" : "user",
-    canUpload: true,
-    createdAt: new Date().toISOString(),
-    publicVisible: true
-  };
+  currentProfile.role = "admin";
+  currentProfile.approved = true;
+  currentProfile.email = authEmail || profileEmail;
+}
 
   await set(dbRef(db, "profiles/" + user.uid), currentProfile);
 
@@ -2068,7 +2060,13 @@ if (!currentProfile) {
   if (!usernameSnap.exists()) {
     await set(usernameRef, user.uid);
   }
-
+console.log("ADMIN CHECK", {
+  authEmail: String(currentUser?.email || "").trim().toLowerCase(),
+  profileEmail: String(currentProfile?.email || "").trim().toLowerCase(),
+  role: currentProfile?.role,
+  approved: currentProfile?.approved,
+  isAdmin: isAdmin()
+});
   console.log("Perfil creado automáticamente para:", user.uid);
 }
 
