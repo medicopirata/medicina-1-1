@@ -178,48 +178,42 @@
 
     <div class="subjects-grid">
 
-        <a href="indice fisiologia.html" class="subject-card card-red"
-           data-subject-id="fisiologia" data-subject-name="Fisiología">
+        <a href="indice fisiologia.html" class="subject-card card-red">
             <div class="icon-container">🫀</div>
             <div class="subject-title">Fisiología</div>
             <div class="subject-desc">Funciones e integración de sistemas</div>
             <div class="arrow-indicator">Entrar ➜</div>
         </a>
 
-        <a href="indice anatomia 2.html" class="subject-card"
-           data-subject-id="anatomia_ii" data-subject-name="Anatomía II">
+        <a href="indice anatomia 2.html" class="subject-card">
             <div class="icon-container">💀</div>
             <div class="subject-title">Anatomía II</div>
             <div class="subject-desc">Esplacnología, Cabeza y Cuello</div>
             <div class="arrow-indicator">Entrar ➜</div>
         </a>
 
-        <a href="indice histo y embrio 1.html" class="subject-card card-orange"
-           data-subject-id="histo_embrio_i" data-subject-name="Histología y Embriología I">
+        <a href="indice histo y embrio 1.html" class="subject-card card-orange">
             <div class="icon-container">🔬</div>
             <div class="subject-title">Histología y Embriología I</div>
             <div class="subject-desc">Teoría, Embriología Visual e Histología Visual</div>
             <div class="arrow-indicator">Entrar ➜</div>
         </a>
 
-        <a href="indice bioquimica medica.html" class="subject-card card-green"
-           data-subject-id="bioquimica_medica" data-subject-name="Bioquímica Médica">
+        <a href="indice bioquimica medica.html" class="subject-card card-green">
             <div class="icon-container">🧬</div>
             <div class="subject-title">Bioquímica Médica</div>
             <div class="subject-desc">Metabolismo y Biología Molecular</div>
             <div class="arrow-indicator">Entrar ➜</div>
         </a>
 
-        <a href="indice comunicacionmedica.html" class="subject-card card-purple"
-           data-subject-id="comunicacion_medica" data-subject-name="Com. Médica">
+        <a href="indice comunicacionmedica.html" class="subject-card card-purple">
             <div class="icon-container">🗣️</div>
             <div class="subject-title">Com. Médica</div>
             <div class="subject-desc">Relación Médico-Paciente y Ética</div>
             <div class="arrow-indicator">Entrar ➜</div>
         </a>
 
-        <a href="indice rellenar.html" class="subject-card"
-           data-subject-id="fichas_rellenar" data-subject-name="Fichas para rellenar">
+        <a href="indice rellenar.html" class="subject-card">
             <div class="icon-container">📝</div>
             <div class="subject-title">Fichas para rellenar</div>
             <div class="subject-desc">Ejercicios y material práctico</div>
@@ -228,156 +222,23 @@
 
     </div>
 
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, update, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
+    <script>
+        const accesoPermitido =
+            sessionStorage.getItem("_auth_tkn_882") === "1" ||
+            sessionStorage.getItem("medico_pirata_access") === "1" ||
+            !!sessionStorage.getItem("_auth_hash");
 
-        const firebaseConfig = {
-            apiKey: "AIzaSyAKughV5w2XAKRm3rWuUmhVldwU2bjj0zY",
-            authDomain: "portal-estudio-medicina.firebaseapp.com",
-            databaseURL: "https://portal-estudio-medicina-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "portal-estudio-medicina",
-            storageBucket: "portal-estudio-medicina.firebasestorage.app",
-            messagingSenderId: "536326985694",
-            appId: "1:536326985694:web:ee2428d39421653be26f4f",
-            measurementId: "G-52KKQDCFXD"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        const USERS = [
-            {
-                hash: "26f23fc6cb9d53db0d5041fd0c3b1a09b03c3359f01ab4f9b99a2b3063b8e603",
-                alias: "Comodoro Supremo",
-                admin: true
-            },
-            {
-                hash: "0aaf6107f7ad50f68c7fdd9e43e25d22a6bc026080aff0f1013c322babe65cc5",
-                alias: "Tripulante",
-                admin: false
-            },
-            {
-                hash: "e1357c6a116c33525352fee3d57b090847e027bac164b873b410eac234e3ef27",
-                alias: "Tripulante",
-                admin: false
-            },
-            {
-                hash: "7a1d5d03f970ac38d2080c6ac040902bd30d8d59b4c5cc374c30445d2b690778",
-                alias: "Tripulante",
-                admin: false
-            },
-            {
-                hash: "7e153005924bb1c6049581649bd1310e60ff18c58bb5033f0433e42efbd76c26",
-                alias: "Tripulante",
-                admin: false
-            },
-            {
-                hash: "835288e0a626d18f9ca168a38570afcb81a5b79f7f7570007191a409870fbcd0",
-                alias: "Tripulante",
-                admin: false
-            }
-        ];
-
-        const QUAD_ID = "primero_segundo_cuatrimestre";
-        const QUAD_NAME = "1º Medicina · 2º Cuatrimestre";
-
-        function findUserByHash(hash) {
-            return USERS.find(u => u.hash === hash) || null;
+        if (!accesoPermitido) {
+            window.location.replace("index.html");
         }
 
-        function getSafeDisplayName(userObj) {
-            if (!userObj) return "Tripulante";
-            return userObj.alias || "Tripulante";
-        }
+        const alias =
+            sessionStorage.getItem("medico_pirata_username") ||
+            sessionStorage.getItem("medico_pirata_alias") ||
+            sessionStorage.getItem("medico_pirata_email") ||
+            "Tripulante";
 
-        function hasNewAccess() {
-            return (
-                sessionStorage.getItem("_auth_tkn_882") === "1" ||
-                sessionStorage.getItem("medico_pirata_access") === "1"
-            );
-        }
-
-        function getLegacyHash() {
-            return sessionStorage.getItem("_auth_hash") || "";
-        }
-
-        function getDisplayName() {
-            const legacyHash = getLegacyHash();
-            const legacyUser = findUserByHash(legacyHash);
-
-            if (legacyUser) return getSafeDisplayName(legacyUser);
-
-            const firebaseName =
-                sessionStorage.getItem("medico_pirata_username") ||
-                sessionStorage.getItem("medico_pirata_alias") ||
-                sessionStorage.getItem("medico_pirata_email") ||
-                "Tripulante";
-
-            return firebaseName;
-        }
-
-        async function registerQuarterAccess(userKey) {
-            const accessKey = `quarter_counted_${QUAD_ID}_${userKey}`;
-            if (sessionStorage.getItem(accessKey)) return;
-
-            const updates = {};
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/totalEntradas`] = increment(1);
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/usuarios/${userKey}/entradas`] = increment(1);
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/usuarios/${userKey}/nombre`] = getDisplayName();
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/meta/nombre`] = QUAD_NAME;
-
-            await update(ref(db), updates);
-            sessionStorage.setItem(accessKey, "1");
-        }
-
-        async function registerSubjectClick(userKey, subjectId, subjectName) {
-            const updates = {};
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/asignaturas/${subjectId}/clics`] = increment(1);
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/asignaturas/${subjectId}/nombre`] = subjectName;
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/asignaturas/${subjectId}/usuarios/${userKey}`] = increment(1);
-
-            updates[`navegacion/asignaturas/${subjectId}/totalEntradas`] = increment(1);
-            updates[`navegacion/asignaturas/${subjectId}/nombre`] = subjectName;
-            updates[`navegacion/asignaturas/${subjectId}/usuarios/${userKey}/entradas`] = increment(1);
-
-            await update(ref(db), updates);
-        }
-
-        async function initPage() {
-            const legacyHash = getLegacyHash();
-            const legacyUser = findUserByHash(legacyHash);
-            const accessByNewIndex = hasNewAccess();
-
-            if (!accessByNewIndex && !legacyUser) {
-                window.location.replace("index.html");
-                return;
-            }
-
-            const userKey = legacyUser ? legacyHash : "firebase_user";
-            document.getElementById("user-chip").textContent = `${getDisplayName()} · acceso activo`;
-
-            try {
-                await registerQuarterAccess(userKey);
-            } catch (error) {
-                console.log("No se pudo registrar el acceso al cuatrimestre.");
-            }
-
-            document.querySelectorAll(".subject-card").forEach(card => {
-                card.addEventListener("click", async function () {
-                    const subjectId = this.dataset.subjectId || "";
-                    const subjectName = this.dataset.subjectName || "Asignatura";
-
-                    try {
-                        await registerSubjectClick(userKey, subjectId, subjectName);
-                    } catch (error) {
-                        console.log("No se pudo registrar el acceso a la asignatura.");
-                    }
-                });
-            });
-        }
-
-        initPage();
+        document.getElementById("user-chip").textContent = alias + " · acceso activo";
     </script>
 </body>
 </html>
