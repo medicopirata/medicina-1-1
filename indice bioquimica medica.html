@@ -8,7 +8,6 @@
     // Comprobamos si NO existe la llave de acceso
     if (sessionStorage.getItem("_auth_tkn_882") !== "1") {
         // Expulsamos al usuario a la página principal
-        // IMPORTANTE: Cambia "index.html" por el nombre exacto de tu archivo principal si se llama distinto
         window.location.replace("index.html");
     }
 </script>
@@ -60,7 +59,7 @@
         }
 
         a.file-link {
-            display: block;
+            display: flex;
             background-color: var(--card-bg);
             padding: 15px 20px;
             text-decoration: none;
@@ -69,7 +68,6 @@
             box-shadow: 0 2px 5px rgba(0,0,0,0.05);
             transition: all 0.3s ease;
             font-weight: 500;
-            display: flex;
             justify-content: space-between;
             align-items: center;
         }
@@ -149,6 +147,9 @@
             <a href="bioquimica medica notebook tema 12.html" class="file-link">Bioquímica Médica - Tema 12 (Proteínas Plasmáticas)</a>
             <a href="bioquimica medica notebook tema 16.html" class="file-link">Bioquímica Médica - Tema 16 (Hígado y Zonación)</a>
             <a href="bioquimica medica notebook tema 17.html" class="file-link">Bioquímica Médica - Tema 17 (Xenobióticos y Metabolismo)</a>
+            <a href="bioquimica medica notebook tema 18.html" class="file-link">Bioquímica Médica - Tema 18 (Compartimentos e Hidratación)</a>
+            <a href="bioquimica medica notebook tema 19.html" class="file-link">Bioquímica Médica - Tema 19 (Hueso y Calcio)</a>
+            <a href="bioquimica medica notebook tema 20.html" class="file-link">Bioquímica Médica - Tema 20 (Colágeno, Elastina y Fibrilina)</a>
         </div>
 
         <footer>
