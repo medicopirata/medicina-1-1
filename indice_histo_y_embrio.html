@@ -18,6 +18,10 @@
             --text: #333;
         }
 
+        * {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -67,9 +71,8 @@
             letter-spacing: 1px;
         }
 
-        h2 {
-            margin: 10px 0 0 0;
-            font-size: 1.2em;
+        .subheader {
+            margin-top: 10px;
             opacity: 0.8;
             font-weight: 400;
         }
@@ -164,12 +167,16 @@
 
         .card-teoria .card-header { background: var(--accent); }
         .card-teoria .icon { color: var(--accent); }
+
         .card-embrio .card-header { background: var(--embrio); }
         .card-embrio .icon { color: var(--embrio); }
+
         .card-histo .card-header { background: var(--histo); }
         .card-histo .icon { color: var(--histo); }
+
         .card-notebook .card-header { background: var(--notebook); }
         .card-notebook .icon { color: var(--notebook); }
+
         .card-kahoot .card-header { background: var(--kahoot); }
         .card-kahoot .icon { color: var(--kahoot); }
 
@@ -201,20 +208,17 @@
 
     <div class="top-strip">
         <div class="crumb">1º Medicina · Histología y Embriología 1</div>
-        <div class="user-chip" id="user-chip">Tripulante activo</div>
+        <div class="user-chip" id="user-chip">Acceso libre</div>
     </div>
 
     <header>
         <h1>Histología y Embriología 1</h1>
-        <div style="opacity: 0.8; font-weight: 400;">Panel de Repaso</div>
+        <div class="subheader">Panel de Repaso</div>
     </header>
 
     <div class="section-title">Material General</div>
     <div class="container">
-        <a href="embrio daypo pro.html" class="card card-teoria"
-           data-resource-id="teoria_completa"
-           data-resource-name="Teoría Completa"
-           data-resource-type="material_general">
+        <a href="embrio daypo pro.html" class="card card-teoria">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">📝</div>
@@ -224,10 +228,7 @@
             </div>
         </a>
 
-        <a href="imagenes embrio.html" class="card card-embrio"
-           data-resource-id="visual_embriologia"
-           data-resource-name="Visual: Embriología"
-           data-resource-type="visual">
+        <a href="imagenes embrio.html" class="card card-embrio">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">👶</div>
@@ -237,10 +238,7 @@
             </div>
         </a>
 
-        <a href="imagenes histo.html" class="card card-histo"
-           data-resource-id="visual_histologia"
-           data-resource-name="Visual: Histología"
-           data-resource-type="visual">
+        <a href="imagenes histo.html" class="card card-histo">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">🔬</div>
@@ -253,10 +251,7 @@
 
     <div class="section-title">Test Notebook (Por Temas)</div>
     <div class="container">
-        <a href="test note embrio 1.html" class="card card-notebook"
-           data-resource-id="embriologia_i"
-           data-resource-name="Embriología I"
-           data-resource-type="notebook_test">
+        <a href="test note embrio 1.html" class="card card-notebook">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">📓</div>
@@ -266,10 +261,7 @@
             </div>
         </a>
 
-        <a href="embrio notebook2.html" class="card card-notebook"
-           data-resource-id="embriologia_ii"
-           data-resource-name="Embriología II"
-           data-resource-type="notebook_test">
+        <a href="embrio notebook2.html" class="card card-notebook">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">📓</div>
@@ -279,10 +271,7 @@
             </div>
         </a>
 
-        <a href="embriologia notebook 3.html" class="card card-notebook"
-           data-resource-id="embriologia_iii"
-           data-resource-name="Embriología III"
-           data-resource-type="notebook_test">
+        <a href="embriologia notebook 3.html" class="card card-notebook">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">📓</div>
@@ -292,10 +281,7 @@
             </div>
         </a>
 
-        <a href="embriologia notebook 4.html" class="card card-notebook"
-           data-resource-id="embriologia_iv"
-           data-resource-name="Embriología IV"
-           data-resource-type="notebook_test">
+        <a href="embriologia notebook 4.html" class="card card-notebook">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">📓</div>
@@ -305,10 +291,7 @@
             </div>
         </a>
 
-        <a href="Histologia , notebook 1.html" class="card card-notebook"
-           data-resource-id="histologia_i"
-           data-resource-name="Histología I"
-           data-resource-type="notebook_test">
+        <a href="Histologia , notebook 1.html" class="card card-notebook">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">📓</div>
@@ -318,10 +301,7 @@
             </div>
         </a>
 
-        <a href="Histologia , notebook 2.html" class="card card-notebook"
-           data-resource-id="histologia_ii"
-           data-resource-name="Histología II"
-           data-resource-type="notebook_test">
+        <a href="Histologia , notebook 2.html" class="card card-notebook">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">📓</div>
@@ -331,10 +311,7 @@
             </div>
         </a>
 
-        <a href="Histologia , notebook 3.html" class="card card-notebook"
-           data-resource-id="histologia_iii"
-           data-resource-name="Histología III"
-           data-resource-type="notebook_test">
+        <a href="Histologia , notebook 3.html" class="card card-notebook">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">📓</div>
@@ -344,10 +321,7 @@
             </div>
         </a>
 
-        <a href="Histologia , notebook 4.html" class="card card-notebook"
-           data-resource-id="histologia_iv"
-           data-resource-name="Histología IV"
-           data-resource-type="notebook_test">
+        <a href="Histologia , notebook 4.html" class="card card-notebook">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">📓</div>
@@ -360,14 +334,11 @@
 
     <div class="section-title">Kahoots de Clase</div>
     <div class="container">
-        <a href="embrio semana 1 kahoot.html" class="card card-kahoot"
-           data-resource-id="kahoot_embriologia"
-           data-resource-name="Kahoots de clase Embriología"
-           data-resource-type="kahoot">
+        <a href="embrio semana 1 kahoot.html" class="card card-kahoot">
             <div class="card-header"></div>
             <div class="card-body">
                 <div class="icon">🎮</div>
-                <div class="card-title">Kahoots de clase Embriologia</div>
+                <div class="card-title">Kahoots de clase Embriología</div>
                 <div class="card-desc">Cuestionario interactivo con corrección instantánea y seguimiento de respuestas marcadas o falladas.</div>
                 <div class="tag">Cuestionarios Dinámicos</div>
             </div>
@@ -378,114 +349,6 @@
         U Cádiz - Facultad de Medicina.<br>
         Asegúrate de que todos los archivos HTML y las carpetas de imágenes estén en el mismo directorio.
     </footer>
-
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-app.js";
-        import { getDatabase, ref, update, increment } from "https://www.gstatic.com/firebasejs/10.8.1/firebase-database.js";
-
-        const firebaseConfig = {
-            apiKey: "TU_API_KEY",
-            authDomain: "portal-estudio-medicina.firebaseapp.com",
-            databaseURL: "https://portal-estudio-medicina-default-rtdb.europe-west1.firebasedatabase.app",
-            projectId: "portal-estudio-medicina",
-            storageBucket: "portal-estudio-medicina.firebasestorage.app",
-            messagingSenderId: "536326985694",
-            appId: "1:536326985694:web:ee2428d39421653be26f4f",
-            measurementId: "G-52KKQDCFXD"
-        };
-
-        const app = initializeApp(firebaseConfig);
-        const db = getDatabase(app);
-
-        const USERS = [
-            { hash: "26f23fc6cb9d53db0d5041fd0c3b1a09b03c3359f01ab4f9b99a2b3063b8e603", alias: "Comodoro Supremo", admin: true },
-            { hash: "0aaf6107f7ad50f68c7fdd9e43e25d22a6bc026080aff0f1013c322babe65cc5", alias: "Tripulante", admin: false }
-        ];
-
-        const SUBJECT_ID = "histo_embrio_i";
-        const SUBJECT_NAME = "Histología y Embriología 1";
-        const QUAD_ID = "primero_segundo_cuatrimestre";
-
-        function findUserByHash(hash) {
-            return USERS.find(u => u.hash === hash) || null;
-        }
-
-        function getSafeDisplayName(userObj) {
-            if (!userObj) return "Tripulante";
-            return userObj.alias || "Tripulante";
-        }
-
-        async function registerSubjectIndexAccess(userHash) {
-            const sessionKey = `subject_index_counted_${SUBJECT_ID}_${userHash}`;
-            if (sessionStorage.getItem(sessionKey)) return;
-
-            const updates = {};
-            updates[`navegacion/asignaturas/${SUBJECT_ID}/nombre`] = SUBJECT_NAME;
-            updates[`navegacion/asignaturas/${SUBJECT_ID}/indiceEntradas`] = increment(1);
-            updates[`navegacion/asignaturas/${SUBJECT_ID}/usuarios/${userHash}/indiceEntradas`] = increment(1);
-            updates[`navegacion/asignaturas/${SUBJECT_ID}/usuarios/${userHash}/nombre`] = getSafeDisplayName(findUserByHash(userHash));
-
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/asignaturas/${SUBJECT_ID}/nombre`] = SUBJECT_NAME;
-            updates[`navegacion/cuatrimestres/${QUAD_ID}/asignaturas/${SUBJECT_ID}/indiceEntradas`] = increment(1);
-
-            await update(ref(db, "/"), updates);
-            sessionStorage.setItem(sessionKey, "1");
-        }
-
-        async function registerResourceClick(userHash, resourceId, resourceName, resourceType) {
-            const updates = {};
-            updates[`navegacion/asignaturas/${SUBJECT_ID}/recursos/${resourceId}/nombre`] = resourceName;
-            updates[`navegacion/asignaturas/${SUBJECT_ID}/recursos/${resourceId}/tipo`] = resourceType;
-            updates[`navegacion/asignaturas/${SUBJECT_ID}/recursos/${resourceId}/clics`] = increment(1);
-            updates[`navegacion/asignaturas/${SUBJECT_ID}/recursos/${resourceId}/usuarios/${userHash}`] = increment(1);
-
-            updates[`navegacion/usuarios/${userHash}/asignaturas/${SUBJECT_ID}/recursos/${resourceId}/clics`] = increment(1);
-            updates[`navegacion/usuarios/${userHash}/asignaturas/${SUBJECT_ID}/recursos/${resourceId}/nombre`] = resourceName;
-            updates[`navegacion/usuarios/${userHash}/asignaturas/${SUBJECT_ID}/recursos/${resourceId}/tipo`] = resourceType;
-
-            await update(ref(db, "/"), updates);
-        }
-
-        async function initPage() {
-            const tokenOk = sessionStorage.getItem("_auth_tkn_882") === "1";
-            const currentHash = sessionStorage.getItem("_auth_hash") || "";
-            const currentUser = findUserByHash(currentHash);
-
-            if (!tokenOk || !currentHash || !currentUser) {
-                window.location.replace("index.html");
-                return;
-            }
-
-            const chip = document.getElementById("user-chip");
-            if (chip) {
-                chip.textContent = `${getSafeDisplayName(currentUser)} · acceso activo`;
-            }
-
-            try {
-                await registerSubjectIndexAccess(currentHash);
-            } catch (error) {
-                console.error("No se pudo registrar acceso al índice:", error);
-            }
-
-            document.querySelectorAll(".card").forEach(card => {
-                card.addEventListener("click", async function () {
-                    const resourceId = this.dataset.resourceId || "";
-                    const resourceName = this.dataset.resourceName || "Recurso";
-                    const resourceType = this.dataset.resourceType || "general";
-
-                    try {
-                        await registerResourceClick(currentHash, resourceId, resourceName, resourceType);
-                    } catch (error) {
-                        console.error("No se pudo registrar el clic:", error);
-                    }
-                });
-            });
-        }
-
-        initPage().catch(error => {
-            console.error("Error al iniciar la página:", error);
-        });
-    </script>
 
 </body>
 </html>
