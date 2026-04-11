@@ -113,7 +113,6 @@
             transform: translateX(5px);
         }
 
-        /* Estilos hover específicos por asignatura */
         .anato-link:hover { background: var(--color-anato); border-color: #2980b9; }
         .bioq-link:hover { background: var(--color-bioq); border-color: #c0392b; }
         .fisio-link:hover { background: var(--color-fisio); border-color: #d35400; }
@@ -212,6 +211,11 @@
                 <h2><span class="icon-fisio"></span> Fisiología Humana</h2>
                 <ul class="file-list">
                     <li class="file-item">
+                        <a href="fisio%20claude.html" target="_blank" rel="noopener noreferrer" class="file-link fisio-link" style="border-left: 3px solid var(--color-fisio); background: #fffdf5;">
+                            FisioQuiz: Repaso General (Claude) <span class="badge" style="background:var(--color-fisio); color:white;">NUEVO</span>
+                        </a>
+                    </li>
+                    <li class="file-item">
                         <a href="6%20de%20abril%20fisiologia.html" class="file-link fisio-link" style="border-left: 3px solid var(--color-fisio);">
                             Master Quiz: Fisiología Integral <span class="badge">200 PREGS</span>
                         </a>
@@ -241,7 +245,6 @@
             appId: "1:260077805780:web:91c23126b9b65eb34fdb41",
             measurementId: "G-T3X8N7YSQ6"
         };
-
         firebase.initializeApp(firebaseConfig);
         firebase.analytics();
     </script>
