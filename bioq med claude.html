@@ -108,6 +108,21 @@ button{cursor:pointer;font-family:var(--f);transition:all .2s}
 .ex{margin-top:.9rem;padding:.85rem 1rem;background:var(--s1);border-left:3px solid var(--ac);border-radius:0 var(--r) var(--r) 0;font-size:.8rem;line-height:1.6;color:var(--t2);animation:slideIn .3s ease-out}
 .qnav{display:flex;gap:.5rem;justify-content:space-between;margin-top:1.3rem;padding-bottom:2rem}
 
+/* ANKI DIFFICULTY BUTTONS */
+.anki-bar{display:flex;gap:.35rem;margin-top:.8rem;animation:fadeIn .3s ease-out}
+.anki-bar .anki-label{font-size:.6rem;color:var(--t3);font-family:var(--m);display:flex;align-items:center;margin-right:.2rem;text-transform:uppercase;letter-spacing:.5px}
+.anki-btn{flex:1;padding:.5rem .3rem;border:1px solid var(--bdr);border-radius:var(--r);background:var(--s2);color:var(--t1);font-size:.7rem;font-weight:600;font-family:var(--f);cursor:pointer;transition:all .2s;display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1.2}
+.anki-btn .anki-time{font-size:.52rem;color:var(--t3);font-family:var(--m);font-weight:400}
+.anki-btn:hover{transform:translateY(-2px);box-shadow:var(--shadow)}
+.anki-btn.a-again{border-color:var(--no);color:var(--no2)}.anki-btn.a-again:hover{background:var(--nobg)}
+.anki-btn.a-hard{border-color:#e17055;color:#e17055}.anki-btn.a-hard:hover{background:rgba(225,112,85,.08)}
+.anki-btn.a-good{border-color:var(--ok);color:var(--ok2)}.anki-btn.a-good:hover{background:var(--okbg)}
+.anki-btn.a-easy{border-color:#74b9ff;color:#74b9ff}.anki-btn.a-easy:hover{background:rgba(116,185,255,.08)}
+.anki-btn.sel{opacity:.5;pointer-events:none}
+
+/* SRS indicator on question header */
+.srs-badge{font-size:.5rem;font-family:var(--m);padding:.1rem .35rem;border-radius:3px;font-weight:600}
+
 /* RESULTS */
 #P3{display:none;flex-direction:column;align-items:center;padding:2rem 1.5rem;gap:1rem;min-height:100vh}
 .rc{background:var(--s1);border:1px solid var(--bdr);border-radius:var(--r2);padding:1.6rem;max-width:580px;width:100%;text-align:center}
@@ -129,18 +144,18 @@ button{cursor:pointer;font-family:var(--f);transition:all .2s}
 .rg{display:grid;grid-template-columns:1fr 1fr;gap:.4rem;max-width:580px;width:100%;margin-top:.5rem}
 
 @media(max-width:900px){.mg{grid-template-columns:1fr 1fr}.dash{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:700px){.sb{width:185px}.qa{padding:1rem}.tg{grid-template-columns:1fr}.dash{grid-template-columns:repeat(2,1fr)}}
-@media(max-width:540px){#P2{flex-direction:column}.sb{width:100%;max-height:28vh;border-right:none;border-bottom:1px solid var(--bdr)}.qa{padding:.9rem}.mg{grid-template-columns:1fr 1fr}.dash{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.sb{width:185px}.qa{padding:1rem}.tg{grid-template-columns:1fr}.dash{grid-template-columns:repeat(2,1fr)}.anki-btn{font-size:.62rem;padding:.4rem .2rem}}
+@media(max-width:540px){#P2{flex-direction:column}.sb{width:100%;max-height:28vh;border-right:none;border-bottom:1px solid var(--bdr)}.qa{padding:.9rem}.mg{grid-template-columns:1fr 1fr}.dash{grid-template-columns:1fr 1fr}.anki-bar{flex-wrap:wrap}.anki-bar .anki-label{width:100%;margin-bottom:.15rem}}
 </style>
 </head>
 <body>
 
 <div id="P0">
 <div class="logo fade-in">Bioquímica</div>
-<p class="sub fd1">Quiz de repaso · 974 preguntas · 25 temas · algoritmo adaptativo</p>
+<p class="sub fd1">Quiz de repaso · 974 preguntas · 25 temas · repetición espaciada</p>
 <input type="text" id="uname" placeholder="Tu nombre..." autocomplete="off" class="fd2">
 <button class="btn bp fd3" onclick="login()">Comenzar</button>
-<span class="v-badge fd3">v3.0 · 974 preguntas · 25 temas</span>
+<span class="v-badge fd3">v4.0 · 974 preguntas · 25 temas · Anki</span>
 </div>
 
 <div id="P1">
@@ -159,7 +174,7 @@ button{cursor:pointer;font-family:var(--f);transition:all .2s}
 <h2>Modo de estudio</h2>
 <div class="mg" id="mGrid">
 <div class="mb sel" data-m="all" onclick="sMode(this)"><div class="mi">📝</div><b>Todas</b><small>Todas las preguntas</small></div>
-<div class="mb" data-m="smart" onclick="sMode(this)"><div class="mi">🧠</div><b>Inteligente</b><small>Prioriza fallos y no vistas</small></div>
+<div class="mb" data-m="smart" onclick="sMode(this)"><div class="mi">🧠</div><b>Inteligente</b><small>Repetición espaciada (SRS)</small></div>
 <div class="mb" data-m="exam" onclick="sMode(this)"><div class="mi">🎓</div><b>Examen</b><small>Simulacro con cronómetro</small></div>
 <div class="mb" data-m="quick" onclick="sMode(this)"><div class="mi">⚡</div><b>Rápido</b><small>10 preguntas</small></div>
 <div class="mb" data-m="fail" onclick="sMode(this)"><div class="mi">❌</div><b>Falladas</b><small id="failCount">Errores</small></div>
@@ -221,6 +236,44 @@ return`<label class="ti"><input type="checkbox" value="${t}" checked onchange="u
 window.tAll=function(v){document.querySelectorAll('#tGrid input').forEach(cb=>cb.checked=!!v);updateCounts()};
 window.sMode=function(el){document.querySelectorAll('.mb').forEach(b=>b.classList.remove('sel'));el.classList.add('sel');S.mode=el.dataset.m};
 
+// SRS (Spaced Repetition) - SM-2 inspired algorithm
+// Each question stores: {a, c, w, ls, sk, ef, ivl, due, diff}
+// ef = ease factor (starts 2.5), ivl = interval in minutes, due = next review timestamp, diff = last difficulty
+function srsInterval(st, diff){
+// diff: 0=again, 1=hard, 2=good, 3=easy
+let ef = st.ef || 2.5;
+let ivl = st.ivl || 0;
+if(diff === 0){ // Again
+  ivl = 1; // 1 minute
+  ef = Math.max(1.3, ef - 0.2);
+} else if(diff === 1){ // Hard
+  ivl = Math.max(ivl * 1.2, 6); // at least 6 min
+  ef = Math.max(1.3, ef - 0.15);
+} else if(diff === 2){ // Good
+  if(ivl < 1) ivl = 10; // first time: 10 min
+  else if(ivl < 60) ivl = ivl * ef;
+  else ivl = ivl * ef;
+} else if(diff === 3){ // Easy
+  if(ivl < 1) ivl = 60; // 1 hour
+  else ivl = ivl * ef * 1.3;
+  ef = ef + 0.15;
+}
+ivl = Math.min(ivl, 525600); // cap at 365 days in minutes
+return {ef: Math.round(ef*100)/100, ivl: Math.round(ivl), due: Date.now() + ivl * 60000};
+}
+
+function srsLabel(ivl){
+if(!ivl || ivl < 1) return '';
+if(ivl < 60) return Math.round(ivl)+'m';
+if(ivl < 1440) return Math.round(ivl/60)+'h';
+return Math.round(ivl/1440)+'d';
+}
+
+function getNextIntervals(st){
+const base = {...(st||{a:0,c:0,w:0,ls:0,sk:0,ef:2.5,ivl:0,due:0})};
+return [0,1,2,3].map(d => srsInterval({...base}, d).ivl);
+}
+
 // START
 window.go=function(){const sel=gSel();if(!sel.length){alert('Selecciona al menos un tema');return}S.topics=sel;S.ord=document.querySelector('input[name="ord"]:checked').value;let pool=ALL_QUESTIONS.filter(q=>sel.includes(q.topic));const lim=parseInt(document.getElementById('qLimit').value)||0;examMode=false;
 switch(S.mode){
@@ -237,28 +290,60 @@ if(S.ord==='r'||examMode||S.mode==='quick')pool=shuf([...pool]);
 S.qs=pool.map(q=>{const ix=q.opts.map((_,i)=>i);const si=shuf([...ix]);return{...q,dOpts:si.map(i=>q.opts[i]),dC:si.indexOf(q.correct)}});
 S.ci=0;S.ans={};if(examMode){examStart=Date.now();examTimer=setInterval(updTimer,1000)}render();sh('P2')};
 
-function smartS(p){const n=Date.now();return[...p].sort((a,b)=>{const sa=S.st[a.id]||{a:0,c:0,w:0,ls:0,sk:0};const sb=S.st[b.id]||{a:0,c:0,w:0,ls:0,sk:0};return scr(sb,n)-scr(sa,n)})}
-function scr(s,n){if(!s.a)return 1000;const fr=s.w/Math.max(s.a,1);const h=(n-(s.ls||0))/36e5;return(fr*500)+(h*2)-(Math.max(0,s.sk||0)*50)}
+function smartS(p){const n=Date.now();return[...p].sort((a,b)=>{const sa=S.st[a.id]||{a:0,c:0,w:0,ls:0,sk:0,ef:2.5,ivl:0,due:0};const sb=S.st[b.id]||{a:0,c:0,w:0,ls:0,sk:0,ef:2.5,ivl:0,due:0};return scr(sb,n)-scr(sa,n)})}
+function scr(s,n){
+if(!s.a) return 1000; // never seen = highest priority
+if(s.due && s.due > n) return -100 + (s.due - n)/36e5; // not due yet = low priority
+const fr=s.w/Math.max(s.a,1);const h=(n-(s.ls||0))/36e5;
+const overdue = s.due ? Math.max(0, (n - s.due)/36e5) : h;
+return (fr*500)+(overdue*3)-(Math.max(0,s.sk||0)*30)+(s.ef?((2.5-s.ef)*100):0);
+}
 function updTimer(){const el=document.getElementById('tmr');if(!el)return;const e=Math.floor((Date.now()-examStart)/1000);el.textContent=String(Math.floor(e/60)).padStart(2,'0')+':'+String(e%60).padStart(2,'0')}
 
 // RENDER
 function render(){rSb();rQ();rP()}
 function rSb(){document.getElementById('sbN').innerHTML=S.qs.map((q,i)=>{let c='qi';if(i===S.ci)c+=' cur';if(S.ans[i]!==undefined)c+=S.ans[i].ok?' aok':' ano';if(S.bm.has(q.id))c+=' bm';return`<span class="${c}" onclick="gt(${i})">${i+1}</span>`}).join('');
-const a=Object.keys(S.ans).length,co=Object.values(S.ans).filter(x=>x.ok).length;document.getElementById('sbS').textContent=co+'/'+a;document.getElementById('sbT').textContent=examMode?'Examen':S.mode==='quick'?'Rápido':'Quiz';
+const a=Object.keys(S.ans).length,co=Object.values(S.ans).filter(x=>x.ok).length;document.getElementById('sbS').textContent=co+'/'+a;document.getElementById('sbT').textContent=examMode?'Examen':S.mode==='quick'?'Rápido':S.mode==='smart'?'SRS':'Quiz';
 let info=`<span>Progreso: ${a}/${S.qs.length}</span>`;if(a>0)info+=`<span>Acierto: ${Math.round(co/a*100)}%</span>`;if(examMode)info+=`<span class="timer" id="tmr">00:00</span>`;document.getElementById('sbInfo').innerHTML=info}
 
 function rQ(){const q=S.qs[S.ci];if(!q)return;const a=S.ans[S.ci];const bm=S.bm.has(q.id);const st=S.st[q.id];
-let hist='';if(st&&st.a>0){const p=Math.round(st.c/st.a*100);hist=`<div class="qhist"><span style="color:var(--ok)">✓${st.c}</span><span style="color:var(--no)">✗${st.w}</span><span>${p}%</span>${st.sk>1?`<span style="color:var(--warn)">🔥${st.sk}</span>`:''}</div>`}
+let hist='';if(st&&st.a>0){const p=Math.round(st.c/st.a*100);
+let srsInfo='';if(st.ivl){srsInfo=`<span class="srs-badge" style="background:var(--s3);color:var(--ac2)">⏱${srsLabel(st.ivl)}</span>`}
+hist=`<div class="qhist"><span style="color:var(--ok)">✓${st.c}</span><span style="color:var(--no)">✗${st.w}</span><span>${p}%</span>${st.sk>1?`<span style="color:var(--warn)">🔥${st.sk}</span>`:''}${srsInfo}</div>`}
+
+// Anki difficulty buttons (shown after answering, NOT in exam mode)
+let ankiHtml='';
+if(a && !examMode){
+const rated = a.diff !== undefined;
+const intervals = getNextIntervals(st);
+ankiHtml=`<div class="anki-bar">
+<span class="anki-label">Dificultad:</span>
+<button class="anki-btn a-again ${rated?'sel':''}" onclick="rateDiff(0)"><span>Otra vez</span><span class="anki-time">${srsLabel(intervals[0])}</span></button>
+<button class="anki-btn a-hard ${rated?'sel':''}" onclick="rateDiff(1)"><span>Difícil</span><span class="anki-time">${srsLabel(intervals[1])}</span></button>
+<button class="anki-btn a-good ${rated?'sel':''}" onclick="rateDiff(2)"><span>Normal</span><span class="anki-time">${srsLabel(intervals[2])}</span></button>
+<button class="anki-btn a-easy ${rated?'sel':''}" onclick="rateDiff(3)"><span>Fácil</span><span class="anki-time">${srsLabel(intervals[3])}</span></button>
+</div>`}
+
 document.getElementById('qArea').innerHTML=`<div class="qh"><span class="qn">${S.ci+1}/${S.qs.length}</span><span class="qt">${TOPIC_NAMES[q.topic]||q.topic}</span>${hist}<span class="qb ${bm?'on':''}" onclick="tbm('${q.id}')">${bm?'★':'☆'}</span></div>
 <div class="qx">${q.q}</div>
 <div class="opts">${q.dOpts.map((o,i)=>{let c='opt';if(a){c+=' dis';if(i===q.dC)c+=' ok';else if(a.sel===i&&!a.ok)c+=' no'}return`<div class="${c}" onclick="sel(${i})">${o}</div>`}).join('')}</div>
 ${a?`<div class="ex"><strong>Explicación:</strong> ${q.exp}</div>`:''}
+${ankiHtml}
 <div class="qnav"><button class="btn bs" onclick="gt(${S.ci-1})" ${S.ci===0?'disabled':''}>← Anterior</button>${S.ci<S.qs.length-1?`<button class="btn bp" onclick="gt(${S.ci+1})">Siguiente →</button>`:`<button class="btn bp" onclick="end()">Ver resultados</button>`}</div>`}
 function rP(){const a=Object.keys(S.ans).length;document.getElementById('pFill').style.width=(a/S.qs.length*100)+'%'}
 
 // ACTIONS
-window.sel=function(i){if(S.ans[S.ci])return;const q=S.qs[S.ci];const ok=i===q.dC;S.ans[S.ci]={sel:i,ok};if(!S.st[q.id])S.st[q.id]={a:0,c:0,w:0,ls:0,sk:0};S.st[q.id].a++;S.st[q.id].ls=Date.now();if(ok){S.st[q.id].c++;S.st[q.id].sk=(S.st[q.id].sk||0)+1}else{S.st[q.id].w++;S.st[q.id].sk=0}save();render();
-if(Object.keys(S.ans).length===S.qs.length){setTimeout(()=>{if(confirm('¡Completado! ¿Ver resultados?'))end()},500)}else if(ok&&!examMode){setTimeout(()=>{if(S.ci<S.qs.length-1)gt(S.ci+1)},700)}};
+window.sel=function(i){if(S.ans[S.ci])return;const q=S.qs[S.ci];const ok=i===q.dC;S.ans[S.ci]={sel:i,ok};if(!S.st[q.id])S.st[q.id]={a:0,c:0,w:0,ls:0,sk:0,ef:2.5,ivl:0,due:0};S.st[q.id].a++;S.st[q.id].ls=Date.now();if(ok){S.st[q.id].c++;S.st[q.id].sk=(S.st[q.id].sk||0)+1}else{S.st[q.id].w++;S.st[q.id].sk=0}save();render();
+// NO auto-advance: user reads explanation and clicks "Siguiente" manually
+if(Object.keys(S.ans).length===S.qs.length){setTimeout(()=>{if(confirm('¡Completado! ¿Ver resultados?'))end()},800)}};
+
+// Rate difficulty (Anki-style)
+window.rateDiff=function(diff){const q=S.qs[S.ci];if(!S.ans[S.ci])return;S.ans[S.ci].diff=diff;
+if(!S.st[q.id])S.st[q.id]={a:0,c:0,w:0,ls:0,sk:0,ef:2.5,ivl:0,due:0};
+const result=srsInterval(S.st[q.id],diff);
+S.st[q.id].ef=result.ef;S.st[q.id].ivl=result.ivl;S.st[q.id].due=result.due;S.st[q.id].diff=diff;
+save();render()};
+
 window.gt=function(i){if(i<0||i>=S.qs.length)return;S.ci=i;rQ();rSb();document.querySelector('.mc').scrollTop=0};
 window.tbm=function(id){if(S.bm.has(id))S.bm.delete(id);else S.bm.add(id);save();rQ();rSb()};
 window.end=function(){if(examTimer){clearInterval(examTimer);examTimer=null}showRes();sh('P3')};
@@ -268,10 +353,8 @@ function showRes(){const t=S.qs.length,a=Object.keys(S.ans).length,c=Object.valu
 let elapsed='';if(examMode){const sec=Math.floor((Date.now()-examStart)/1000);elapsed=` en ${Math.floor(sec/60)}m ${sec%60}s`}
 const grade=p>=90?'Sobresaliente':p>=70?'Notable':p>=50?'Aprobado':'Suspenso';
 document.getElementById('rCard').innerHTML=`<div class="rs" style="color:${p>=50?'var(--ok)':'var(--no)'}">${p}%</div><div class="rsubt">${grade}${elapsed} · ${c} de ${t} correctas</div><div class="rd"><div><div class="v">${a}</div><div class="l">Respondidas</div></div><div><div class="v" style="color:var(--ok)">${c}</div><div class="l">Correctas</div></div><div><div class="v" style="color:var(--no)">${w}</div><div class="l">Incorrectas</div></div></div>`;
-// Topic breakdown
 const tS={};S.qs.forEach((q,i)=>{if(!tS[q.topic])tS[q.topic]={t:0,c:0};tS[q.topic].t++;if(S.ans[i]&&S.ans[i].ok)tS[q.topic].c++});
 document.getElementById('rTopics').innerHTML=Object.entries(tS).sort((a,b)=>(a[1].c/a[1].t)-(b[1].c/b[1].t)).map(([t,s])=>{const pc=Math.round(s.c/s.t*100);const cl=pc>=70?'var(--ok)':pc>=40?'var(--warn)':'var(--no)';return`<div class="rtop"><span class="rtn">${TOPIC_NAMES[t]||t}</span><div class="rtbar"><div class="rtbar-f" style="width:${pc}%;background:${cl}"></div></div><span class="rts" style="color:${cl}">${s.c}/${s.t}</span></div>`}).join('');
-// Review errors
 const rev=[];S.qs.forEach((q,i)=>{if(S.ans[i]&&!S.ans[i].ok){rev.push(`<div class="review-card"><div class="rv-q">${q.q}</div><div class="rv-sel rv-no">✗ Tu respuesta: ${q.dOpts[S.ans[i].sel]}</div><div class="rv-correct">✓ Correcta: ${q.dOpts[q.dC]}</div><div class="rv-exp">${q.exp}</div></div>`)}});
 document.getElementById('rReview').innerHTML=rev.length?rev.join(''):'<p style="color:var(--ok);font-size:.82rem;text-align:center">¡Sin errores! 🎉</p>';
 const bN=S.qs.filter(q=>S.bm.has(q.id)).length;
