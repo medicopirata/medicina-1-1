@@ -204,7 +204,7 @@ button{cursor:pointer;font-family:var(--f);transition:all .2s}
 <div class="rg" id="rGrid"></div>
 </div>
 
-<script src="questions.js"></script>
+<script src="preguntasbioquimicaclaude.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getDatabase,ref,set,get,child}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
@@ -212,35 +212,44 @@ const fApp=initializeApp({apiKey:"AIzaSyCg86OLSle_1InlGjQYWbAPephJSoWH3DU",authD
 const fDb=getDatabase(fApp);
 window._fbSave=async(u,d)=>{try{await set(ref(fDb,'bioq/'+u),d)}catch(e){console.warn('fb save err',e)}};
 window._fbLoad=async u=>{try{const s=await get(child(ref(fDb),'bioq/'+u));return s.exists()?s.val():null}catch(e){console.warn('fb load err',e);return null}};
-// Migration: load old-format data (history + flags) and convert to new format
-window._fbMigrate=async u=>{try{
+// Load and auto-migrate old format data
+window._fbLoadAndMigrate=async u=>{try{
 const snap=await get(child(ref(fDb),'bioq/'+u));
 if(!snap.exists())return null;
 const raw=snap.val();
-// If already has new format 'st' key, no migration needed
-if(raw.st && Object.keys(raw.st).some(k=>k.startsWith('b')))return raw;
-// Check for old format: 'history' key with numeric IDs and {s,c,ls,lc} fields
-const hist=raw.history||raw;
-const flags=raw.flags||[];
-if(!hist||typeof hist!=='object')return raw;
-// Detect old format: keys are numeric, values have 's' field
-const keys=Object.keys(hist);
-const isOld=keys.length>0&&keys.some(k=>/^\d+$/.test(k))&&hist[keys[0]]&&('s' in hist[keys[0]]);
-if(!isOld)return raw;
-console.log('Migrating old bioq data:',keys.length,'questions');
+if(!raw)return null;
+// CASE 1: Already new format (has 'st' with 'b'-prefixed keys)
+if(raw.st && typeof raw.st==='object'){
+  const k=Object.keys(raw.st);
+  if(k.length>0 && k[0].startsWith('b')) return raw;
+}
+// CASE 2: Old format - look for 'history' child or root-level numeric keys with {s,c,ls,lc}
+let hist=null, flags=[];
+if(raw.history && typeof raw.history==='object'){
+  hist=raw.history; flags=raw.flags||[];
+} else {
+  // Maybe the whole node IS the old history (no wrapper)
+  const testKeys=Object.keys(raw);
+  const firstKey=testKeys[0];
+  if(firstKey && raw[firstKey] && typeof raw[firstKey]==='object' && 's' in raw[firstKey]){
+    hist=raw;
+  }
+}
+if(!hist) return raw; // Can't detect old format, return as-is
+// Convert old → new
 const newSt={};
-keys.forEach(k=>{if(hist[k]&&typeof hist[k]==='object'){
-const old=hist[k];
-const newId='b'+k;
-newSt[newId]={a:old.s||0,c:old.c||0,w:Math.max(0,(old.s||0)-(old.c||0)),ls:old.ls||0,sk:old.lc?1:0,ef:2.5,ivl:0,due:0};
-}});
+const entries=Array.isArray(hist)?hist.map((v,i)=>[String(i),v]):Object.entries(hist);
+entries.forEach(([k,old])=>{
+  if(!old||typeof old!=='object'||!('s' in old))return;
+  newSt['b'+k]={a:old.s||0,c:old.c||0,w:Math.max(0,(old.s||0)-(old.c||0)),ls:old.ls||0,sk:old.lc?1:0,ef:2.5,ivl:0,due:0};
+});
+if(Object.keys(newSt).length===0) return raw;
 const newBm=Array.isArray(flags)?flags.map(f=>'b'+f):[];
 const migrated={st:newSt,bm:newBm,la:Date.now()};
-// Save migrated data
+console.log('Migrated',Object.keys(newSt).length,'questions from old format');
 await set(ref(fDb,'bioq/'+u),migrated);
-console.log('Migration complete:',Object.keys(newSt).length,'questions migrated');
 return migrated;
-}catch(e){console.warn('migration err',e);return null}};
+}catch(e){console.warn('migrate err',e);return null}};
 </script>
 <script>
 let S={uid:'',mode:'all',topics:[],ord:'s',qs:[],ci:0,ans:{},bm:new Set(),st:{}};
@@ -249,7 +258,7 @@ let examTimer=null,examStart=0,examMode=false;
 function sh(id){['P0','P1','P2','P3'].forEach(p=>document.getElementById(p).style.display='none');document.getElementById(id).style.display='flex';if(examTimer&&id!=='P2'){clearInterval(examTimer);examTimer=null}if(id==='P1'){updateDash();updateCounts()}}
 
 // LOGIN
-window.login=async function(){const n=document.getElementById('uname').value.trim();if(!n)return;S.uid=n.toLowerCase().replace(/[^a-z0-9áéíóúñü]/g,'_');const d=await window._fbMigrate(S.uid);if(d){S.st=d.st||{};S.bm=new Set(d.bm||[])}document.getElementById('wmsg').textContent='Hola, '+n+' 👋';initSetup();sh('P1')};
+window.login=async function(){const n=document.getElementById('uname').value.trim();if(!n)return;S.uid=n.toLowerCase().replace(/[^a-z0-9áéíóúñü]/g,'_');const d=await window._fbLoadAndMigrate(S.uid);if(d){S.st=d.st||{};S.bm=new Set(d.bm||[])}document.getElementById('wmsg').textContent='Hola, '+n+' 👋';initSetup();sh('P1')};
 document.getElementById('uname').addEventListener('keydown',e=>{if(e.key==='Enter')window.login()});
 
 // DASHBOARD
