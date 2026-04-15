@@ -152,10 +152,10 @@ button{cursor:pointer;font-family:var(--f);transition:all .2s}
 
 <div id="P0">
 <div class="logo fade-in">Bioquímica</div>
-<p class="sub fd1">Quiz de repaso · 1155 preguntas · 25 temas · repetición espaciada</p>
+<p class="sub fd1">Quiz de repaso · 1236 preguntas · 25 temas · repetición espaciada</p>
 <input type="text" id="uname" placeholder="Tu nombre..." autocomplete="off" class="fd2">
 <button class="btn bp fd3" onclick="login()">Comenzar</button>
-<span class="v-badge fd3">v4.0 · 1155 preguntas · 25 temas · Anki</span>
+<span class="v-badge fd3">v4.0 · 1236 preguntas · 25 temas · Anki</span>
 </div>
 
 <div id="P1">
@@ -185,7 +185,7 @@ button{cursor:pointer;font-family:var(--f);transition:all .2s}
 </div></div>
 <div class="box fd3" style="display:flex;gap:1rem;align-items:center;flex-wrap:wrap">
 <div><h2 style="margin-bottom:.35rem">Orden</h2><div class="ot"><input type="radio" name="ord" id="oS" value="s" checked><label for="oS">Secuencial</label><input type="radio" name="ord" id="oR" value="r"><label for="oR">Aleatorio</label></div></div>
-<div style="margin-left:auto"><h2 style="margin-bottom:.35rem">Cantidad</h2><div style="display:flex;align-items:center;gap:.35rem"><input type="number" class="num-input" id="qLimit" value="0" min="0" max="1155"><span style="font-size:.62rem;color:var(--t2)">0=todas</span></div></div>
+<div style="margin-left:auto"><h2 style="margin-bottom:.35rem">Cantidad</h2><div style="display:flex;align-items:center;gap:.35rem"><input type="number" class="num-input" id="qLimit" value="0" min="0" max="1236"><span style="font-size:.62rem;color:var(--t2)">0=todas</span></div></div>
 </div>
 <button class="btn bp" onclick="go()" style="padding:.65rem 2.2rem;font-size:.88rem">▶ Comenzar</button>
 </div>
@@ -204,7 +204,7 @@ button{cursor:pointer;font-family:var(--f);transition:all .2s}
 <div class="rg" id="rGrid"></div>
 </div>
 
-<script src="preguntasbioquimicaclaude.js"></script>
+<script src="questions.js"></script>
 <script type="module">
 import{initializeApp}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import{getDatabase,ref,set,get,child}from"https://www.gstatic.com/firebasejs/10.12.0/firebase-database.js";
