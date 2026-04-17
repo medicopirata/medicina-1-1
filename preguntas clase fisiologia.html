@@ -14,11 +14,11 @@
         }
 
         body { font-family: 'Segoe UI', Arial, sans-serif; background: var(--bg); margin: 0; display: flex; }
-        
+
         /* Modal de Inicio */
         #setup-modal { position: fixed; inset: 0; background: rgba(0,0,0,0.8); display: flex; align-items: center; justify-content: center; z-index: 1000; }
         .modal-content { background: white; padding: 30px; border-radius: 15px; text-align: center; max-width: 400px; width: 90%; }
-        
+
         select {
             padding: 10px;
             border-radius: 8px;
@@ -39,7 +39,7 @@
         /* Contenedor Principal */
         main { margin-left: 80px; padding: 40px; width: 100%; max-width: 900px; }
         .question-card { background: white; padding: 25px; border-radius: 12px; margin-bottom: 40px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); position: relative; }
-        
+
         .tag-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; }
         .mark-btn { cursor: pointer; background: #eee; border: none; padding: 5px 10px; border-radius: 5px; font-size: 0.8em; }
         .mark-btn.active { background: #ffa500; color: white; }
@@ -47,11 +47,11 @@
         h3 { margin-top: 0; color: var(--secondary); }
         .options-grid { display: grid; grid-template-columns: 1fr; gap: 15px; margin: 20px 0; }
         @media(min-width: 600px) { .options-grid { grid-template-columns: 1fr 1fr; } }
-        
+
         .opt { padding: 15px; border: 2px solid #ddd; border-radius: 8px; cursor: pointer; transition: 0.2s; position: relative; }
         .opt:hover { border-color: var(--primary); background: #f9f9f9; }
         .opt.selected { border-color: var(--primary); background: #f0ebf8; }
-        
+
         /* Colores de Corrección */
         .opt.correct { background: var(--success) !important; color: white; border-color: var(--success); }
         .opt.wrong { background: var(--danger) !important; color: white; border-color: var(--danger); }
@@ -87,6 +87,10 @@
             <option value="11">Tema 11</option>
             <option value="12">Tema 12</option>
             <option value="13">Tema 13</option>
+            <option value="14">Tema 14 — Sangre y grupos sanguíneos</option>
+            <option value="15">Tema 15 — Transmisión sináptica</option>
+            <option value="16">Tema 16 — Fisiología muscular</option>
+            <option value="17">Tema 17 — Cardiovascular y Renal</option>
         </select>
 
         <p>¿Cómo prefieres las preguntas?</p>
@@ -121,7 +125,7 @@ const rawData = [
     { id: 5, tema: 2, q: "¿Qué ocurre en una solución hipotónica?", options: ["Células se deshidratan", "Células se estabilizan", "Células se hinchan", "Células se crenan"], correct: [2], exp: "El agua entra en la célula por ósmosis, aumentando su volumen." },
     { id: 6, tema: 2, q: "¿Qué son los canales iónicos?", options: ["Lípidos de membrana", "Proteínas de transporte", "Carbohidratos", "Ácidos nucleicos"], correct: [1], exp: "Son proteínas transmembrana que permiten el paso selectivo de iones." },
     { id: 7, tema: 2, q: "¿Qué es la ósmosis?", options: ["Movimiento de agua", "Movimiento de solutos", "Movimiento de iones", "Movimiento de proteínas"], correct: [0], exp: "Es el movimiento neto de solvente (agua) hacia donde hay más concentración de solutos." },
-    
+
     // TEMA 3
     { id: 8, tema: 3, q: "1. ¿Cuál es la función de las permeasas?", options: ["a) Transportar solutos a favor de gradiente", "b) Producir ATP", "c) Almacenar energía", "d) Transportar solutos en contra del gradiente"], correct: [0], exp: "Las permeasas median la difusión facilitada, que siempre es a favor de gradiente." },
     { id: 9, tema: 3, q: "2. ¿Qué representa la Km en la cinética de difusión facilitada?", options: ["a) Velocidad máxima de transporte", "b) Afinidad del soluto por su sitio de unión", "c) Cantidad de transportador", "d) Concentración de ATP"], correct: [1], exp: "Km indica la afinidad; a menor Km, mayor afinidad del transportador por el sustrato." },
@@ -138,7 +142,7 @@ const rawData = [
     { id: 18, tema: 4, q: "Los anticuerpos de la leche materna pasan al cuerpo del recién nacido por:", options: ["Difusión facilitada", "Difusión simple", "Transcitosis", "Fagocitosis a nivel intestinal"], correct: [2], exp: "La transcitosis permite el paso de macromoléculas a través de barreras epiteliales." },
     { id: 19, tema: 4, q: "¿Cómo se transporta el hierro en sangre?", options: ["Asociado a la transferrina", "En forma libre", "Asociado a la hemosiderina", "Asociado a la ferritina"], correct: [0], exp: "El hierro viaja unido a la transferrina en el plasma." },
     { id: 20, tema: 4, q: "Una alteración genética que dificulta la endocitosis de LDL puede provocar:", options: ["Diabetes mellitus tipo II", "Aterosclerosis prematura", "Que el Cádiz CF ascienda", "Diabetes mellitus tipo I"], correct: [1], exp: "Al no captarse el LDL, aumenta en sangre y favorece la aterosclerosis." },
-    { id: 21, tema: 4, q: "¿Cómo se elimina del plasma el LDL “colesterol malo”?", options: ["Exocitosis", "Endocitosis mediada por receptor", "Transcitosis", "Por difusión"], correct: [1], exp: "Se internaliza mediante receptores de LDL." },
+    { id: 21, tema: 4, q: "¿Cómo se elimina del plasma el LDL "colesterol malo"?", options: ["Exocitosis", "Endocitosis mediada por receptor", "Transcitosis", "Por difusión"], correct: [1], exp: "Se internaliza mediante receptores de LDL." },
 
     // TEMA 5
     { id: 22, tema: 5, q: "1️⃣ Las hormonas esteroideas:", options: ["a) Se unen a receptores acoplados a proteína G en la membrana celular", "b) Se unen a receptores intracelulares", "c) Desarrollan una respuesta rápida en la célula", "d) Origina una señal eléctrica al unirse al receptor"], correct: [1], exp: "Son liposolubles y atraviesan la membrana." },
@@ -204,7 +208,57 @@ const rawData = [
     { id: 66, tema: 13, q: "5. ¿Qué estrategia evolutiva aumenta en mayor medida la velocidad de conducción del p.a.?", options: ["Mielinización", "Reducción de Rm", "Aumento de diámetro axonal", "Aumento de Cm"], correct: [0], exp: "El proceso de mielinización en los vertebrados permitió alcanzar altísimas velocidades de conducción sin tener que incrementar drásticamente el diámetro del axón." },
     { id: 67, tema: 13, q: "6. ¿A qué hace referencia la capacitancia de membrana?", options: ["Generación de carga", "Distribución de carga", "Pérdida de carga", "Almacenamiento de carga"], correct: [3], exp: "Es la propiedad física mediante la cual la membrana acumula o almacena cargas iónicas." },
     { id: 68, tema: 13, q: "7. ¿Cómo se propaga el potencial de acción?", options: ["Circularmente", "Aleatoriamente", "Bidireccionalmente", "Unidireccionalmente"], correct: [3], exp: "Avanza en una sola dirección hacia el terminal gracias a que los segmentos que deja atrás entran en un periodo refractario." },
-    { id: 69, tema: 13, q: "8. ¿Dónde inicia el potencial de acción?", options: ["Soma", "Segmento inicial", "Terminal axónico", "Dendritas"], correct: [1], exp: "Generalmente se desencadena en el cono axónico o segmento inicial debido a que es la zona con mayor concentración de canales de sodio voltaje-dependientes." }
+    { id: 69, tema: 13, q: "8. ¿Dónde inicia el potencial de acción?", options: ["Soma", "Segmento inicial", "Terminal axónico", "Dendritas"], correct: [1], exp: "Generalmente se desencadena en el cono axónico o segmento inicial debido a que es la zona con mayor concentración de canales de sodio voltaje-dependientes." },
+
+    // TEMA 14 - Sangre, grupos sanguíneos y hemostasia
+    { id: 70, tema: 14, q: "Los anticuerpos 'naturales' anti-A o anti-B del sistema ABO no suelen causar problemas durante el embarazo porque:", options: ["El feto no expresa antígenos ABO hasta después del nacimiento.", "Son IgM pentaméricas, demasiado grandes para atravesar la barrera placentaria.", "Son IgG neutralizadas por el líquido amniótico.", "El sistema inmune materno se deprime específicamente para el sistema ABO."], correct: [1], exp: "Las IgM son pentaméricas y demasiado grandes para cruzar la placenta, a diferencia de las IgG del sistema Rh. Detalle muy remarcado por el profesor." },
+    { id: 71, tema: 14, q: "Una paciente con 'Fenotipo Bombay' (genotipo hh) sufre una hemorragia severa. ¿Qué sangre puede recibir de forma segura?", options: ["Sangre del grupo O universal, ya que carece de antígenos A y B.", "Únicamente sangre de otro donante con fenotipo Bombay.", "Sangre de grupo AB tratada con inmunosupresores.", "Cualquier sangre Rh negativo."], correct: [1], exp: "El fenotipo Bombay carece del antígeno H y tiene potentes anticuerpos Anti-H. La sangre O normal contiene antígeno H y sería aglutinada. El profesor avisa de este 'falso O'." },
+    { id: 72, tema: 14, q: "Antonio (A, Rh-) recibe por primera vez accidentalmente sangre de Luis (A, Rh+). ¿Qué reacción inmunológica inmediata observaremos?", options: ["Aglutinación inmediata y letal en urgencias.", "Una reacción alérgica mediada por IgE.", "No habrá reacción hemolítica inmediata, ya que Antonio no posee anticuerpos preformados contra el antígeno D.", "El sistema ABO atacará al Rh de Luis inmediatamente."], correct: [2], exp: "Contra el Rh no hay anticuerpos naturales preformados. Antonio tardará días en fabricar IgG anti-D. Trampa clásica de clase." },
+    { id: 73, tema: 14, q: "¿Por qué un neonato con eritroblastosis fetal presenta hepatomegalia y esplenomegalia?", options: ["Por acumulación de anticuerpos IgM maternos en estos órganos.", "La anemia induce hipoxia que dispara la EPO, sobreestimulando la eritropoyesis compensatoria en el hígado y el bazo (órganos hematopoyéticos fetales).", "Por una infección viral oportunista.", "Porque el hígado no puede metabolizar glucosa."], correct: [1], exp: "Ante la lisis de hematíes, el feto sufre hipoxia, dispara la EPO y el hígado/bazo (sus fábricas de sangre) se hipertrofian. Pregunta directa del profesor." },
+    { id: 74, tema: 14, q: "Madre grupo A (genotipo A0), hijo grupo O (genotipo 00). ¿Qué podemos afirmar sobre el padre biológico?", options: ["El padre debe ser obligatoriamente grupo O.", "El padre no puede ser bajo ningún concepto grupo AB.", "El padre debe ser obligatoriamente grupo B.", "La prueba confirma al 100% la paternidad si el padre es grupo O."], correct: [1], exp: "Para que el niño sea 00, el padre debe aportar un alelo '0', lo que es imposible si el padre es AB. El ABO sirve para descartar, nunca para confirmar paternidad." },
+    { id: 75, tema: 14, q: "La ictericia en un neonato con eritroblastosis fetal se debe directamente a:", options: ["Un fallo hepático por acumulación de hierro.", "La presencia de IgG en la piel.", "La acumulación de bilirrubina, subproducto de la degradación masiva de la hemoglobina de los eritrocitos lisados.", "La falta de oxígeno en los capilares dérmicos."], correct: [2], exp: "De la degradación hemolítica de los eritrocitos se libera bilirrubina, que provoca el color amarillento característico. Lo aclara el profesor directamente." },
+    { id: 76, tema: 14, q: "La síntesis del antígeno A en el eritrocito ocurre cuando la 'Enzima A' añade al precursor (antígeno H) una molécula de:", options: ["Fucosa", "N-acetilgalactosamina", "Galactosa", "Ácido siálico"], correct: [1], exp: "La enzima H añade fucosa; la enzima A añade N-acetilgalactosamina; la enzima B añade Galactosa." },
+    { id: 77, tema: 14, q: "Paciente de grupo B+. Se cruza su suero con eritrocitos de un donante AB-. ¿Qué ocurrirá in vitro?", options: ["No habrá aglutinación porque el donante es Rh-.", "Habrá aglutinación, porque el receptor B+ tiene anticuerpos anti-A que atacarán el antígeno A del donante.", "No habrá aglutinación, porque el receptor no tiene anticuerpos anti-B.", "Habrá aglutinación por anticuerpos anti-D."], correct: [1], exp: "El paciente B tiene anticuerpos anti-A naturales. La sangre AB tiene antígeno A, que será atacado y aglutinado." },
+    { id: 78, tema: 14, q: "¿Por qué el oxígeno transportado por el eritrocito no es consumido por la propia célula?", options: ["El 2,3-DPG bloquea las rutas metabólicas aeróbicas.", "La hemoglobina fetal se lo impide.", "Los eritrocitos maduros carecen de mitocondrias y dependen exclusivamente de la glucólisis anaeróbica.", "Por la alta concentración de metahemoglobina."], correct: [2], exp: "Al no tener mitocondrias, el eritrocito no consume oxígeno, garantizando que el 100% de su carga llegue al tejido diana." },
+    { id: 79, tema: 14, q: "Las plaquetas activadas liberan Tromboxano A2 y Serotonina, los cuales provocan:", options: ["Lisis directa del coágulo de fibrina.", "Vasodilatación profunda.", "Vasoconstricción local intensa del músculo liso para frenar mecánicamente la hemorragia.", "Activación de la vía alterna del complemento."], correct: [2], exp: "Las plaquetas rotas espasman el vaso dañado, estrangulando el tubo e impidiendo que continúe el sangrado." },
+    { id: 80, tema: 14, q: "Para prevenir el rechazo agudo en un alotrasplante, los inmunosupresores buscan mitigar la reacción contra:", options: ["El sistema antigénico de la enzima H.", "La hemoglobina circulante del órgano.", "El Complejo Mayor de Histocompatibilidad (MHC o HLA), cuya variabilidad delata al órgano como foráneo.", "Los anticuerpos IgM naturales."], correct: [2], exp: "El HLA/MHC es el DNI celular. Su polimorfismo es la principal causa de ataque linfocitario en trasplantes." },
+    { id: 81, tema: 14, q: "Los neutrófilos detectan y acorralan bacterias invasoras invaginando su membrana para digerirlas. Este mecanismo se denomina:", options: ["Pinocitosis mediada por receptor.", "Fagocitosis inespecífica o dirigida formando fagosomas.", "Exocitosis de calcio.", "Simporte bacteriano pasivo."], correct: [1], exp: "Los neutrófilos emiten pseudópodos para tragar físicamente los patógenos y destruirlos enzimáticamente en el fagosoma." },
+    { id: 82, tema: 14, q: "La cifra normal de hematíes en un hemograma de un varón adulto oscila en:", options: ["150.000 a 300.000 eritrocitos/mm³", "6.000 a 10.000 eritrocitos/mm³", "4.500.000 a 5.500.000 eritrocitos/mm³", "Más de 10.000.000 eritrocitos/mm³"], correct: [2], exp: "Los hematíes oscilan alrededor de los 5 millones/mm³, las plaquetas sobre 300.000 y los leucocitos en 6.000-8.000." },
+    { id: 83, tema: 14, q: "¿Qué desplaza la curva de disociación de la Hemoglobina hacia la DERECHA, provocando mayor liberación de O2 en el tejido?", options: ["Disminución de temperatura.", "Caída drástica de pCO2.", "Aumento de pH (alcalosis).", "Aumento de protones (bajada de pH) y CO2: Efecto Bohr."], correct: [3], exp: "Un tejido muy metabólico (ácido, caliente, lleno de CO2 y 2,3-DPG) exige más oxígeno. La Hb lo suelta fácilmente." },
+
+    // TEMA 15 - Transmisión sináptica y neurotransmisores
+    { id: 84, tema: 15, q: "En el terminal presináptico, la maquinaria SNARE provoca la exocitosis de vesículas de neurotransmisor ÚNICAMENTE tras la entrada de:", options: ["Potasio (K+)", "Cloro (Cl-)", "Calcio (Ca2+)", "Magnesio (Mg2+)"], correct: [2], exp: "El Calcio es el gatillo absoluto de la neurotransmisión. Entra por canales voltaje-dependientes y provoca la fusión vesicular." },
+    { id: 85, tema: 15, q: "Si GABA se une a receptores ionotrópicos GABA-A, el efecto eléctrico postsináptico habitual será:", options: ["Un EPSP por entrada de Sodio.", "Un IPSP causado por entrada de Cloro (Cl-), hiperpolarizando la membrana.", "Un cierre de los canales de Potasio de fuga.", "La generación inmediata de un potencial de acción."], correct: [1], exp: "El GABA es el inhibidor principal del SNC. El receptor GABA-A es un canal de Cloro. La entrada de cargas negativas hiperpolariza la célula." },
+    { id: 86, tema: 15, q: "El receptor NMDA tiene una característica única para la plasticidad sináptica (LTP). ¿Cuál es?", options: ["Es exclusivamente metabotrópico.", "Es impermeable al Calcio.", "Está bloqueado en reposo por un ión Mg2+, requiriendo ligando Y despolarización previa para abrirse.", "Transporta glutamato en contra de gradiente."], correct: [2], exp: "Es un receptor 'coincidente'. Sin la despolarización previa, el tapón de magnesio no se expulsa y el canal no puede abrirse." },
+    { id: 87, tema: 15, q: "Si inyectamos Atropina (bloqueador muscarínico) a un individuo, ¿qué efecto tendrá sobre el marcapasos cardíaco?", options: ["Parada cardíaca en diástole.", "Taquicardia inmediata, por anulación del tono vagal parasimpático.", "Bradicardia severa por hiperactivación simpática.", "Ningún efecto."], correct: [1], exp: "El nervio Vago secreta ACh sobre receptores muscarínicos del nodo sinusal, frenando el latido. Al bloquearlo, el corazón se acelera." },
+    { id: 88, tema: 15, q: "Una diferencia fundamental entre ACh y Noradrenalina en la brecha sináptica es:", options: ["La ACh se recaptura intacta, la NA se difunde.", "La ACh es hidrolizada por Acetilcolinesterasa; la NA es mayoritariamente recaptada por el terminal (transportador NET).", "La NA requiere ATP extra para ser destruida.", "Ambas son metabolizadas por MAO in situ sin diferencias."], correct: [1], exp: "Las aminas catecólicas son costosas de fabricar y se reciclan (recaptación). La ACh se rompe enzimáticamente de forma rápida." },
+    { id: 89, tema: 15, q: "Un estímulo sensorial logra discriminación espacial precisa en el cerebro gracias a:", options: ["Sumación temporal rítmica.", "Inhibición lateral, que silencia las vías sensoriales adyacentes a la estimulada.", "Habituación a corto plazo.", "Divergencia sináptica masiva."], correct: [1], exp: "Al oprimir el centro, el circuito apaga los bordes, creando un foco hiperpreciso. Frecuente en tests." },
+    { id: 90, tema: 15, q: "La 'Integración Sináptica' en el cono axónico se basa en la sumación algebraica de:", options: ["Potenciales de Acción 'Todo o Nada' de otras células.", "Únicamente los EPSPs, ignorando los inhibidores.", "Los potenciales locales graduados y pasivos (EPSPs e IPSPs) que decaen espacial y temporalmente.", "La constante Lambda del líquido extracelular."], correct: [2], exp: "El soma integra corrientes locales menguantes. Si la suma de EPSPs menos IPSPs alcanza el umbral en el cono axónico, la célula dispara." },
+
+    // TEMA 16 - Fisiología muscular
+    { id: 91, tema: 16, q: "En la contracción del músculo LISO, es CIERTO que:", options: ["El calcio se une directamente a la Troponina C.", "Las sarcómeras están en estrías perfectamente alineadas.", "El complejo Calcio-Calmodulina activa la enzima MLCK (Quinasa de la cadena ligera de miosina).", "No se requiere hidrólisis de ATP."], correct: [2], exp: "El músculo liso carece de troponina. Su sensor de calcio es la Calmodulina, que activa la MLCK y desencadena la contracción." },
+    { id: 92, tema: 16, q: "Para que el músculo estriado se RELAJE, se requiere ATP para:", options: ["Despolarizar el túbulo T.", "Alimentar las bombas SERCA del retículo sarcoplásmico, que secuestran el Calcio en contra de gradiente.", "Activar la acetilcolinesterasa.", "Formar los puentes cruzados actina-miosina."], correct: [1], exp: "La relajación es un proceso activo. Sin ATP (como en el rigor mortis), el calcio libre persiste y el músculo permanece contraído." },
+    { id: 93, tema: 16, q: "Un deportista empuja un muro inamovible desarrollando inmensa tensión sin que el músculo se acorte. ¿Cómo se denomina esta contracción?", options: ["Contracción isométrica.", "Contracción isotónica excéntrica.", "Contracción isocinética.", "Contracción isotónica concéntrica."], correct: [0], exp: "Iso = igual; métrica = longitud. Hay tensión máxima pero el músculo no cambia de longitud." },
+
+    // TEMA 17 - Cardiovascular y Renal
+    { id: 94, tema: 17, q: "La Ley de Frank-Starling establece que el miocardio ventricular:", options: ["Reduce su fuerza si se estira en diástole.", "Incrementa su fuerza sistólica de forma directamente proporcional al aumento del Volumen Telediastólico (precarga).", "Depende exclusivamente de la estimulación simpática.", "Late más rápido cuanto mayor sea la postcarga aórtica."], correct: [1], exp: "El corazón exprime lo que recibe. Mayor retorno venoso estira la fibra, optimiza el solapamiento actina/miosina y genera más fuerza." },
+    { id: 95, tema: 17, q: "Una vasoconstricción EXCLUSIVA de la Arteriola Eferente renal tendrá como efecto:", options: ["Descenso de la presión glomerular y cese del filtrado.", "Incremento del flujo hacia los capilares peritubulares.", "Aumento de la presión hidrostática en el glomérulo, incrementando la Tasa de Filtrado Glomerular (TFG).", "Destrucción de los podocitos."], correct: [2], exp: "Al estrangular el conducto de salida manteniendo abierto el de entrada, la sangre se represa y la presión glomerular aumenta, forzando más filtración." },
+    { id: 96, tema: 17, q: "Los barorreceptores aórticos y carotídeos controlan la Presión Arterial a corto plazo porque:", options: ["Aumentan su frecuencia de descarga a medida que la pared arterial se estira por un pico hipertensivo.", "Se activan en respuesta a la hipoxemia.", "Detienen su disparo cuando la presión supera 120 mmHg.", "Están inervados por el sistema somático voluntario."], correct: [0], exp: "Son detectores mecánicos de estiramiento. Alta presión → más estiramiento → bombardeo de señales al bulbo raquídeo para bajar el pulso." },
+
+    // Preguntas de clase asignadas a temas existentes
+    { id: 97, tema: 10, q: "La Ecuación de Nernst permite calcular el potencial de equilibrio de un ión. Este punto se alcanza exactamente cuando:", options: ["La célula agota sus reservas de ATP.", "El flujo neto de ese ión es cero, ya que el gradiente químico se iguala con el gradiente eléctrico.", "Se cierran todos los canales de fuga pasivos.", "La membrana llega al umbral del potencial de acción."], correct: [1], exp: "Es la definición termodinámica estricta: el Nernst anula la fuerza impulsora neta equilibrando fuerzas química y eléctrica." },
+    { id: 98, tema: 11, q: "En una neurona en reposo (-70 mV), la membrana es mucho más permeable al K+ que al Na+. Esto se debe a:", options: ["La acción exclusiva de la bomba Na+/K+ ATPasa.", "La apertura de canales K+ dependientes de voltaje.", "La presencia de numerosos 'canales de fuga' (leak channels) de K+ abiertos constantemente.", "La entrada de aniones cloruro."], correct: [2], exp: "Los canales de fuga de K+ son la base del potencial de reposo, dejando escapar K+ y acercando el voltaje a su potencial de Nernst electronegativo." },
+    { id: 99, tema: 12, q: "La fase ascendente (despolarización) del Potencial de Acción neuronal se explica por:", options: ["La salida rápida de K+.", "La entrada masiva de Na+ impulsada por el enorme gradiente electroquímico.", "El bloqueo de canales de Calcio.", "La activación de receptores metabotrópicos."], correct: [1], exp: "Al rebasar el umbral, los canales de Na+ voltaje-dependientes se abren súbitamente, inundando la célula de cargas positivas." },
+    { id: 100, tema: 12, q: "La Tetrodotoxina (TTX) provoca parálisis letal porque:", options: ["Bloquea la recaptación de serotonina.", "Destruye la vaina de mielina.", "Tapa físicamente el poro de los canales de Na+ voltaje-dependientes, impidiendo generar potenciales de acción.", "Inactiva la bomba de Calcio del retículo."], correct: [2], exp: "La TTX es el bloqueador específico del canal de sodio voltaje-dependiente. Trampa típica de neurofisiología." },
+    { id: 101, tema: 13, q: "La velocidad de conducción es superior en axones mielinizados porque:", options: ["El axón motor es más fino.", "La mielina aumenta la resistencia de membrana y permite que el potencial 'salte' entre Nodos de Ranvier.", "No consume ATP.", "Aumenta la capacitancia de membrana."], correct: [1], exp: "La mielina aísla el axón evitando pérdidas de carga y obliga a la corriente a fluir rápido hasta el siguiente nodo (conducción saltatoria)." },
+    { id: 102, tema: 3, q: "¿Qué mecanismo usa el ión Na+ cayendo a favor de gradiente para 'arrastrar' glucosa hacia el enterocito?", options: ["Difusión facilitada simple (GLUT).", "Transporte activo primario por ATPasas.", "Cotransporte o simporte secundario (SGLT).", "Endocitosis de fase fluida."], correct: [2], exp: "El transportador SGLT parasita la fuerza cinética del sodio (transporte activo secundario) para colar la glucosa contra su gradiente." },
+    { id: 103, tema: 2, q: "Un hematíe (osmolaridad ~300 mOsm) en solución hipotónica de 70 mOsm. ¿Qué ocurre?", options: ["Crenación (encogimiento).", "Entrada masiva de agua por ósmosis hasta lisis celular.", "Permanece intacto por sus cadherinas.", "Expulsa iones activamente."], correct: [1], exp: "El agua va hacia donde hay más osmoles. El interior celular más concentrado atrae agua hasta reventar la célula." },
+    { id: 104, tema: 8, q: "Una célula metastásica se desprende del tumor primario. ¿Qué familia de moléculas de adhesión ha silenciado?", options: ["Integrinas", "Conexinas", "Selectinas", "Cadherinas (E-cadherina)"], correct: [3], exp: "Las cadherinas anclan firmemente las células del mismo tejido. Su pérdida es el semáforo en verde para la invasión oncológica." },
+    { id: 105, tema: 6, q: "La vía Gq activa Fosfolipasa C, que escinde un fosfolípido de membrana en dos segundos mensajeros. ¿Cuáles son?", options: ["AMPc y PKA.", "IP3 y Diacilglicerol (DAG).", "Calcio y Calmodulina.", "Óxido Nítrico y GMPc."], correct: [1], exp: "El IP3 libera calcio del retículo endoplásmico; el DAG activa la PKC en la membrana." },
+    { id: 106, tema: 6, q: "La 'Sinergia' entre dos moléculas señalizadoras implica que:", options: ["Compiten y bloquean el efecto mutuo.", "Tienen la misma estructura química.", "El efecto conjunto es inmensamente superior a la suma de sus efectos individuales.", "Solo actúan mediante endocitosis."], correct: [2], exp: "Es la cooperación máxima de las vías intracelulares; 1+1 no son 2, sino que detonan una respuesta exponencial." },
+    { id: 107, tema: 9, q: "El Óxido Nítrico (NO) ejerce su vasodilatación al activar en el músculo liso:", options: ["La Adenilato Ciclasa (subiendo AMPc).", "Los receptores nicotínicos.", "La Guanilato Ciclasa soluble, elevando GMPc intracelular.", "La bomba de Calcio SERCA."], correct: [2], exp: "El NO activa específicamente la vía del GMP cíclico, que provoca la relajación vascular. Cuidado con confundir con la vía del AMPc." },
+    { id: 108, tema: 5, q: "La señalización 'Paracrina' se define por:", options: ["Verter el ligando al torrente sanguíneo.", "El ligando actúa sobre la propia célula que lo secreta.", "El mediador difunde localmente afectando solo células vecinas.", "Comunicar citoplasmas adyacentes por conexinas."], correct: [2], exp: "Para = 'al lado de'. La molécula apenas viaja unas micras para modular el tejido inmediato colindante." },
+    { id: 109, tema: 3, q: "Si eliminamos la Bomba Na+/K+ ATPasa de una célula, la consecuencia más temprana sobre sus transportadores será:", options: ["Aumento de la exocitosis.", "Fallo del cotransporte secundario al disiparse el gradiente de Sodio que usaban de motor.", "Incremento de la velocidad de conducción saltatoria.", "Hiperpolarización letal hasta -120 mV."], correct: [1], exp: "Si apagas la bomba primaria, el sodio anula su gradiente y todos los transportes secundarios (SGLT, NHE, etc.) se detienen." }
 ];
 
 let questions = [];
@@ -215,7 +269,7 @@ function startQuiz(randomize) {
     const selectedTopic = topicSelect.value;
 
     document.getElementById('setup-modal').style.display = 'none';
-    
+
     if (selectedTopic === 'all') {
         questions = [...rawData];
     } else {
@@ -249,7 +303,7 @@ function renderQuiz() {
         const card = document.createElement('div');
         card.className = "question-card";
         card.id = `q-${index}`;
-        
+
         const indexedOptions = q.options.map((text, i) => ({ text, originalIdx: i }));
         if(q.options.length > 2 && !q.q.includes("Ordena")) {
             indexedOptions.sort(() => Math.random() - 0.5);
@@ -293,10 +347,10 @@ function toggleMark(id, btn, idx) {
 function selectOption(el, qIdx) {
     const card = document.getElementById(`q-${qIdx}`);
     if(card.classList.contains('locked')) return;
-    
+
     // Detectar automáticamente si la pregunta tiene múltiples respuestas
-    const isMulti = questions[qIdx].correct.length > 1; 
-    
+    const isMulti = questions[qIdx].correct.length > 1;
+
     if(!isMulti) {
         card.querySelectorAll('.opt').forEach(o => o.classList.remove('selected'));
     }
@@ -309,11 +363,11 @@ function checkAnswer(qIdx, qId) {
 
     const selected = Array.from(card.querySelectorAll('.opt.selected')).map(o => parseInt(o.dataset.orig));
     const correctAnswers = questions[qIdx].correct;
-    
+
     if(selected.length === 0) return alert("Selecciona al menos una respuesta");
 
     const isCorrect = selected.length === correctAnswers.length && selected.every(v => correctAnswers.includes(v));
-    
+
     card.querySelectorAll('.opt').forEach(opt => {
         const origIdx = parseInt(opt.dataset.orig);
         if(correctAnswers.includes(origIdx)) opt.classList.add('correct');
@@ -322,7 +376,7 @@ function checkAnswer(qIdx, qId) {
 
     if(!isCorrect) userState.wrong.add(qId);
     else userState.wrong.delete(qId);
-    
+
     userState.answered.add(qId);
     document.getElementById(`nav-${qIdx}`).classList.add('answered');
     document.getElementById(`exp-${qIdx}`).style.display = 'block';
@@ -331,7 +385,7 @@ function checkAnswer(qIdx, qId) {
 
 function restartQuiz(mode) {
     if(mode === 'all') { location.reload(); return; }
-    
+
     let newPool = [];
     if(mode === 'wrong') newPool = rawData.filter(q => userState.wrong.has(q.id));
     else if(mode === 'marked') newPool = rawData.filter(q => userState.marked.has(q.id));
