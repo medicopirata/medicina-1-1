@@ -23,6 +23,7 @@
             --color-anato: #3498db;
             --color-bioq: #e74c3c;
             --color-fisio: #f39c12;
+            --color-histo: #2ecc71; /* Nuevo color para Histología */
         }
 
         body {
@@ -116,6 +117,7 @@
         .anato-link:hover { background: var(--color-anato); border-color: #2980b9; }
         .bioq-link:hover { background: var(--color-bioq); border-color: #c0392b; }
         .fisio-link:hover { background: var(--color-fisio); border-color: #d35400; }
+        .histo-link:hover { background: var(--color-histo); border-color: #27ae60; }
 
         .badge {
             margin-left: auto;
@@ -142,6 +144,7 @@
         .icon-bioq::before { content: "🧪"; }
         .icon-fisio::before { content: "⚡"; }
         .icon-atlas::before { content: "📖"; }
+        .icon-histo::before { content: "🔬"; } /* Nuevo icono */
 
     </style>
 </head>
@@ -224,6 +227,17 @@
                         <span class="file-link" style="cursor: default; opacity: 0.6;">
                             Guía de Conceptos Bloque 1-11 <span class="badge">INFO</span>
                         </span>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="category-card">
+                <h2><span class="icon-histo"></span> Histología y Embriología</h2>
+                <ul class="file-list">
+                    <li class="file-item">
+                        <a href="quiz_standalone.html" target="_blank" rel="noopener noreferrer" class="file-link histo-link" style="border-left: 3px solid var(--color-histo); background: #f5fff8;">
+                            Quiz: Histología y Embriología <span class="badge" style="background:var(--color-histo); color:white;">191 PREGS</span>
+                        </a>
                     </li>
                 </ul>
             </div>
