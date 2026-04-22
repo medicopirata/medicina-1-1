@@ -622,4 +622,313 @@ const masterData = [
         options: [
             { text: "A) Transporte activo primario en el mismo receptor.", isCorrect: false },
             { text: "B) Co-transporte o simporte secundario dependiente de Sodio (receptores SGLT).", isCorrect: true },
-            { text: "C) Difusión simple cruzando los
+            { text: "C) Difusión simple cruzando los fosfolípidos directamente.", isCorrect: false },
+            { text: "D) Canales aniónicos inespecíficos.", isCorrect: false }
+        ],
+        explanation: "Explicación: Parasitismo metabólico brillante. El transportador usa la energía del sodio cayendo a favor de gradiente para obligar a la glucosa a \"subir\" la cuesta de su propio gradiente."
+    },
+    {
+        id: 33,
+        question: "33. La eliminación fisiológica del neurotransmisor Acetilcolina (ACh) de la hendidura sináptica neuromuscular se distingue de la inactivación de la Noradrenalina simpática principalmente en que:",
+        options: [
+            { text: "A) La ACh se elimina mediante su destrucción enzimática fulminante por la Acetilcolinesterasa in situ, mientras que la Noradrenalina es mayoritariamente recaptada entera por el terminal presináptico.", isCorrect: true },
+            { text: "B) La ACh difunde lentamente a los capilares, sin enzimas implicadas.", isCorrect: false },
+            { text: "C) Ambas moléculas se degradan exactamente igual mediante la MAO mitocondrial.", isCorrect: false },
+            { text: "D) La ACh ingresa al músculo estriado a través del receptor nicotínico.", isCorrect: false }
+        ],
+        explanation: "Explicación: Las aminas son difíciles de sintetizar y se reciclan (NET recaptador). La ACh es barata de armar, y se prefiere dar un \"tijeretazo\" enzimático rapidísimo para frenar la contracción."
+    },
+    {
+        id: 34,
+        question: "34. ¿Qué suceso letal ocurre si inyectamos Tetrodotoxina (veneno clásico del pez globo) en una preparación con nervios somáticos viables?",
+        options: [
+            { text: "A) Provocará descargas epilépticas constantes.", isCorrect: false },
+            { text: "B) Se unirá irreversiblemente a las cabezas de miosina.", isCorrect: false },
+            { text: "C) Taponará físicamente el poro de los canales de Sodio voltaje dependientes, bloqueando por completo la generación y conducción del impulso nervioso (parálisis).", isCorrect: true },
+            { text: "D) Inducirá apoptosis de los astrocitos.", isCorrect: false }
+        ],
+        explanation: "Explicación: La TTX es el bloqueador de Na+ por excelencia en investigación electrofisiológica."
+    },
+    {
+        id: 35,
+        question: "35. Cuando ocurre una hemorragia tisular que expone el Factor Tisular o el colágeno subendotelial, ¿qué enzima maestra es la meta final de la cascada de coagulación, responsable de transformar el Fibrinógeno soluble (liberado por plaquetas) en hebras de Fibrina insoluble?",
+        options: [
+            { text: "A) Plasmina.", isCorrect: false },
+            { text: "B) Trombina.", isCorrect: true },
+            { text: "C) COX-2.", isCorrect: false },
+            { text: "D) Factor de von Willebrand.", isCorrect: false }
+        ],
+        explanation: "Explicación: El objetivo último de la hemostasia secundaria. La protrombina se convierte en trombina, la cual es la encargada directa de \"cuajar\" el fibrinógeno y estabilizar el trombo."
+    },
+    {
+        id: 36,
+        question: "36. A nivel del filtrado y control circulatorio del glomérulo renal, una VASOCONSTRICCIÓN EXCLUSIVA de la Arteriola EFERENTE (el vaso de salida) producirá hemodinámicamente:",
+        options: [
+            { text: "A) El cese inmediato de la Tasa de Filtrado Glomerular (TFG).", isCorrect: false },
+            { text: "B) La lisis de los glóbulos rojos por atrapamiento.", isCorrect: false },
+            { text: "C) Un embalsamiento de sangre intraglomerular que aumentará bruscamente la presión hidrostática del ovillo, elevando de forma forzada la TFG.", isCorrect: true },
+            { text: "D) Un estímulo negativo en el aparato yuxtaglomerular.", isCorrect: false }
+        ],
+        explanation: "Explicación: Si cierras el tubo de desagüe pero la manguera sigue metiendo sangre, el glomérulo se presuriza como un globo, filtrando plasma con enorme fuerza."
+    },
+    {
+        id: 37,
+        question: "37. El mecanismo fisiológico de \"Inhibición Lateral\" ejecutado en las vías aferentes sensoriales o visuales, sirve fundamentalmente al cerebro para:",
+        options: [
+            { text: "A) Desconectar estímulos dolorosos continuos (Habituación).", isCorrect: false },
+            { text: "B) Sumar temporalmente impulsos repetitivos de baja intensidad.", isCorrect: false },
+            { text: "C) Silenciar las neuronas periféricas al estímulo central, aumentando drásticamente el contraste para afinar y precisar al máximo la localización del estímulo original.", isCorrect: true },
+            { text: "D) Prevenir la isquemia periférica en los dedos.", isCorrect: false }
+        ],
+        explanation: "Explicación: Si te pinchan con un compás, el punto central de dolor inhibe lateralmente a los mecanorreceptores de la zona adyacente para que el cerebro identifique la localización exacta."
+    },
+    {
+        id: 38,
+        question: "38. La Integración o sumación de estímulos múltiples y simultáneos procedentes de diversas terminaciones nerviosas anatómicamente alejadas entre sí, que convergen sobre el soma o árbol dendrítico de una neurona, se denomina:",
+        options: [
+            { text: "A) Sumación temporal rítmica.", isCorrect: false },
+            { text: "B) Sumación espacial.", isCorrect: true },
+            { text: "C) Convergencia divergente.", isCorrect: false },
+            { text: "D) Plasticidad axónica terminal.", isCorrect: false }
+        ],
+        explanation: "Explicación: Espacial = estímulos que chocan al mismo tiempo provenientes de distintos \"espacios\" de la neurona. Temporal = ráfaga continua y rápida por el mismo botón sináptico."
+    },
+    {
+        id: 39,
+        question: "39. Si fisiológicamente el volumen plasmático o vascular de un paciente disminuye drásticamente (ej. hemorragia grave), los Barorreceptores de alta presión aórticos y carotídeos reaccionarán mecánicamente:",
+        options: [
+            { text: "A) Estirándose aún más y secretando acetilcolina.", isCorrect: false },
+            { text: "B) Aumentando su frecuencia de disparo eléctrico rítmico.", isCorrect: false },
+            { text: "C) Disminuyendo el estiramiento de su pared, reduciendo su frecuencia de disparo y provocando una retirada del freno vagal (se induce taquicardia y vasoconstricción simpática refleja).", isCorrect: true },
+            { text: "D) Induciendo liberación de histamina.", isCorrect: false }
+        ],
+        explanation: "Explicación: Son tónicos mecánicos. Con alta presión se tensan y avisan para frenar el corazón. Al bajar la volemia, se aflojan, y el cerebro entiende que tiene que activar las alarmas de bombeo (taquicardia simpática)."
+    },
+    {
+        id: 40,
+        question: "40. Teniendo en consideración las proporciones celulares correctas de un individuo adulto fisiológicamente sano, un hemograma general reportará un volumen de leucocitos (células blancas totales) que rondará los:",
+        options: [
+            { text: "A) 300.000 / mm3.", isCorrect: false },
+            { text: "B) 5.000.000 / mm3.", isCorrect: false },
+            { text: "C) 6.000 - 10.000 / mm3.", isCorrect: true },
+            { text: "D) Menos de 500 / mm3 en cualquier condición.", isCorrect: false }
+        ],
+        explanation: "Explicación: Números dorados fisiológicos: Eritrocitos 5 millones, Plaquetas en torno a 300.000 y Leucocitos \"pocos\", unos 6 mil a 10 mil patrullando la sangre de base."
+    }
+];
+
+// Estado global
+let activeQuestions = [];
+let quizState = {}; // { id: { answered: bool, correct: bool, marked: bool } }
+
+// Inicializar el estado de masterData la primera vez
+masterData.forEach(q => {
+    quizState[q.id] = { answered: false, correct: false, marked: false };
+});
+
+function shuffleArray(array) {
+    const newArr = [...array];
+    for (let i = newArr.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+    }
+    return newArr;
+}
+
+function initQuiz(randomize) {
+    document.getElementById('start-modal').classList.add('hidden');
+    document.getElementById('sidebar').classList.remove('hidden');
+    document.getElementById('main-content').classList.remove('hidden');
+    
+    // Preparar lista de preguntas activas
+    if (!activeQuestions.length) {
+        activeQuestions = [...masterData]; // Si está vacío, cargar todo
+    }
+
+    if (randomize) {
+        activeQuestions = shuffleArray(activeQuestions);
+    }
+
+    renderQuiz();
+}
+
+function renderQuiz() {
+    const indexContainer = document.getElementById('index-container');
+    const questionsContainer = document.getElementById('questions-container');
+    
+    indexContainer.innerHTML = '';
+    questionsContainer.innerHTML = '';
+
+    activeQuestions.forEach((q, loopIndex) => {
+        const visualNum = loopIndex + 1;
+        
+        // --- 1. Crear Botón Índice ---
+        const idxBtn = document.createElement('a');
+        idxBtn.href = `#q-${q.id}`;
+        idxBtn.className = 'index-btn';
+        idxBtn.id = `idx-${q.id}`;
+        idxBtn.textContent = visualNum;
+        
+        // Restaurar estilos de estado anterior
+        if (quizState[q.id].marked) idxBtn.classList.add('is-marked');
+        if (quizState[q.id].answered) {
+            idxBtn.classList.add(quizState[q.id].correct ? 'answered-correct' : 'answered-incorrect');
+        }
+        indexContainer.appendChild(idxBtn);
+
+        // --- 2. Crear Tarjeta de Pregunta ---
+        const card = document.createElement('div');
+        card.className = 'question-card';
+        card.id = `q-${q.id}`;
+
+        const header = document.createElement('div');
+        header.className = 'question-header';
+        
+        const title = document.createElement('h3');
+        title.className = 'question-title';
+        // Reemplazar el número original por el de la secuencia actual
+        title.textContent = `Pregunta ${visualNum}: ${q.question.replace(/^\**\(*REPASO INTEGRADO DE ALTA RENTABILIDAD\)*\**\s*/, '').replace(/^\d+\.\s*/, '')}`;
+        
+        const markBtn = document.createElement('button');
+        markBtn.className = `mark-toggle ${quizState[q.id].marked ? 'active' : ''}`;
+        markBtn.textContent = quizState[q.id].marked ? '★ Desmarcar' : '☆ Marcar';
+        markBtn.onclick = () => toggleMark(q.id, markBtn, idxBtn);
+
+        header.appendChild(title);
+        header.appendChild(markBtn);
+        card.appendChild(header);
+
+        const optionsDiv = document.createElement('div');
+        optionsDiv.className = 'options-list';
+        optionsDiv.id = `opts-${q.id}`;
+
+        // Mezclar opciones
+        const shuffledOptions = shuffleArray(q.options);
+        
+        shuffledOptions.forEach((opt, i) => {
+            const btn = document.createElement('button');
+            btn.className = 'option-btn';
+            btn.textContent = opt.text;
+            
+            // Si ya fue respondida en una sesión anterior pero se volvió a cargar sin resetear su state
+            if (quizState[q.id].answered) {
+                btn.disabled = true;
+                if (opt.isCorrect) btn.classList.add('correct');
+            } else {
+                btn.onclick = () => handleAnswer(q.id, opt.isCorrect, btn, optionsDiv);
+            }
+            optionsDiv.appendChild(btn);
+        });
+        
+        card.appendChild(optionsDiv);
+
+        // Explicación
+        const expDiv = document.createElement('div');
+        expDiv.className = 'explanation';
+        expDiv.id = `exp-${q.id}`;
+        expDiv.textContent = q.explanation;
+        if (quizState[q.id].answered) expDiv.style.display = 'block';
+        card.appendChild(expDiv);
+
+        questionsContainer.appendChild(card);
+    });
+}
+
+function toggleMark(qId, btnEl, idxEl) {
+    quizState[qId].marked = !quizState[qId].marked;
+    if (quizState[qId].marked) {
+        btnEl.classList.add('active');
+        btnEl.textContent = '★ Desmarcar';
+        idxEl.classList.add('is-marked');
+    } else {
+        btnEl.classList.remove('active');
+        btnEl.textContent = '☆ Marcar';
+        idxEl.classList.remove('is-marked');
+    }
+}
+
+function handleAnswer(qId, isCorrect, clickedBtn, optionsDiv) {
+    quizState[qId].answered = true;
+    quizState[qId].correct = isCorrect;
+
+    // Deshabilitar botones y mostrar colores
+    const buttons = optionsDiv.querySelectorAll('.option-btn');
+    buttons.forEach(b => {
+        b.disabled = true;
+        // Buscar cuál era la correcta en los datos
+        const qData = masterData.find(x => x.id === qId);
+        const correctText = qData.options.find(o => o.isCorrect).text;
+        
+        if (b.textContent === correctText) {
+            b.classList.add('correct');
+        } else if (b === clickedBtn && !isCorrect) {
+            b.classList.add('incorrect');
+        }
+    });
+
+    // Mostrar explicación
+    document.getElementById(`exp-${qId}`).style.display = 'block';
+
+    // Actualizar índice numérico
+    const idxBtn = document.getElementById(`idx-${qId}`);
+    idxBtn.classList.add(isCorrect ? 'answered-correct' : 'answered-incorrect');
+}
+
+function showEndModal() {
+    const total = activeQuestions.length;
+    let correctCount = 0;
+    let answeredCount = 0;
+
+    activeQuestions.forEach(q => {
+        if (quizState[q.id].answered) answeredCount++;
+        if (quizState[q.id].correct) correctCount++;
+    });
+
+    document.getElementById('results-summary').textContent = 
+        `Has respondido ${answeredCount} de ${total} preguntas. Aciertos: ${correctCount}.`;
+    
+    // Calcular si hay falladas o marcadas en general para habilitar/deshabilitar botones
+    const hasFailed = masterData.some(q => quizState[q.id].answered && !quizState[q.id].correct);
+    const hasMarked = masterData.some(q => quizState[q.id].marked);
+
+    document.getElementById('btn-retake-failed').disabled = !hasFailed;
+    document.getElementById('btn-retake-marked').disabled = !hasMarked;
+    document.getElementById('btn-retake-mixed').disabled = !(hasFailed || hasMarked);
+
+    document.getElementById('end-modal').classList.remove('hidden');
+}
+
+function retakeQuiz(mode) {
+    document.getElementById('end-modal').classList.add('hidden');
+    
+    // Filtrar masterData según el modo
+    if (mode === 'all') {
+        activeQuestions = [...masterData];
+    } else if (mode === 'failed') {
+        activeQuestions = masterData.filter(q => quizState[q.id].answered && !quizState[q.id].correct);
+    } else if (mode === 'marked') {
+        activeQuestions = masterData.filter(q => quizState[q.id].marked);
+    } else if (mode === 'failed_marked') {
+        activeQuestions = masterData.filter(q => quizState[q.id].marked || (quizState[q.id].answered && !quizState[q.id].correct));
+    }
+
+    // Resetear el estado 'answered' solo para las preguntas activas
+    activeQuestions.forEach(q => {
+        quizState[q.id].answered = false;
+        quizState[q.id].correct = false;
+        // No reseteamos 'marked' para que no pierdan la marca si la quieren conservar
+    });
+
+    // Volver a preguntar el orden
+    document.getElementById('sidebar').classList.add('hidden');
+    document.getElementById('main-content').classList.add('hidden');
+    document.getElementById('start-modal').classList.remove('hidden');
+}
+
+// Iniciar
+window.onload = () => {
+    document.getElementById('start-modal').classList.remove('hidden');
+};
+</script>
+</body>
+</html>
