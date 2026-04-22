@@ -1115,14 +1115,27 @@ function fbRef() {
   return _fbDB.ref('users/' + _fbUser.uid + '/' + STORAGE_KEY);
 }
 
+function fbSanitize(obj) {
+  return JSON.parse(JSON.stringify(obj, function(k, v) {
+    if (v !== v || v === undefined || v === Infinity || v === -Infinity) return 0;
+    return v;
+  }));
+}
+
 function fbSave() {
   const ref = fbRef();
-  if (!ref) return;
+  if (!ref) { console.warn('fbSave: no ref (_fbUser=' + _fbUser + ')'); return; }
   clearTimeout(_fbTimer);
+  setFbStatus('Guardando...', '#94a3b8');
   _fbTimer = setTimeout(function() {
-    ref.set(State.data)
-      .then(function() { setFbStatus('Guardado', '#22c55e'); })
-      .catch(function(e) { console.warn('FB save:', e); setFbStatus('Error guardando', '#ef4444'); });
+    var payload;
+    try { payload = fbSanitize(State.data); } catch(e) { payload = State.data; }
+    ref.set(payload)
+      .then(function() { setFbStatus('Guardado ✓', '#22c55e'); })
+      .catch(function(e) {
+        console.error('FB save error:', e.code, e.message);
+        setFbStatus((e.code || e.message || 'Error al guardar'), '#ef4444');
+      });
   }, 1500);
 }
 
@@ -1140,8 +1153,8 @@ function fbLoad() {
     }
     setFbStatus('Sincronizado', '#22c55e');
   }).catch(function(e) {
-    console.warn('FB load:', e);
-    setFbStatus('Sin conexion', '#f59e0b');
+    console.error('FB load error:', e.code, e.message);
+    setFbStatus((e.code || 'Sin conexion'), '#f59e0b');
   });
 }
 
