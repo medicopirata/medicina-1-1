@@ -110,6 +110,10 @@
 
     .explanation { margin-top: 20px; background: rgba(59,130,246,0.1); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 16px; font-size: 0.9rem; color: #bfdbfe; line-height: 1.6; }
     .explanation strong { color: var(--accent2); display: block; margin-bottom: 4px; }
+    .q-note-area { margin-top: 16px; background: var(--surface); border: 1px solid var(--border); border-radius: 8px; overflow: hidden; }
+    .q-note-label { font-size: 0.72rem; color: var(--text2); padding: 7px 12px 3px; letter-spacing: 0.03em; text-transform: uppercase; }
+    .q-note-input { width: 100%; background: transparent; border: none; color: var(--text); font-size: 0.88rem; padding: 4px 12px 10px; resize: vertical; min-height: 64px; font-family: inherit; line-height: 1.5; outline: none; }
+    .q-note-input::placeholder { color: var(--text2); opacity: 0.4; }
 
     .q-footer { margin-top: 24px; display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .diff-label { font-size: 0.8rem; color: var(--text2); margin-right: 4px; }
@@ -193,16 +197,17 @@
 </head>
 <body>
 
+<!-- Barra Firebase siempre visible -->
+<div id="fb-bar" style="position:fixed;top:0;right:0;z-index:999;display:flex;align-items:center;gap:10px;padding:6px 16px;pointer-events:none">
+  <span id="fb-status" style="font-size:0.72rem;opacity:0.85;pointer-events:none"></span>
+  <span id="fb-login-area" style="pointer-events:auto"></span>
+</div>
+
 <!-- ======== HOME SCREEN ======== -->
 <div id="home-screen">
-  <div class="home-header" style="position:relative">
+  <div class="home-header">
     <h1>🧬 Bioquímica Médica</h1>
     <p>Plataforma de Estudio Inteligente &middot; <span id="total-q-count"></span> preguntas</p>
-  </div>
-  <div style="position:absolute;top:20px;right:24px;display:flex;align-items:center;gap:10px">
-    <span id="fb-status" style="font-size:0.75rem;opacity:0.8"></span>
-    <span id="fb-login-area"></span>
-  </div>
   </div>
 
   <div class="stats-row">
@@ -352,6 +357,10 @@
         <div class="explanation hidden" id="q-explanation">
           <strong>Explicación:</strong>
           <span id="q-exp-text"></span>
+        </div>
+        <div class="q-note-area">
+          <div class="q-note-label">📝 Mis apuntes</div>
+          <textarea class="q-note-input" id="q-note" placeholder="Escribe aquí tus anotaciones sobre esta pregunta..." oninput="App.noteChange(this.value)"></textarea>
         </div>
         <div class="q-footer">
           <span class="diff-label">Dificultad:</span>
@@ -757,8 +766,21 @@ const App = {
     document.getElementById('btn-prev').disabled = idx === 0;
     document.getElementById('btn-next').textContent = idx === total - 1 ? 'Finalizar ✓' : 'Siguiente →';
 
+    // Nota personal
+    document.getElementById('q-note').value = qs.note || '';
+
     // Scroll to top
     document.getElementById('quiz-main').scrollTop = 0;
+  },
+
+  noteChange(text) {
+    const sess = State.session;
+    if (!sess) return;
+    const q = sess.questions[sess.currentIdx];
+    const qs = getQS(q.id);
+    if (text) qs.note = text; else delete qs.note;
+    clearTimeout(this._noteTimer);
+    this._noteTimer = setTimeout(saveData, 800);
   },
 
   answer(chosenIdx) {
@@ -1115,15 +1137,42 @@ function fbRef() {
   return _fbDB.ref('users/' + _fbUser.uid + '/' + STORAGE_KEY);
 }
 
+function fbSanitize(obj) {
+  return JSON.parse(JSON.stringify(obj, function(k, v) {
+    if (v === undefined) return undefined;
+    if (v !== v || v === Infinity || v === -Infinity) return 0;
+    return v;
+  }));
+}
+
 function fbSave() {
   const ref = fbRef();
-  if (!ref) return;
+  if (!ref) { console.warn('fbSave: no ref (_fbUser=' + _fbUser + ')'); return; }
   clearTimeout(_fbTimer);
+  setFbStatus('Guardando...', '#94a3b8');
   _fbTimer = setTimeout(function() {
-    ref.set(State.data)
-      .then(function() { setFbStatus('Guardado', '#22c55e'); })
-      .catch(function(e) { console.warn('FB save:', e); setFbStatus('Error guardando', '#ef4444'); });
+    var payload;
+    try { payload = fbSanitize(State.data); } catch(e) { payload = State.data; }
+    ref.set(payload)
+      .then(function() { setFbStatus('Guardado ✓', '#22c55e'); })
+      .catch(function(e) {
+        console.error('FB save error:', e.code, e.message);
+        setFbStatus((e.code || e.message || 'Error al guardar'), '#ef4444');
+      });
   }, 1500);
+}
+
+function fbMerge(local, remote) {
+  var merged = { qs: {} };
+  var allIds = new Set(Object.keys(local.qs || {}).concat(Object.keys(remote.qs || {})));
+  allIds.forEach(function(id) {
+    var l = (local.qs || {})[id];
+    var r = (remote.qs || {})[id];
+    if (!l) { merged.qs[id] = r; }
+    else if (!r) { merged.qs[id] = l; }
+    else { var mq = { a: Math.max(l.a||0, r.a||0), c: Math.max(l.c||0, r.c||0), d: r.d||l.d||0, m: r.m||l.m||0 }; var n = r.note || l.note; if (n) mq.note = n; merged.qs[id] = mq; }
+  });
+  return merged;
 }
 
 function fbLoad() {
@@ -1133,15 +1182,15 @@ function fbLoad() {
   ref.once('value').then(function(snap) {
     const d = snap.val();
     if (d && d.qs && Object.keys(d.qs).length > 0) {
-      State.data = d;
-      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(d)); } catch(e) {}
+      State.data = fbMerge(State.data, d);
+      try { localStorage.setItem(STORAGE_KEY, JSON.stringify(State.data)); } catch(e) {}
       App.updateHomeStats();
       App.renderTopicsGrid();
     }
     setFbStatus('Sincronizado', '#22c55e');
   }).catch(function(e) {
-    console.warn('FB load:', e);
-    setFbStatus('Sin conexion', '#f59e0b');
+    console.error('FB load error:', e.code, e.message);
+    setFbStatus((e.code || 'Sin conexion'), '#f59e0b');
   });
 }
 
