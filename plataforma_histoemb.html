@@ -539,6 +539,9 @@ const App = {
     const grid = document.getElementById('topics-grid');
     const qs = State.data.qs;
     const topicNames = [...new Set(ALL_QUESTIONS.map(q => q.topicBase))].sort((a, b) => {
+      const isEmbrio = s => s.startsWith('Embriología');
+      if (isEmbrio(a) && !isEmbrio(b)) return -1;
+      if (!isEmbrio(a) && isEmbrio(b)) return 1;
       const numA = parseInt((a.match(/\d+/) || ['9999'])[0], 10);
       const numB = parseInt((b.match(/\d+/) || ['9999'])[0], 10);
       return numA - numB || a.localeCompare(b);
@@ -642,6 +645,9 @@ const App = {
   openTopicSelector() {
     const list = document.getElementById('sel-topics-list');
     const topicNames = [...new Set(ALL_QUESTIONS.map(q => q.topicBase))].sort((a, b) => {
+      const isEmbrio = s => s.startsWith('Embriología');
+      if (isEmbrio(a) && !isEmbrio(b)) return -1;
+      if (!isEmbrio(a) && isEmbrio(b)) return 1;
       const numA = parseInt((a.match(/\d+/) || ['9999'])[0], 10);
       const numB = parseInt((b.match(/\d+/) || ['9999'])[0], 10);
       return numA - numB || a.localeCompare(b);
@@ -1032,6 +1038,9 @@ const App = {
   showStats() {
     const qs = State.data.qs;
     const topicNames = [...new Set(ALL_QUESTIONS.map(q => q.topicBase))].sort((a, b) => {
+      const isEmbrio = s => s.startsWith('Embriología');
+      if (isEmbrio(a) && !isEmbrio(b)) return -1;
+      if (!isEmbrio(a) && isEmbrio(b)) return 1;
       const numA = parseInt((a.match(/\d+/) || ['9999'])[0], 10);
       const numB = parseInt((b.match(/\d+/) || ['9999'])[0], 10);
       return numA - numB || a.localeCompare(b);
@@ -1063,6 +1072,9 @@ const App = {
   exportStats() {
     const qs = State.data.qs;
     const topicNames = [...new Set(ALL_QUESTIONS.map(q => q.topicBase))].sort((a, b) => {
+      const isEmbrio = s => s.startsWith('Embriología');
+      if (isEmbrio(a) && !isEmbrio(b)) return -1;
+      if (!isEmbrio(a) && isEmbrio(b)) return 1;
       const numA = parseInt((a.match(/\d+/) || ['9999'])[0], 10);
       const numB = parseInt((b.match(/\d+/) || ['9999'])[0], 10);
       return numA - numB || a.localeCompare(b);
