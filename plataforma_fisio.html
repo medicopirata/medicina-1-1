@@ -291,6 +291,8 @@
         </select>
       </label>
       <button class="btn btn-outline btn-sm" onclick="App.showStats()">📊 Ver estadísticas</button>
+      <button class="btn btn-outline btn-sm" onclick="App.exportProgress()">⬇ Exportar progreso</button>
+      <label class="btn btn-outline btn-sm" style="cursor:pointer">⬆ Importar progreso<input type="file" accept=".json" style="display:none" onchange="App.importProgress(event)"></label>
       <button class="btn btn-outline btn-sm" onclick="App.resetData()" style="color:var(--danger);border-color:var(--danger)">🗑 Reiniciar datos</button>
     </div>
   </div>
@@ -443,7 +445,12 @@ function loadData() {
 }
 
 function saveData() {
-  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(State.data)); } catch(e) {}
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(State.data));
+  } catch(e) {
+    setFbStatus('Error: almacenamiento local lleno', '#ef4444');
+    return;
+  }
   fbSave();
 }
 
@@ -1094,6 +1101,39 @@ const App = {
     alert('Datos borrados correctamente.');
   },
 
+  exportProgress() {
+    const json = JSON.stringify(State.data, null, 2);
+    const blob = new Blob([json], { type: 'application/json' });
+    const a = document.createElement('a');
+    const date = new Date().toISOString().slice(0, 10);
+    a.href = URL.createObjectURL(blob);
+    a.download = 'fisio_progreso_' + date + '.json';
+    a.click();
+    setFbStatus('Progreso exportado ✓', '#22c55e');
+  },
+
+  importProgress(event) {
+    const file = event.target.files[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      try {
+        const data = JSON.parse(e.target.result);
+        if (!data || typeof data.qs !== 'object') throw new Error('Formato inválido');
+        if (!confirm('¿Importar este archivo? Se fusionará con tu progreso actual (se conserva el máximo de aciertos).')) return;
+        State.data = typeof fbMerge === 'function' ? fbMerge(State.data, data) : data;
+        saveData();
+        App.updateHomeStats();
+        App.renderTopicsGrid();
+        setFbStatus('Progreso importado ✓', '#22c55e');
+      } catch(err) {
+        alert('No se pudo importar el archivo: ' + err.message);
+      }
+    };
+    reader.readAsText(file);
+    event.target.value = '';
+  },
+
   // ----- Navegación entre pantallas -----
   showScreen(name) {
     ['home-screen', 'quiz-screen', 'results-screen'].forEach(id =>
@@ -1116,7 +1156,7 @@ const FB_CONFIG = {
   appId: "1:536326985694:web:ee2428d39421653be26f4f"
 };
 
-let _fbDB = null, _fbUser = null, _fbTimer = null, _fbAuth = null;
+let _fbDB = null, _fbUser = null, _fbTimer = null, _fbAuth = null, _fbListener = null;
 
 (function initFirebase() {
   try {
@@ -1146,18 +1186,30 @@ function fbSanitize(obj) {
 }
 
 function fbSave() {
+  if (!_fbDB) { setFbStatus('Local ✓ · Sin conexión a la nube', '#94a3b8'); return; }
+  if (!_fbUser) { setFbStatus('Local ✓ · Inicia sesión para sincronizar', '#94a3b8'); return; }
   const ref = fbRef();
-  if (!ref) { console.warn('fbSave: no ref (_fbUser=' + _fbUser + ')'); return; }
+  if (!ref) { return; }
   clearTimeout(_fbTimer);
   setFbStatus('Guardando...', '#94a3b8');
   _fbTimer = setTimeout(function() {
     var payload;
     try { payload = fbSanitize(State.data); } catch(e) { payload = State.data; }
     ref.set(payload)
-      .then(function() { setFbStatus('Guardado ✓', '#22c55e'); })
+      .then(function() { setFbStatus('Guardado en la nube ✓', '#22c55e'); })
       .catch(function(e) {
         console.error('FB save error:', e.code, e.message);
-        setFbStatus((e.code || e.message || 'Error al guardar'), '#ef4444');
+        var msg;
+        if (e.code === 'PERMISSION_DENIED') {
+          msg = 'Error: permisos de base de datos. Tu progreso está guardado localmente.';
+        } else if (e.code === 'auth/network-request-failed' || e.message && e.message.includes('network')) {
+          msg = 'Sin conexión. Tu progreso está guardado localmente.';
+        } else if (e.code === 'auth/user-token-expired') {
+          msg = 'Sesión expirada. Vuelve a iniciar sesión.';
+        } else {
+          msg = 'Error al sincronizar (' + (e.code || 'desconocido') + '). Progreso guardado localmente.';
+        }
+        setFbStatus(msg, '#f59e0b');
       });
   }, 1500);
 }
@@ -1178,8 +1230,15 @@ function fbMerge(local, remote) {
 function fbLoad() {
   const ref = fbRef();
   if (!ref) return;
+
+  if (_fbListener) {
+    try { fbRef().off('value', _fbListener); } catch(e) {}
+    _fbListener = null;
+  }
+
   setFbStatus('Sincronizando...', '#94a3b8');
-  ref.once('value').then(function(snap) {
+
+  _fbListener = ref.on('value', function(snap) {
     const d = snap.val();
     if (d && d.qs && Object.keys(d.qs).length > 0) {
       State.data = fbMerge(State.data, d);
@@ -1187,10 +1246,16 @@ function fbLoad() {
       App.updateHomeStats();
       App.renderTopicsGrid();
     }
-    setFbStatus('Sincronizado', '#22c55e');
-  }).catch(function(e) {
+    setFbStatus('Sincronizado ✓', '#22c55e');
+  }, function(e) {
     console.error('FB load error:', e.code, e.message);
-    setFbStatus((e.code || 'Sin conexion'), '#f59e0b');
+    var msg;
+    if (e.code === 'PERMISSION_DENIED') {
+      msg = 'Error de permisos en la nube. Usando datos locales.';
+    } else {
+      msg = 'Sin sincronización (' + (e.code || 'sin conexión') + '). Usando datos locales.';
+    }
+    setFbStatus(msg, '#f59e0b');
   });
 }
 
@@ -1245,6 +1310,10 @@ function fbRegister() {
 }
 
 function fbLogout() {
+  if (_fbListener) {
+    try { fbRef() && fbRef().off('value', _fbListener); } catch(e) {}
+    _fbListener = null;
+  }
   if (_fbAuth) _fbAuth.signOut();
 }
 
