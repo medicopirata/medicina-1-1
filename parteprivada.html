@@ -24,6 +24,7 @@
             --color-bioq: #e74c3c;
             --color-fisio: #f39c12;
             --color-histo: #2ecc71;
+            --color-medint: #db2777;
         }
 
         body {
@@ -118,6 +119,7 @@
         .bioq-link:hover { background: var(--color-bioq); border-color: #c0392b; }
         .fisio-link:hover { background: var(--color-fisio); border-color: #d35400; }
         .histo-link:hover { background: var(--color-histo); border-color: #27ae60; }
+        .medint-link:hover { background: var(--color-medint); border-color: #9d174d; }
 
         .badge {
             margin-left: auto;
@@ -145,6 +147,7 @@
         .icon-fisio::before { content: "⚡"; }
         .icon-atlas::before { content: "📖"; }
         .icon-histo::before { content: "🔬"; }
+        .icon-medint::before { content: "🩺"; }
 
         .curso-titulo {
             font-size: 1.9rem;
@@ -174,6 +177,17 @@
 
         <h2 class="curso-titulo">Segundo <span class="curso-badge">2º curso · 1er cuatrimestre</span></h2>
         <div class="grid">
+            <div class="category-card">
+                <h2><span class="icon-medint"></span> Medicina Interna (IMI)</h2>
+                <ul class="file-list">
+                    <li class="file-item">
+                        <a href="plataforma_medint.html" target="_blank" rel="noopener noreferrer" class="file-link medint-link" style="border-left: 3px solid var(--color-medint); background: #fdf2f8;">
+                            Plataforma de Medicina Interna · 4274 preguntas <span class="badge" style="background:var(--color-medint); color:white;">NUEVO</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             <div class="category-card">
                 <h2><span class="icon-quiz"></span> Anatomía 3 (Neuroanatomía)</h2>
                 <ul class="file-list">
