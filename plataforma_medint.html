@@ -156,8 +156,9 @@
     .btn-warn:hover { filter: brightness(1.1); }
     .btn-sm { padding: 6px 14px; font-size: 0.8rem; }
     .btn:disabled { opacity: 0.45; cursor: not-allowed; }
-    body.in-quiz #fb-bar { top: auto; bottom: env(safe-area-inset-bottom, 0); left: 0; right: auto; }
-    body.in-quiz #fb-login-area { display: none; }
+    body.in-quiz #fb-bar { display: none !important; }
+    #fb-status-slot { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    #fb-status-slot:empty { display: none; }
     .mode-btn.resume { border-color: var(--warning); background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(245,158,11,0.04)); }
     .mode-btn .discard { float: right; font-size: 0.72rem; color: var(--text2); border: 1px solid var(--border); border-radius: 5px; padding: 2px 7px; background: none; cursor: pointer; line-height: 1.4; }
     .mode-btn .discard:hover { color: var(--danger); border-color: var(--danger); }
@@ -229,6 +230,7 @@
       .topic-flags input[type="checkbox"] { width: 18px; height: 18px; }
       .q-footer { padding-bottom: env(safe-area-inset-bottom); }
       .kbd-hint { display: none; }
+      #fb-status-slot { display: none; }
     }
 
     /* Scrollbar */
@@ -418,6 +420,7 @@
       </div>
       <span class="prog-text" id="q-score-live" style="color:var(--success)">✓ 0</span>
       <span class="prog-text" id="q-fail-live" style="color:var(--danger)">✗ 0</span>
+      <span class="prog-text" id="fb-status-slot"></span>
     </div>
     <div class="quiz-actions">
       <button class="btn btn-outline btn-sm" onclick="App.toggleSidebar()" id="btn-sidebar-toggle">☰ Índice</button>
@@ -1514,6 +1517,11 @@ const App = {
       document.getElementById(id).classList.toggle('hidden', id !== name + '-screen')
     );
     document.body.classList.toggle('in-quiz', name === 'quiz');
+    // El estado de la nube vive en la barra superior mientras se hace un test,
+    // y en su esquina habitual en el resto de pantallas
+    const st = document.getElementById('fb-status');
+    const slot = document.getElementById(name === 'quiz' ? 'fb-status-slot' : 'fb-bar');
+    if (st && slot && st.parentElement !== slot) slot.insertBefore(st, slot.firstChild);
     if (name === 'home') this.refreshResumeCard();
   },
 };
