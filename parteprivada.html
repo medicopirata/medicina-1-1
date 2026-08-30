@@ -25,6 +25,7 @@
             --color-fisio: #f39c12;
             --color-histo: #2ecc71;
             --color-medint: #db2777;
+            --color-genetica: #8b5cf6;
         }
 
         body {
@@ -120,6 +121,7 @@
         .fisio-link:hover { background: var(--color-fisio); border-color: #d35400; }
         .histo-link:hover { background: var(--color-histo); border-color: #27ae60; }
         .medint-link:hover { background: var(--color-medint); border-color: #9d174d; }
+        .genetica-link:hover { background: var(--color-genetica); border-color: #6d28d9; }
 
         .badge {
             margin-left: auto;
@@ -148,6 +150,7 @@
         .icon-atlas::before { content: "📖"; }
         .icon-histo::before { content: "🔬"; }
         .icon-medint::before { content: "🩺"; }
+        .icon-genetica::before { content: "🧬"; }
 
         .curso-titulo {
             font-size: 1.9rem;
@@ -177,6 +180,17 @@
 
         <h2 class="curso-titulo">Segundo <span class="curso-badge">2º curso · 1er cuatrimestre</span></h2>
         <div class="grid">
+            <div class="category-card">
+                <h2><span class="icon-genetica"></span> Genética Médica</h2>
+                <ul class="file-list">
+                    <li class="file-item">
+                        <a href="plataforma_genetica.html" target="_blank" rel="noopener noreferrer" class="file-link genetica-link" style="border-left: 3px solid var(--color-genetica); background: #f5f3ff;">
+                            Plataforma de Genética Médica · 736 preguntas <span class="badge" style="background:var(--color-genetica); color:white;">NUEVO</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
             <div class="category-card">
                 <h2><span class="icon-medint"></span> Medicina Interna (IMI)</h2>
                 <ul class="file-list">
