@@ -46,8 +46,8 @@
     .mode-btn { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 18px 16px; cursor: pointer; transition: all 0.2s; text-align: left; color: var(--text); }
     .mode-btn:hover { border-color: var(--accent); background: var(--surface2); transform: translateY(-2px); }
     .mode-btn .icon { font-size: 1.8rem; margin-bottom: 10px; display: block; }
-    .mode-btn .title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; }
-    .mode-btn .desc { font-size: 0.78rem; color: var(--text2); }
+    .mode-btn .title { font-weight: 600; font-size: 0.95rem; margin-bottom: 4px; display: block; }
+    .mode-btn .desc { font-size: 0.78rem; color: var(--text2); display: block; }
     .mode-btn.accent { border-color: var(--accent); }
     .mode-btn.disabled { opacity: 0.4; cursor: not-allowed; pointer-events: none; }
 
@@ -126,6 +126,7 @@
     .opt-btn:disabled { cursor: default; }
     .opt-btn.correct { background: rgba(34,197,94,0.15) !important; border-color: var(--success) !important; color: #86efac !important; }
     .opt-btn.wrong { background: rgba(239,68,68,0.15) !important; border-color: var(--danger) !important; color: #fca5a5 !important; }
+    .opt-btn.chosen { border-color: var(--accent); background: var(--surface); }
 
     .explanation { margin-top: 20px; background: rgba(59,130,246,0.1); border-left: 3px solid var(--accent); border-radius: 0 8px 8px 0; padding: 14px 16px; font-size: 0.9rem; color: #bfdbfe; line-height: 1.6; }
     .explanation strong { color: var(--accent2); display: block; margin-bottom: 4px; }
@@ -160,6 +161,15 @@
     #fb-status-slot { max-width: 260px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     #fb-status-slot:empty { display: none; }
     .mode-btn.resume { border-color: var(--warning); background: linear-gradient(135deg, rgba(245,158,11,0.16), rgba(245,158,11,0.04)); }
+    .mode-btn.today { border-color: var(--accent); background: linear-gradient(135deg, rgba(16,185,129,0.14), rgba(16,185,129,0.03)); }
+    .streak { font-size: 0.78rem; color: var(--warning); font-weight: 600; }
+    .exam-timer { font-variant-numeric: tabular-nums; font-weight: 700; }
+    .exam-timer.low { color: var(--danger); }
+    #exam-setup .sel-options label { justify-content: space-between; }
+    #exam-setup select, #exam-setup input { background: var(--surface2); color: var(--text); border: 1px solid var(--border); border-radius: 6px; padding: 5px 8px; font-size: 0.85rem; }
+    .sim-row { display: flex; align-items: center; gap: 10px; padding: 8px 12px; background: var(--surface2); border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem; }
+    .sim-row .sim-date { color: var(--text2); min-width: 116px; }
+    .sim-row .sim-score { font-weight: 700; margin-left: auto; }
     .mode-btn .discard { float: right; font-size: 0.72rem; color: var(--text2); border: 1px solid var(--border); border-radius: 5px; padding: 2px 7px; background: none; cursor: pointer; line-height: 1.4; }
     .mode-btn .discard:hover { color: var(--danger); border-color: var(--danger); }
     .opt-btn.pinned-hint { }
@@ -306,6 +316,21 @@
         <span class="title">Continuar sesión <span class="discard" role="button" tabindex="0" onclick="event.stopPropagation();App.discardSession()" title="Descartar la sesión guardada">✕ descartar</span></span>
         <span class="desc" id="resume-desc"></span>
       </button>
+      <button class="mode-btn today" id="btn-today" onclick="App.startToday()">
+        <span class="icon">🗓️</span>
+        <span class="title">Sesión de hoy</span>
+        <span class="desc" id="today-desc"></span>
+      </button>
+      <button class="mode-btn" id="btn-due" onclick="App.startMode('due')">
+        <span class="icon">⏰</span>
+        <span class="title">Repaso vencido</span>
+        <span class="desc" id="due-desc">Lo que toca repasar según la repetición espaciada</span>
+      </button>
+      <button class="mode-btn" onclick="App.openExamSetup()">
+        <span class="icon">⏱️</span>
+        <span class="title">Simulacro de examen</span>
+        <span class="desc">Con tiempo, sin correcciones hasta el final</span>
+      </button>
       <button class="mode-btn accent" onclick="App.startMode('all')">
         <span class="icon">🎲</span>
         <span class="title">Todas mezcladas</span>
@@ -439,6 +464,48 @@
   </div>
 </div>
 
+<!-- ======== SIMULACRO: CONFIGURACIÓN ======== -->
+<div id="exam-setup" class="hidden">
+  <div class="selector-box">
+    <h2>⏱️ Simulacro de examen</h2>
+    <p style="color:var(--text2);font-size:0.86rem;margin:-8px 0 14px">Sin correcciones hasta el final, con tiempo y con penalización por fallo.</p>
+    <div class="sel-options">
+      <label>Número de preguntas
+        <select id="exam-n">
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="50" selected>50</option>
+          <option value="80">80</option>
+          <option value="100">100</option>
+        </select>
+      </label>
+      <label>Tiempo total (minutos)
+        <select id="exam-min">
+          <option value="0">Sin límite</option>
+          <option value="20">20</option>
+          <option value="30">30</option>
+          <option value="50" selected>50</option>
+          <option value="80">80</option>
+          <option value="120">120</option>
+        </select>
+      </label>
+      <label>Preguntas de
+        <select id="exam-src">
+          <option value="all">Todo el banco</option>
+          <option value="exam">Solo exámenes de años anteriores</option>
+        </select>
+      </label>
+      <label>Penalizar los fallos
+        <input type="checkbox" id="exam-pen" checked style="width:16px;height:16px;accent-color:var(--accent)">
+      </label>
+    </div>
+    <div class="sel-actions">
+      <button class="btn btn-outline" onclick="document.getElementById('exam-setup').classList.add('hidden')">Cancelar</button>
+      <button class="btn btn-primary" onclick="App.startExam()">Empezar simulacro</button>
+    </div>
+  </div>
+</div>
+
 <!-- ======== QUIZ SCREEN ======== -->
 <div id="quiz-screen" class="hidden">
   <div class="quiz-topbar">
@@ -449,6 +516,7 @@
       </div>
       <span class="prog-text" id="q-score-live" style="color:var(--success)">✓ 0</span>
       <span class="prog-text" id="q-fail-live" style="color:var(--danger)">✗ 0</span>
+      <span class="prog-text exam-timer hidden" id="exam-timer"></span>
       <span class="prog-text" id="fb-status-slot"></span>
     </div>
     <div class="quiz-actions">
@@ -517,6 +585,7 @@
     <h2>Sesión completada</h2>
     <div class="score-big" id="res-pct"></div>
     <p class="score-sub" id="res-sub"></p>
+    <div id="res-exam" class="hidden" style="margin-top:14px"></div>
   </div>
 
   <div class="result-stats">
@@ -547,6 +616,10 @@
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
       <h2>📊 Estadísticas por tema</h2>
       <button class="close-btn" onclick="document.getElementById('stats-panel').classList.add('hidden')">✕ Cerrar</button>
+    </div>
+    <div id="stats-sims" class="hidden" style="margin-bottom:20px">
+      <p class="section-title">⏱️ Simulacros</p>
+      <div id="stats-sims-list"></div>
     </div>
     <div class="stats-topic-grid" id="stats-topic-list"></div>
     <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
@@ -587,6 +660,7 @@ function loadData() {
   }
   return { qs: {}, topicFlags: {} };
 }
+
 
 // Elimina registros vacíos (sin intentos, marca, dificultad, nota ni marca de tiempo)
 function pruneData(d) {
@@ -665,6 +739,56 @@ function colorForPct(p) {
   if (p >= 80) return 'var(--success)';
   if (p >= 50) return 'var(--warning)';
   return 'var(--danger)';
+}
+
+// Día actual como número entero (días desde 1970), para comparar vencimientos
+const DAY_MS = 86400000;
+function today() { return Math.floor(Date.now() / DAY_MS); }
+function todayKey() { return new Date().toISOString().slice(0, 10); }
+
+// SM-2 ligero: iv = intervalo en días, ef = factor de facilidad, du = día de vencimiento.
+// La calidad sale del acierto y de la dificultad que declares (1 fácil · 2 media · 3 difícil).
+function scheduleSM2(qs, wasCorrect) {
+  let ef = typeof qs.ef === 'number' ? qs.ef : 2.5;
+  let iv = typeof qs.iv === 'number' ? qs.iv : 0;
+  const q = wasCorrect ? (qs.d === 3 ? 3 : qs.d === 1 ? 5 : 4) : (qs.d === 1 ? 2 : 1);
+  ef = ef + (0.1 - (5 - q) * (0.08 + (5 - q) * 0.02));
+  ef = Math.max(1.3, Math.min(2.8, ef));
+  if (!wasCorrect) iv = 0;
+  else if (iv <= 0) iv = 1;
+  else if (iv === 1) iv = 3;
+  else iv = Math.round(iv * ef);
+  iv = Math.min(iv, 180);
+  qs.ef = Math.round(ef * 100) / 100;
+  qs.iv = iv;
+  qs.du = today() + (wasCorrect ? iv : 0); // si fallas vuelve a tocar hoy mismo
+  return qs;
+}
+// ¿Toca repasarla hoy? (solo cuenta lo ya estudiado)
+function isDue(s) { return !!s && s.a > 0 && typeof s.du === 'number' && s.du <= today(); }
+function isNew(s) { return !s || !s.a; }
+
+// Registro del día: {n respondidas, ok aciertos} por fecha, y racha de días seguidos
+function bumpDaily(wasCorrect) {
+  const d = State.data.daily || (State.data.daily = {});
+  const k = todayKey();
+  if (!d[k]) d[k] = { n: 0, ok: 0 };
+  d[k].n++;
+  if (wasCorrect) d[k].ok++;
+  // Conservar solo los últimos 400 días
+  const keys = Object.keys(d).sort();
+  while (keys.length > 400) delete d[keys.shift()];
+}
+function streakDays() {
+  const d = State.data.daily || {};
+  let n = 0;
+  for (let i = 0; ; i++) {
+    const k = new Date(Date.now() - i * DAY_MS).toISOString().slice(0, 10);
+    if (d[k] && d[k].n > 0) n++;
+    else if (i > 0) break;           // ayer sin estudiar: se corta
+    else if (i === 0) continue;      // hoy todavía sin responder: no rompe la racha
+  }
+  return n;
 }
 
 function esc(s) {
@@ -790,6 +914,24 @@ const App = {
     document.getElementById('stat-hard').textContent = hard.toLocaleString('es');
     document.getElementById('stat-topics').textContent = studiedTopics.size;
 
+    // Repetición espaciada: cuántas tocan hoy y cuántas están sin empezar
+    let due = 0, fresh = 0;
+    for (const q of ALL_QUESTIONS) {
+      const s = qs[q.id];
+      if (isDue(s)) due++;
+      else if (isNew(s)) fresh++;
+    }
+    State.due = due; State.fresh = fresh;
+    const streak = streakDays();
+    const hoy = (State.data.daily || {})[todayKey()] || { n: 0, ok: 0 };
+    document.getElementById('today-desc').innerHTML =
+      `${due} vencidas · ${fresh.toLocaleString('es')} nuevas · hoy ${hoy.n}` +
+      (streak > 1 ? ` <span class="streak">🔥 ${streak} días</span>` : '');
+    document.getElementById('due-desc').textContent = due
+      ? `${due} preguntas te tocan hoy`
+      : 'Nada vencido: vuelve mañana o estudia por tema';
+    document.getElementById('btn-due').classList.toggle('disabled', due === 0);
+
     // Botones condicionales
     document.getElementById('btn-failed').classList.toggle('disabled', failedCount === 0);
     document.getElementById('btn-marked').classList.toggle('disabled', marked === 0);
@@ -830,6 +972,9 @@ const App = {
         correct: sess.correct,
         wrong: sess.wrong,
         mode: sess.mode,
+        exam: sess.exam,
+        penaliza: sess.penaliza,
+        endsAt: sess.endsAt,
         t: Date.now(),
       }));
     } catch(e) {}
@@ -866,10 +1011,14 @@ const App = {
       wrong: s.wrong || 0,
       mode: s.mode || 'all',
       sessionMarked: new Set(),
+      exam: !!s.exam,
+      penaliza: !!s.penaliza,
+      endsAt: s.endsAt || 0,
     };
     this.showScreen('quiz');
     this.renderQuizQuestion();
     this.renderSidebar();
+    this.startExamTimer();
   },
 
   renderTopicsGrid() {
@@ -961,6 +1110,8 @@ const App = {
     } else if (mode === 'topic') {
       this.openTopicSelector();
       return;
+    } else if (mode === 'due') {
+      pool = ALL_QUESTIONS.filter(q => isDue(State.data.qs[q.id]));
     } else if (mode === 'failed') {
       pool = ALL_QUESTIONS.filter(q => isFailed(State.data.qs[q.id]));
     } else if (mode === 'marked') {
@@ -982,6 +1133,82 @@ const App = {
     if (limit > 0 && limit < pool.length) pool = pool.slice(0, limit);
 
     this.beginSession(pool, mode);
+  },
+
+  // Sesión del día: 60 % vencidas, 25 % falladas en el último intento, 15 % nuevas
+  startToday() {
+    const qs = State.data.qs;
+    const limit = parseInt(document.getElementById('sel-limit').value) || 30;
+    const due = shuffle(ALL_QUESTIONS.filter(q => isDue(qs[q.id])));
+    const failed = shuffle(ALL_QUESTIONS.filter(q => { const s = qs[q.id]; return isFailed(s) && !isDue(s); }));
+    const fresh = shuffle(ALL_QUESTIONS.filter(q => isNew(qs[q.id])));
+    const take = (arr, n) => arr.slice(0, Math.max(0, n));
+    let pool = take(due, Math.round(limit * 0.6))
+      .concat(take(failed, Math.round(limit * 0.25)))
+      .concat(take(fresh, Math.round(limit * 0.15)));
+    // Si alguna fuente no llega, se completa con las demás
+    if (pool.length < limit) {
+      const usados = new Set(pool.map(q => q.id));
+      for (const arr of [due, failed, fresh]) {
+        for (const q of arr) {
+          if (pool.length >= limit) break;
+          if (!usados.has(q.id)) { pool.push(q); usados.add(q.id); }
+        }
+      }
+    }
+    if (!pool.length) { alert('No hay preguntas para la sesión de hoy.'); return; }
+    this.beginSession(shuffle(pool), 'today');
+  },
+
+  // ----- Simulacro -----
+  openExamSetup() {
+    const hayExamenes = ALL_QUESTIONS.some(q => /^\s*📝/.test(q.topicBase));
+    const src = document.getElementById('exam-src');
+    src.options[1].disabled = !hayExamenes;
+    if (!hayExamenes) src.value = 'all';
+    document.getElementById('exam-setup').classList.remove('hidden');
+  },
+
+  startExam() {
+    const n = parseInt(document.getElementById('exam-n').value, 10) || 50;
+    const mins = parseInt(document.getElementById('exam-min').value, 10) || 0;
+    const soloExamenes = document.getElementById('exam-src').value === 'exam';
+    const penaliza = document.getElementById('exam-pen').checked;
+    let pool = ALL_QUESTIONS.filter(q => Number.isInteger(effCorrectOrig(q)) && q.options.length >= 2);
+    if (soloExamenes) pool = pool.filter(q => /^\s*📝/.test(q.topicBase));
+    if (!pool.length) { alert('No hay preguntas disponibles para el simulacro.'); return; }
+    pool = shuffle(pool).slice(0, Math.min(n, pool.length));
+    document.getElementById('exam-setup').classList.add('hidden');
+    this.beginSession(pool, 'exam', { exam: true, penaliza, endsAt: mins ? Date.now() + mins * 60000 : 0 });
+  },
+
+  startExamTimer() {
+    clearInterval(this._examTimer);
+    const el = document.getElementById('exam-timer');
+    const sess = State.session;
+    if (!sess || !sess.exam || !sess.endsAt) { el.classList.add('hidden'); return; }
+    el.classList.remove('hidden');
+    const tick = () => {
+      const s = State.session;
+      if (!s || !s.exam) { clearInterval(this._examTimer); el.classList.add('hidden'); return; }
+      const left = Math.max(0, Math.round((s.endsAt - Date.now()) / 1000));
+      el.textContent = `⏱ ${String(Math.floor(left / 60)).padStart(2, '0')}:${String(left % 60).padStart(2, '0')}`;
+      el.classList.toggle('low', left <= 60);
+      if (left <= 0) { clearInterval(this._examTimer); this.finishQuiz(); }
+    };
+    tick();
+    this._examTimer = setInterval(tick, 1000);
+  },
+
+  // Repasar las respuestas después de corregir el simulacro
+  reviewExam() {
+    const sess = State.session;
+    if (!sess) return;
+    sess.exam = false;
+    sess.currentIdx = 0;
+    this.showScreen('quiz');
+    this.renderQuizQuestion();
+    this.renderSidebar();
   },
 
   buildSpacedPool(limit) {
@@ -1035,8 +1262,9 @@ const App = {
     return { ...q, displayOptions: perm.map(i => q.options[i]), perm };
   },
 
-  beginSession(questions, mode) {
+  beginSession(questions, mode, opts) {
     if (questions.length === 0) { alert('No hay preguntas disponibles.'); return; }
+    opts = opts || {};
     const shuffleOpts = document.getElementById('chk-shuffle-opts').checked;
 
     // Preparar preguntas con opciones mezcladas si aplica (respetando "Todas/Ninguna" al final y las autorreferentes)
@@ -1057,9 +1285,13 @@ const App = {
       wrong: 0,
       mode,
       sessionMarked: new Set(),
+      exam: !!opts.exam,
+      penaliza: !!opts.penaliza,
+      endsAt: opts.endsAt || 0,
     };
 
     this.saveSession();
+    this.startExamTimer();
     this.showScreen('quiz');
     this.renderQuizQuestion();
     this.renderSidebar();
@@ -1076,6 +1308,8 @@ const App = {
     // Topbar
     document.getElementById('q-progress').textContent = `${idx + 1} / ${total}`;
     document.getElementById('q-progress-bar').style.width = `${((idx + 1) / total) * 100}%`;
+    document.getElementById('q-score-live').classList.toggle('hidden', !!sess.exam);
+    document.getElementById('q-fail-live').classList.toggle('hidden', !!sess.exam);
     document.getElementById('q-score-live').textContent = '✓ ' + sess.correct;
     document.getElementById('q-fail-live').textContent = '✗ ' + sess.wrong;
 
@@ -1125,7 +1359,12 @@ const App = {
     // Restaurar estado si ya fue respondida
     const prevAnswer = sess.answers[q.id];
     const expDiv = document.getElementById('q-explanation');
-    if (prevAnswer) {
+    if (prevAnswer && sess.exam) {
+      // En el simulacro solo se recuerda lo marcado, sin decir si está bien
+      const btns = optDiv.querySelectorAll('.opt-btn');
+      if (btns[prevAnswer.chosen]) btns[prevAnswer.chosen].classList.add('chosen');
+      expDiv.classList.add('hidden');
+    } else if (prevAnswer) {
       const btns = optDiv.querySelectorAll('.opt-btn');
       btns.forEach(b => b.disabled = true);
       const dcPrev = dispCorrect(q);
@@ -1198,9 +1437,22 @@ const App = {
     qs.a++;
     if (wasCorrect) qs.c++;
     qs.l = wasCorrect ? 1 : 0;
+    scheduleSM2(qs, wasCorrect);
     touchQS(qs);
+    bumpDaily(wasCorrect);
     saveData();
     this.saveSession();
+
+    if (sess.exam) {
+      // Simulacro: se guarda la respuesta pero no se corrige hasta el final
+      const btns0 = document.querySelectorAll('.opt-btn');
+      btns0.forEach(b => b.disabled = true);
+      if (btns0[chosenIdx]) btns0[chosenIdx].classList.add('chosen');
+      this.updateSidebarBtn(q.id, null);
+      document.getElementById('q-progress').textContent = `${sess.currentIdx + 1} / ${sess.questions.length}`;
+      setTimeout(() => { if (State.session === sess && sess.currentIdx < sess.questions.length - 1) { sess.currentIdx++; this.renderQuizQuestion(); this.updateSidebarActiveBtn(); } }, 180);
+      return;
+    }
 
     // Colorear opciones
     const btns = document.querySelectorAll('.opt-btn');
@@ -1459,10 +1711,35 @@ const App = {
     const p = pct(correct, answered || 1);
 
     this.clearSession();
+    clearInterval(this._examTimer);
+    document.getElementById('exam-timer').classList.add('hidden');
     document.getElementById('quiz-sidebar').classList.remove('open');
 
     // Calcular marcadas de la sesión
     const markedCount = sess.questions.filter(q => peekQS(q.id).m).length;
+
+    // Simulacro: nota sobre 10 restando errores/(k-1), con k = nº de opciones de cada pregunta
+    const examBox = document.getElementById('res-exam');
+    if (sess.exam) {
+      let bruto = 0;
+      for (const q of sess.questions) {
+        const ans = sess.answers[q.id];
+        if (!ans) continue;
+        if (ans.wasCorrect) bruto += 1;
+        else if (sess.penaliza) bruto -= 1 / Math.max(1, q.options.length - 1);
+      }
+      const nota = Math.max(0, Math.round((bruto / total) * 100) / 10);
+      const sims = State.data.sims || (State.data.sims = []);
+      sims.push({ t: Date.now(), n: total, ok: correct, mal: wrong, blanco: unanswered, nota, pen: !!sess.penaliza });
+      while (sims.length > 50) sims.shift();
+      saveData();
+      examBox.classList.remove('hidden');
+      examBox.innerHTML = `<div style="font-size:2.6rem;font-weight:800;color:${nota >= 5 ? 'var(--success)' : 'var(--danger)'}">${nota.toFixed(1)}<span style="font-size:1rem;color:var(--text2)"> / 10</span></div>
+        <div style="color:var(--text2);font-size:0.85rem;margin-top:4px">${correct} aciertos · ${wrong} fallos · ${unanswered} en blanco${sess.penaliza ? ' · penalización aplicada' : ' · sin penalización'}</div>
+        <button class="btn btn-outline btn-sm" style="margin-top:12px" onclick="App.reviewExam()">🔍 Revisar respuestas</button>`;
+    } else {
+      examBox.classList.add('hidden');
+    }
 
     document.getElementById('res-pct').textContent = p + '%';
     document.getElementById('res-pct').className = 'score-big ' + (p >= 80 ? 'great' : p >= 50 ? 'ok' : 'bad');
@@ -1621,6 +1898,18 @@ const App = {
       </div>`;
     }).join('');
     document.getElementById('stats-topic-list').innerHTML = html;
+
+    const sims = State.data.sims || [];
+    const simBox = document.getElementById('stats-sims');
+    simBox.classList.toggle('hidden', sims.length === 0);
+    if (sims.length) {
+      document.getElementById('stats-sims-list').innerHTML = sims.slice().reverse().slice(0, 12).map(s => {
+        const f = new Date(s.t).toLocaleString('es', { day: '2-digit', month: 'short', hour: '2-digit', minute: '2-digit' });
+        return `<div class="sim-row"><span class="sim-date">${f}</span>
+          <span style="color:var(--text2)">${s.ok}/${s.n} · ${s.mal} fallos · ${s.blanco} en blanco</span>
+          <span class="sim-score" style="color:${s.nota >= 5 ? 'var(--success)' : 'var(--danger)'}">${s.nota.toFixed(1)}</span></div>`;
+      }).join('');
+    }
     document.getElementById('stats-panel').classList.remove('hidden');
   },
 
@@ -1648,7 +1937,7 @@ const App = {
   resetData() {
     if (!confirm('¿Seguro que quieres borrar todo el progreso? Esta acción no se puede deshacer.')) return;
     // resetAt: cualquier registro anterior a este instante (local o en la nube) se descarta al fusionar
-    State.data = { qs: {}, topicFlags: {}, resetAt: Date.now() };
+    State.data = { qs: {}, topicFlags: {}, daily: {}, sims: [], resetAt: Date.now() };
     this.clearSession();
     saveData();
     fbFlush();
@@ -1824,13 +2113,14 @@ function fbMerge(local, remote) {
     else if (!r) mq = l;
     else if (l.t || r.t) mq = ((l.t || 0) >= (r.t || 0)) ? l : r;
     else {
-      mq = { a: Math.max(l.a||0, r.a||0), c: Math.max(l.c||0, r.c||0), d: r.d||l.d||0, m: r.m||l.m||0 };
-      var n = r.note || l.note; if (n) mq.note = n;
-      // La respuesta marcada a mano se conserva (antes se perdía al sincronizar)
-      var k = Number.isInteger(r.ck) ? r.ck : l.ck;
-      if (Number.isInteger(k)) mq.ck = k;
-      var lastR = (r.l !== undefined) ? r.l : l.l;
-      if (lastR !== undefined) mq.l = lastR;
+      // Se parte de todos los campos (ck, l, iv, ef, du…) para no perder ninguno,
+      // y sobre ellos se aplican los máximos de los contadores.
+      mq = Object.assign({}, l, r);
+      mq.a = Math.max(l.a||0, r.a||0);
+      mq.c = Math.max(l.c||0, r.c||0);
+      mq.d = r.d||l.d||0;
+      mq.m = r.m||l.m||0;
+      var n = r.note || l.note; if (n) mq.note = n; else delete mq.note;
     }
     merged.qs[id] = mq;
   });
@@ -1848,6 +2138,23 @@ function fbMerge(local, remote) {
     else f = { e: l.e || r.e || 0, i: l.i || r.i || 0, r: l.r || r.r || 0 };
     if (f.e || f.i || f.r || f.t) merged.topicFlags[t] = f;
   });
+  // Diario de estudio: se queda el mayor recuento de cada día
+  var ld = local.daily || {}, rd = remote.daily || {};
+  var days = new Set(Object.keys(ld).concat(Object.keys(rd)));
+  if (days.size) {
+    merged.daily = {};
+    days.forEach(function(k) {
+      var a = ld[k] || { n: 0, ok: 0 }, b = rd[k] || { n: 0, ok: 0 };
+      merged.daily[k] = { n: Math.max(a.n || 0, b.n || 0), ok: Math.max(a.ok || 0, b.ok || 0) };
+    });
+  }
+  // Simulacros: unión por marca de tiempo
+  var sims = (local.sims || []).concat(remote.sims || []);
+  if (sims.length) {
+    var vistos = {};
+    merged.sims = sims.filter(function(s) { if (!s || vistos[s.t]) return false; vistos[s.t] = 1; return true; })
+                      .sort(function(a, b) { return a.t - b.t; }).slice(-50);
+  }
   return pruneData(merged);
 }
 
@@ -1957,7 +2264,7 @@ document.addEventListener('keydown', e => {
   const fbModal = document.getElementById('fb-modal');
   if (fbModal && fbModal.style.display === 'flex') return;
   if (e.key === 'Escape') {
-    ['topic-selector', 'combo-selector', 'stats-panel'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    ['topic-selector', 'combo-selector', 'stats-panel', 'exam-setup'].forEach(id => document.getElementById(id).classList.add('hidden'));
     const sb = document.getElementById('quiz-sidebar');
     if (sb && sb.classList.contains('open')) sb.classList.remove('open');
     return;
