@@ -164,6 +164,22 @@
     .mode-btn .discard:hover { color: var(--danger); border-color: var(--danger); }
     .opt-btn.pinned-hint { }
     .kbd-hint { font-size: 0.72rem; color: var(--text2); margin-top: 10px; }
+    .topic-card.banco-nuevo { border-color: #f59e0b !important; box-shadow: 0 0 0 3px rgba(245,158,11,0.55), 0 4px 14px rgba(245,158,11,0.3) !important; }
+    .topic-dup-star { position: absolute; top: 6px; right: 8px; font-size: 18px; line-height: 1; }
+    body.wrap-names .topic-info .name { white-space: normal; overflow-wrap: anywhere; line-height: 1.3; }
+    .extra-section { margin-top: 32px; }
+    .extra-section .section-title { border-bottom: 1px solid var(--border); padding-bottom: 8px; margin-bottom: 14px; }
+    .q-keyrow { margin-top: 14px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.82rem; color: var(--text2); padding: 7px 10px; border: 1px dashed var(--border); border-radius: 8px; }
+    .q-keyrow.nokey { border-color: var(--warning); color: #fbbf24; background: rgba(245,158,11,0.08); border-style: solid; }
+    .q-keyrow.flash { box-shadow: 0 0 0 3px rgba(245,158,11,0.45); }
+    .q-keyrow .kr-toggle { background: none; border: 1px solid var(--border); color: inherit; border-radius: 6px; padding: 3px 10px; font-size: 0.8rem; cursor: pointer; }
+    .q-keyrow.nokey .kr-toggle { border-color: var(--warning); }
+    .q-keyrow .kr-toggle:hover { border-color: var(--accent2); color: var(--text); }
+    .q-keyrow .kr-btn { width: 34px; height: 34px; border-radius: 6px; border: 1.5px solid var(--border); background: var(--surface); color: var(--text); cursor: pointer; font-weight: 700; }
+    .q-keyrow .kr-btn:hover { border-color: var(--accent2); }
+    .q-keyrow .kr-btn.active { background: rgba(34,197,94,0.2); border-color: var(--success); color: #86efac; }
+    .q-keyrow .kr-clear { background: none; border: none; color: var(--accent2); cursor: pointer; font-size: 0.8rem; text-decoration: underline; }
+    .q-keyrow .kr-hint { opacity: 0.8; font-style: italic; }
 
     /* ===== RESULTS SCREEN ===== */
     #results-screen { padding: 24px; max-width: 900px; margin: 0 auto; }
@@ -255,6 +271,7 @@
 <div id="home-screen">
   <div class="home-header">
     <h1>🩺 Medicina Interna · IMI</h1>
+    
     <p>Plataforma de Estudio Inteligente &middot; <span id="total-q-count"></span> preguntas</p>
   </div>
 
@@ -364,10 +381,13 @@
     </div>
   </div>
 
+  
+
   <div class="topics-section" style="margin-top:28px">
     <p class="section-title">Temas · Haz clic para estudiar solo ese tema</p>
     <div class="topics-grid" id="topics-grid"></div>
   </div>
+  <div id="extra-sections"></div>
 
 
 </div>
@@ -449,11 +469,13 @@
           <span class="q-num" id="q-num-label"></span>
           <span class="q-topic-tag" id="q-topic-tag"></span>
           <span class="badge hidden" id="q-diff-badge"></span>
+          <span class="hidden" id="q-dup-star" title="Pregunta repetida en otro cuestionario" style="font-size:18px;line-height:1">⭐</span>
           <button class="q-mark-btn" id="q-mark-btn" onclick="App.toggleMark()">🔖 Marcar</button>
         </div>
         <div class="q-text" id="q-text"></div>
         <div id="q-image-wrap" class="hidden" style="margin:10px 0"><img id="q-image" alt="Figura de la pregunta" style="max-width:100%;max-height:420px;border-radius:10px;border:1px solid var(--border);cursor:zoom-in;display:block" onclick="this.style.maxHeight=this.style.maxHeight==='none'?'420px':'none'"></div>
         <div class="options" id="q-options"></div>
+        <div class="q-keyrow hidden" id="q-keyrow"></div>
         <div class="explanation hidden" id="q-explanation">
           <strong>Explicación:</strong>
           <span id="q-exp-text"></span>
@@ -562,7 +584,7 @@ function pruneData(d) {
   const qs = d.qs || {};
   for (const id of Object.keys(qs)) {
     const s = qs[id];
-    if (!s || (!s.a && !s.c && !s.d && !s.m && !s.note && !s.t)) delete qs[id];
+    if (!s || (!s.a && !s.c && !s.d && !s.m && !s.note && !s.t && !Number.isInteger(s.ck))) delete qs[id];
   }
   return d;
 }
@@ -642,6 +664,39 @@ function esc(s) {
 
 // Categoría de banco para ordenar las tarjetas (depende de la asignatura)
 const TOPIC_CAT = s => s.startsWith('📚') ? 1 : s.startsWith('💻') ? 2 : s.startsWith('🖼') ? 3 : s.startsWith('📝') ? 4 : 0;
+// Secciones adicionales de la portada: {id, title, color, match(nombreDeBanco), strip}
+const SECTIONS = [];
+// Rasgos propios de cada asignatura
+const FEATURES = Object.assign({
+  dupStar: false,          // ⭐ en las preguntas/bancos marcados con dup
+  shuffleOptsDefault: false,
+  persistPrefs: false,     // recordar las casillas de mezclado entre visitas
+  wrapNames: false,        // nombres de banco en varias líneas
+  pinned: [],              // bancos que van primero en la rejilla principal
+  highlight: [],           // bancos resaltados en ámbar
+}, {});
+function sectionOf(topic) { return SECTIONS.find(s => s.match(topic)) || null; }
+
+// Índice (sobre q.options original) de la correcta: la marcada por el usuario manda sobre la predefinida.
+// Devuelve null si la pregunta todavía no tiene respuesta correcta.
+function effCorrectOrig(q) {
+  if (FEATURES.answerKey) {
+    const s = State.data.qs[q.id];
+    if (s && Number.isInteger(s.ck)) return s.ck;
+  }
+  return Number.isInteger(q.correct) ? q.correct : null;
+}
+// Índice de la correcta sobre las opciones tal y como se muestran, o -1 si no hay clave.
+function dispCorrect(q) {
+  const o = effCorrectOrig(q);
+  if (o == null) return -1;
+  return q.perm ? q.perm.indexOf(o) : o;
+}
+// ¿La clave que se está usando es la predefinida y no una marcada por el usuario?
+function keyIsPredefined(q) {
+  const s = State.data.qs[q.id];
+  return (!s || !Number.isInteger(s.ck)) && Number.isInteger(q.correct);
+}
 function sortTopicNames(names) {
   return [...names].sort((a, b) => {
     const ca = TOPIC_CAT(a), cb = TOPIC_CAT(b);
@@ -681,6 +736,19 @@ const App = {
   // ----- Inicio -----
   init() {
     document.getElementById('total-q-count').textContent = ALL_QUESTIONS.length.toLocaleString('es');
+    if (FEATURES.wrapNames) document.body.classList.add('wrap-names');
+    const chkQ = document.getElementById('chk-shuffle'), chkO = document.getElementById('chk-shuffle-opts');
+    chkO.checked = !!FEATURES.shuffleOptsDefault;
+    if (FEATURES.persistPrefs) {
+      try {
+        const pq = localStorage.getItem(STORAGE_KEY + '_pref_shuffleQ');
+        const po = localStorage.getItem(STORAGE_KEY + '_pref_shuffleOpts');
+        if (pq !== null) chkQ.checked = pq === '1';
+        if (po !== null) chkO.checked = po === '1';
+      } catch(e) {}
+      chkQ.addEventListener('change', e => { try { localStorage.setItem(STORAGE_KEY + '_pref_shuffleQ', e.target.checked ? '1' : '0'); } catch(err) {} });
+      chkO.addEventListener('change', e => { try { localStorage.setItem(STORAGE_KEY + '_pref_shuffleOpts', e.target.checked ? '1' : '0'); } catch(err) {} });
+    }
     this.updateHomeStats();
     this.renderTopicsGrid();
     this.refreshResumeCard();
@@ -813,10 +881,14 @@ const App = {
       const progressPct = Math.round((attempted / total) * 100);
       const escTopic = esc(topic);
       const f = flags[topic] || {};
-      const cardClass = 'topic-card' + (f.e ? ' flagged-examen' : '');
-      return `<div class="${cardClass}" onclick="App.startSingleTopic(this.dataset.topic)" data-topic="${escTopic}">
+      const sec = sectionOf(topic);
+      const shown = sec && sec.strip ? topic.replace(sec.strip, '') : topic;
+      const hasDup = FEATURES.dupStar && topicQs.some(q => q.dup);
+      const cardClass = 'topic-card' + (f.e ? ' flagged-examen' : '') + (FEATURES.highlight.includes(topic) ? ' banco-nuevo' : '');
+      return `<div class="${cardClass}" onclick="App.startSingleTopic(this.dataset.topic)" data-topic="${escTopic}" style="position:relative">
+        ${hasDup ? '<span class="topic-dup-star" title="Contiene preguntas repetidas en otro cuestionario">⭐</span>' : ''}
         <div class="topic-info">
-          <div class="name">${escTopic}</div>
+          <div class="name">${esc(shown)}</div>
           <div class="count">${total} preguntas · ${attempted} respondidas</div>
           <div class="progress-bar-h" style="margin-top:6px"><div class="progress-bar-fill" style="width:${progressPct}%"></div></div>
           <div class="topic-flags" onclick="event.stopPropagation()">
@@ -832,9 +904,25 @@ const App = {
       </div>`;
     };
 
-    // Temas
-    const mainTopics = sortTopicNames(TOPIC_NAMES);
+    // Rejilla principal: los bancos que no pertenecen a ninguna sección aparte
+    const mainTopics = sortTopicNames(TOPIC_NAMES.filter(t => !sectionOf(t)));
+    for (const name of [...FEATURES.pinned].reverse()) {
+      const i = mainTopics.indexOf(name);
+      if (i > 0) { mainTopics.splice(i, 1); mainTopics.unshift(name); }
+    }
     document.getElementById('topics-grid').innerHTML = mainTopics.map(buildCard).join('');
+
+    // Secciones adicionales
+    const extra = document.getElementById('extra-sections');
+    extra.innerHTML = SECTIONS.map(s => {
+      const names = sortTopicNames(TOPIC_NAMES.filter(t => sectionOf(t) === s));
+      if (!names.length) return '';
+      const total = names.reduce((n, t) => n + (BY_TOPIC.get(t) || []).length, 0);
+      return `<div class="topics-section extra-section">
+        <p class="section-title" style="color:${s.color || 'var(--accent2)'}">${s.title} · <span style="color:var(--text2);font-weight:400">${total} preguntas</span></p>
+        <div class="topics-grid">${names.map(buildCard).join('')}</div>
+      </div>`;
+    }).join('');
   },
 
   startSingleTopic(topic) {
@@ -933,13 +1021,9 @@ const App = {
   // ----- Sesión -----
   // perm = permutación de índices originales (null = orden original)
   _prepareQuestion(q, perm) {
-    if (!perm) return { ...q, displayOptions: [...q.options], displayCorrect: q.correct, perm: null };
-    return {
-      ...q,
-      displayOptions: perm.map(i => q.options[i]),
-      displayCorrect: perm.indexOf(q.correct),
-      perm,
-    };
+    // La correcta NO se congela aquí: se calcula con dispCorrect() porque el usuario puede cambiarla
+    if (!perm) return { ...q, displayOptions: [...q.options], perm: null };
+    return { ...q, displayOptions: perm.map(i => q.options[i]), perm };
   },
 
   beginSession(questions, mode) {
@@ -1006,6 +1090,8 @@ const App = {
     markBtn.className = 'q-mark-btn' + (isMarked ? ' marked' : '');
     markBtn.textContent = isMarked ? '🔖 Marcada' : '🔖 Marcar';
 
+    document.getElementById('q-dup-star').classList.toggle('hidden', !(FEATURES.dupStar && q.dup));
+
     // Pregunta
     document.getElementById('q-text').textContent = q.q;
 
@@ -1033,8 +1119,9 @@ const App = {
     if (prevAnswer) {
       const btns = optDiv.querySelectorAll('.opt-btn');
       btns.forEach(b => b.disabled = true);
+      const dcPrev = dispCorrect(q);
       if (btns[prevAnswer.chosen]) btns[prevAnswer.chosen].classList.add(prevAnswer.wasCorrect ? 'correct' : 'wrong');
-      if (!prevAnswer.wasCorrect && btns[q.displayCorrect]) btns[q.displayCorrect].classList.add('correct');
+      if (!prevAnswer.wasCorrect && btns[dcPrev]) btns[dcPrev].classList.add('correct');
       expDiv.classList.remove('hidden');
       document.getElementById('q-exp-text').textContent = q.exp || 'Sin explicación disponible.';
     } else {
@@ -1050,6 +1137,10 @@ const App = {
     // Nav buttons
     document.getElementById('btn-prev').disabled = idx === 0;
     document.getElementById('btn-next').textContent = idx === total - 1 ? 'Finalizar ✓' : 'Siguiente →';
+
+    // Fila para marcar la respuesta correcta
+    if (FEATURES.answerKey) this.renderKeyRow();
+    else document.getElementById('q-keyrow').classList.add('hidden');
 
     // Nota personal
     document.getElementById('q-note').value = qs.note || '';
@@ -1081,7 +1172,15 @@ const App = {
     const q = sess.questions[sess.currentIdx];
     if (sess.answers[q.id]) return;
 
-    const wasCorrect = chosenIdx === q.displayCorrect;
+    const dc = dispCorrect(q);
+    if (dc < 0) {
+      // Todavía no hay respuesta correcta: pedir que la marque antes de responder
+      const row = document.getElementById('q-keyrow');
+      if (row) { row.classList.add('flash'); setTimeout(() => row.classList.remove('flash'), 1300); }
+      if (!this._keyExpanded) this.toggleKeyRow();
+      return;
+    }
+    const wasCorrect = chosenIdx === dc;
     sess.answers[q.id] = { chosen: chosenIdx, wasCorrect };
     if (wasCorrect) sess.correct++; else sess.wrong++;
 
@@ -1098,7 +1197,7 @@ const App = {
     const btns = document.querySelectorAll('.opt-btn');
     btns.forEach(b => b.disabled = true);
     if (btns[chosenIdx]) btns[chosenIdx].classList.add(wasCorrect ? 'correct' : 'wrong');
-    if (!wasCorrect && btns[q.displayCorrect]) btns[q.displayCorrect].classList.add('correct');
+    if (!wasCorrect && btns[dc]) btns[dc].classList.add('correct');
 
     // Mostrar explicación
     const expDiv = document.getElementById('q-explanation');
@@ -1111,6 +1210,87 @@ const App = {
     // Actualizar topbar
     document.getElementById('q-score-live').textContent = '✓ ' + sess.correct;
     document.getElementById('q-fail-live').textContent = '✗ ' + sess.wrong;
+  },
+
+  // ----- Marcar / cambiar la respuesta correcta (FEATURES.answerKey) -----
+  renderKeyRow() {
+    const sess = State.session;
+    const q = sess.questions[sess.currentIdx];
+    const row = document.getElementById('q-keyrow');
+    if (!row) return;
+    row.classList.remove('hidden');
+    const dc = dispCorrect(q);
+    const hasKey = dc >= 0;
+    const userSet = hasKey && !keyIsPredefined(q);
+    row.className = 'q-keyrow' + (hasKey ? '' : ' nokey');
+    if (!this._keyExpanded) {
+      const label = !hasKey ? '⚠️ Esta pregunta no tiene respuesta correcta marcada todavía.'
+        : userSet ? '🔑 Respuesta correcta marcada por ti ✓'
+        : '🔑 Respuesta correcta predefinida ✓';
+      row.innerHTML = `<span>${label}</span> <button class="kr-toggle" onclick="App.toggleKeyRow()">${hasKey ? 'Cambiar ▾' : 'Marcar la correcta ▾'}</button>`;
+      return;
+    }
+    let html = '<span>🔑 Marca la opción correcta:</span>';
+    q.displayOptions.forEach((_, i) => {
+      html += ` <button class="kr-btn${i === dc ? ' active' : ''}" onclick="App.setKey(${i})" title="Marcar la opción ${String.fromCharCode(65 + i)} como correcta">${String.fromCharCode(65 + i)}</button>`;
+    });
+    if (userSet) html += ` <button class="kr-clear" onclick="App.clearKey()" title="Quitar tu marca${Number.isInteger(q.correct) ? ' y volver a la predefinida' : ''}">↺ quitar mi marca</button>`;
+    if (!hasKey) html += ' <span class="kr-hint">pulsa la letra de la respuesta correcta</span>';
+    html += ' <button class="kr-toggle" onclick="App.toggleKeyRow()">cerrar ▴</button>';
+    row.innerHTML = html;
+  },
+
+  toggleKeyRow() {
+    this._keyExpanded = !this._keyExpanded;
+    this.renderKeyRow();
+  },
+
+  // Deshace la respuesta de la pregunta actual para poder volver a responderla tras cambiar la clave
+  _unanswerCurrent() {
+    const sess = State.session;
+    const q = sess.questions[sess.currentIdx];
+    const a = sess.answers[q.id];
+    if (!a) return;
+    if (a.wasCorrect) sess.correct = Math.max(0, sess.correct - 1);
+    else sess.wrong = Math.max(0, sess.wrong - 1);
+    const qs = getQS(q.id);
+    if (qs.a > 0) { qs.a--; if (a.wasCorrect && qs.c > 0) qs.c--; }
+    delete qs.l;
+    touchQS(qs);
+    delete sess.answers[q.id];
+    this.updateSidebarBtn(q.id, null);
+    document.getElementById('q-score-live').textContent = '✓ ' + sess.correct;
+    document.getElementById('q-fail-live').textContent = '✗ ' + sess.wrong;
+  },
+
+  setKey(dispIdx) {
+    const sess = State.session;
+    const q = sess.questions[sess.currentIdx];
+    const origIdx = q.perm ? q.perm[dispIdx] : dispIdx;
+    if (origIdx == null) return;
+    const qs = getQS(q.id);
+    this._unanswerCurrent();
+    if (Number.isInteger(q.correct) && q.correct === origIdx) delete qs.ck;
+    else qs.ck = origIdx;
+    touchQS(qs);
+    saveData();
+    this.saveSession();
+    this._keyExpanded = false;
+    this.renderQuizQuestion();
+    this.updateSidebarActiveBtn();
+  },
+
+  clearKey() {
+    const sess = State.session;
+    const q = sess.questions[sess.currentIdx];
+    const qs = getQS(q.id);
+    this._unanswerCurrent();
+    delete qs.ck;
+    touchQS(qs);
+    saveData();
+    this.saveSession();
+    this._keyExpanded = false;
+    this.renderQuizQuestion();
   },
 
   toggleMark() {
@@ -1637,6 +1817,11 @@ function fbMerge(local, remote) {
     else {
       mq = { a: Math.max(l.a||0, r.a||0), c: Math.max(l.c||0, r.c||0), d: r.d||l.d||0, m: r.m||l.m||0 };
       var n = r.note || l.note; if (n) mq.note = n;
+      // La respuesta marcada a mano se conserva (antes se perdía al sincronizar)
+      var k = Number.isInteger(r.ck) ? r.ck : l.ck;
+      if (Number.isInteger(k)) mq.ck = k;
+      var lastR = (r.l !== undefined) ? r.l : l.l;
+      if (lastR !== undefined) mq.l = lastR;
     }
     merged.qs[id] = mq;
   });
