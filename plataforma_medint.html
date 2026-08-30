@@ -265,6 +265,43 @@
     ::-webkit-scrollbar-track { background: var(--bg); }
     ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
     ::-webkit-scrollbar-thumb:hover { background: var(--text2); }
+    /* --- Fase 3: confianza, tipo de error, tarjetas, apuntes, estadísticas --- */
+    .q-text mark { background: rgba(245,158,11,0.26); color: #fde68a; padding: 0 3px; border-radius: 4px; font-weight: 700; }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; margin: 12px 0 2px; }
+    .chip-row .lbl { font-size: 0.78rem; color: var(--text2); }
+    .chip { background: var(--surface2); border: 1px solid var(--border); color: var(--text2); border-radius: 20px; padding: 5px 13px; font-size: 0.78rem; cursor: pointer; font-family: inherit; }
+    .chip:hover { color: var(--text); border-color: var(--accent); }
+    .chip.active { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+    .chip.c1.active { background: var(--success); border-color: var(--success); color: #06231a; }
+    .chip.c2.active { background: var(--warning); border-color: var(--warning); color: #241a02; }
+    .chip.c3.active { background: var(--danger); border-color: var(--danger); color: #fff; }
+    .selfrate { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 14px; }
+    .stat-mini-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(148px, 1fr)); gap: 10px; margin-bottom: 18px; }
+    .stat-mini { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; }
+    .stat-mini .n { font-size: 1.3rem; font-weight: 800; display: block; }
+    .stat-mini .l { font-size: 0.72rem; color: var(--text2); }
+    .trend { display: flex; align-items: flex-end; gap: 6px; height: 66px; margin-bottom: 20px; }
+    .trend .bar { flex: 1; background: linear-gradient(180deg, var(--accent2), var(--accent)); border-radius: 3px 3px 0 0; min-height: 2px; position: relative; }
+    .trend .bar span { position: absolute; bottom: -15px; left: 0; right: 0; text-align: center; font-size: 0.6rem; color: var(--text2); }
+    .trend .bar b { position: absolute; top: -15px; left: 0; right: 0; text-align: center; font-size: 0.6rem; color: var(--text2); font-weight: 600; }
+    .mx { border-collapse: collapse; font-size: 0.8rem; width: 100%; max-width: 460px; }
+    .mx th, .mx td { border: 1px solid var(--border); padding: 5px 9px; text-align: center; }
+    .mx th { color: var(--text2); font-weight: 600; }
+    .todo-list { list-style: none; margin: 0 0 18px; padding: 0; font-size: 0.88rem; }
+    .todo-list li { padding: 7px 0; border-bottom: 1px solid var(--border); }
+    .err-bar-row { display: flex; align-items: center; gap: 10px; font-size: 0.8rem; margin-bottom: 6px; }
+    .err-bar-row .en { min-width: 132px; color: var(--text2); }
+    .err-bar-row .eb { flex: 1; height: 9px; background: var(--surface2); border-radius: 5px; overflow: hidden; }
+    .err-bar-row .eb i { display: block; height: 100%; background: var(--accent); }
+    .worst-row { font-size: 0.8rem; padding: 7px 0; border-bottom: 1px solid var(--border); display: flex; gap: 10px; }
+    .worst-row .wq { flex: 1; }
+    .worst-row .wp { color: var(--danger); font-weight: 700; white-space: nowrap; }
+    #notes-panel { position: fixed; inset: 0; background: rgba(0,0,0,0.75); display: flex; align-items: center; justify-content: center; z-index: 600; }
+    #notes-panel.hidden { display: none; }
+    .note-item { background: var(--surface2); border: 1px solid var(--border); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 10px; }
+    .note-item .nmeta { font-size: 0.7rem; color: var(--text2); margin-bottom: 4px; }
+    .note-item .nq { font-size: 0.85rem; margin-bottom: 6px; }
+    .note-item .nt { font-size: 0.82rem; color: var(--accent2); white-space: pre-wrap; }
   </style>
   <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app-compat.js"></script>
   <script defer src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth-compat.js"></script>
@@ -367,6 +404,16 @@
         <span class="title">Combinar repaso</span>
         <span class="desc">Falladas, marcadas y/o difíciles</span>
       </button>
+      <button class="mode-btn" id="btn-cards" onclick="App.startCards()">
+        <span class="icon">🃏</span>
+        <span class="title">Tarjetas</span>
+        <span class="desc">Recuerda la respuesta antes de verla y autoevalúate</span>
+      </button>
+      <button class="mode-btn" id="btn-surefail" onclick="App.startMode('surefail')">
+        <span class="icon">😰</span>
+        <span class="title">Fallos con seguridad</span>
+        <span class="desc" id="surefail-desc">Las que fallaste creyendo que las sabías</span>
+      </button>
     </div>
   </div>
 
@@ -400,7 +447,12 @@
           <option value="1000">1000 preguntas</option>
         </select>
       </label>
+      <label style="font-size:0.88rem;display:flex;align-items:center;gap:8px;cursor:pointer;" title="Declara si vas seguro antes de responder: es lo que permite medir tu calibración">
+        <input type="checkbox" id="chk-conf" checked style="accent-color:var(--accent);width:15px;height:15px;">
+        Pedir confianza
+      </label>
       <button class="btn btn-outline btn-sm" onclick="App.showStats()">📊 Ver estadísticas</button>
+      <button class="btn btn-outline btn-sm" onclick="App.openNotes()">📝 Mis apuntes</button>
       <button class="btn btn-outline btn-sm" onclick="App.exportProgress()">⬇ Exportar progreso</button>
       <label class="btn btn-outline btn-sm" style="cursor:pointer">⬆ Importar progreso<input type="file" accept=".json" style="display:none" onchange="App.importProgress(event)"></label>
       <button class="btn btn-outline btn-sm" onclick="App.resetData()" style="color:var(--danger);border-color:var(--danger)">🗑 Reiniciar datos</button>
@@ -544,11 +596,33 @@
         </div>
         <div class="q-text" id="q-text"></div>
         <div id="q-image-wrap" class="hidden" style="margin:10px 0"><img id="q-image" alt="Figura de la pregunta" style="max-width:100%;max-height:420px;border-radius:10px;border:1px solid var(--border);cursor:zoom-in;display:block" onclick="this.style.maxHeight=this.style.maxHeight==='none'?'420px':'none'"></div>
+        <div class="chip-row hidden" id="q-conf-row">
+          <span class="lbl">Antes de responder:</span>
+          <button class="chip c1" id="conf-1" onclick="App.setConf(1)">😎 Seguro</button>
+          <button class="chip c2" id="conf-2" onclick="App.setConf(2)">🤔 Dudo</button>
+          <button class="chip c3" id="conf-3" onclick="App.setConf(3)">🎲 Adivino</button>
+        </div>
+        <div class="chip-row hidden" id="q-reveal-row">
+          <button class="btn btn-primary btn-sm" onclick="App.revealCard()">👁 Mostrar respuesta <span style="opacity:0.7">(espacio)</span></button>
+        </div>
         <div class="options" id="q-options"></div>
         <div class="q-keyrow hidden" id="q-keyrow"></div>
         <div class="explanation hidden" id="q-explanation">
           <strong>Explicación:</strong>
           <span id="q-exp-text"></span>
+        </div>
+        <div class="selfrate hidden" id="q-selfrate">
+          <button class="btn btn-danger btn-sm" onclick="App.selfRate(0)">✗ No lo sabía <span style="opacity:0.7">(1)</span></button>
+          <button class="btn btn-warn btn-sm" onclick="App.selfRate(1)">~ Con dudas <span style="opacity:0.7">(2)</span></button>
+          <button class="btn btn-primary btn-sm" onclick="App.selfRate(2)">✓ Lo sabía <span style="opacity:0.7">(3)</span></button>
+        </div>
+        <div class="chip-row hidden" id="q-err-row">
+          <span class="lbl">¿Qué ha pasado?</span>
+          <button class="chip" id="err-1" onclick="App.setErr(1)">No lo sabía</button>
+          <button class="chip" id="err-2" onclick="App.setErr(2)">Confundí conceptos</button>
+          <button class="chip" id="err-3" onclick="App.setErr(3)">Leí mal</button>
+          <button class="chip" id="err-4" onclick="App.setErr(4)">Dudé entre dos</button>
+          <button class="chip" id="err-5" onclick="App.setErr(5)">Todas/ninguna</button>
         </div>
         <div class="q-note-area">
           <div class="q-note-label">📝 Mis apuntes</div>
@@ -566,7 +640,7 @@
             <button class="btn btn-primary btn-sm" onclick="App.nextQ()" id="btn-next">Siguiente →</button>
           </div>
         </div>
-        <div class="kbd-hint">Teclado: A–H responder · ←/→ o Enter navegar · M marcar · 1/2/3 dificultad · Esc cerrar índice</div>
+        <div class="kbd-hint">Teclado: A–H responder · ←/→ o Enter navegar · M marcar · 1/2/3 confianza antes de responder y dificultad después · Espacio girar la tarjeta · Esc cerrar índice</div>
       </div>
     </div>
   </div>
@@ -603,17 +677,57 @@
   </div>
 </div>
 
+<!-- ======== NOTES PANEL ======== -->
+<div id="notes-panel" class="hidden">
+  <div class="stats-box">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:14px">
+      <h2>📝 Mis apuntes</h2>
+      <button class="close-btn" onclick="document.getElementById('notes-panel').classList.add('hidden')">✕ Cerrar</button>
+    </div>
+    <input id="notes-search" type="search" placeholder="Buscar en tus apuntes…" oninput="App.renderNotes(this.value)"
+      style="width:100%;padding:9px 12px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;color:var(--text);font-size:0.88rem;margin-bottom:12px;box-sizing:border-box">
+    <p id="notes-count" style="color:var(--text2);font-size:0.82rem;margin-bottom:12px"></p>
+    <div id="notes-list"></div>
+    <div style="margin-top:18px;padding-top:14px;border-top:1px solid var(--border);display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-primary btn-sm" id="btn-notes-study" onclick="App.studyNotes()">▶️ Estudiar estas preguntas</button>
+      <button class="btn btn-outline btn-sm" onclick="App.exportNotes()">⬇ Exportar en Markdown</button>
+    </div>
+  </div>
+</div>
+
 <!-- ======== STATS PANEL ======== -->
 <div id="stats-panel" class="hidden">
   <div class="stats-box">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
-      <h2>📊 Estadísticas por tema</h2>
+      <h2>📊 Estadísticas</h2>
       <button class="close-btn" onclick="document.getElementById('stats-panel').classList.add('hidden')">✕ Cerrar</button>
     </div>
     <div id="stats-sims" class="hidden" style="margin-bottom:20px">
       <p class="section-title">⏱️ Simulacros</p>
       <div id="stats-sims-list"></div>
     </div>
+    <div style="margin-bottom:18px">
+      <p class="section-title">🎯 Qué hacer hoy</p>
+      <ul class="todo-list" id="stats-todo"></ul>
+    </div>
+    <div class="stat-mini-grid" id="stats-mini"></div>
+    <div>
+      <p class="section-title">📈 Últimos 7 días</p>
+      <div class="trend" id="stats-trend"></div>
+    </div>
+    <div id="stats-conf-box" class="hidden" style="margin-bottom:18px">
+      <p class="section-title">🎚️ Calibración · acierto según la confianza declarada</p>
+      <table class="mx" id="stats-conf"></table>
+    </div>
+    <div id="stats-err-box" class="hidden" style="margin-bottom:18px">
+      <p class="section-title">🧩 Tipos de error</p>
+      <div id="stats-err"></div>
+    </div>
+    <div id="stats-worst-box" class="hidden" style="margin-bottom:18px">
+      <p class="section-title">🔻 Las que más se te resisten</p>
+      <div id="stats-worst"></div>
+    </div>
+    <p class="section-title">📚 Por tema</p>
     <div class="stats-topic-grid" id="stats-topic-list"></div>
     <div style="margin-top:20px;padding-top:16px;border-top:1px solid var(--border)">
       <button class="btn btn-outline btn-sm" onclick="App.exportStats()">⬇ Exportar resumen</button>
@@ -660,7 +774,7 @@ function pruneData(d) {
   const qs = d.qs || {};
   for (const id of Object.keys(qs)) {
     const s = qs[id];
-    if (!s || (!s.a && !s.c && !s.d && !s.m && !s.note && !s.t && !Number.isInteger(s.ck))) delete qs[id];
+    if (!s || (!s.a && !s.c && !s.d && !s.m && !s.note && !s.t && !s.h && !Number.isInteger(s.ck))) delete qs[id];
   }
   return d;
 }
@@ -689,6 +803,35 @@ function touchQS(qs) { qs.t = Date.now(); return qs; }
 function isFailed(s) {
   if (!s || !s.a) return false;
   return s.l === undefined ? s.c < s.a : s.l === 0;
+}
+
+// ---------------------------------------------------------------------
+// Historial por intento: qs.h = [[ts(s), acierto, opción elegida (orden
+// original), confianza 0-3, segundos, tipo de error 0-5], …] (últimos 20).
+// qs.p1 = resultado del primer intento, que sobrevive al recorte.
+// ---------------------------------------------------------------------
+const H_CAP = 20;
+function recordAttempt(qs, ok, chosenOrig, conf, secs) {
+  if (!Array.isArray(qs.h)) qs.h = [];
+  qs.h.push([Math.round(Date.now() / 1000), ok ? 1 : 0,
+             Number.isInteger(chosenOrig) ? chosenOrig : -1,
+             conf || 0, Math.max(0, Math.min(secs || 0, 3600)), 0]);
+  if (qs.h.length > H_CAP) qs.h = qs.h.slice(-H_CAP);
+  if (qs.p1 === undefined) qs.p1 = ok ? 1 : 0;
+  return qs.h[qs.h.length - 1];
+}
+// Fallo con seguridad: la fallaste en el último intento y habías dicho que ibas seguro
+function isSureFail(s) {
+  if (!isFailed(s)) return false;
+  const h = Array.isArray(s.h) ? s.h : [];
+  const last = h.length ? h[h.length - 1] : null;
+  return !!last && last[1] === 0 && last[3] === 1;
+}
+
+// Resalta negaciones y "excepto" del enunciado: son la causa más tonta de fallo
+const NEG_RE = /(\bEXCEPTO\b|\bexcepto\b|\bsalvo\b|\bNO\b|\bno\s+(?:es|son|se|forma|forman|pertenece|pertenecen|corresponde|contiene|produce|aparece|interviene|participa|constituye|presenta|existe|deriva|procede|suele|debe|puede|está|están|tiene|tienen)\b|\bincorrect[ao]\b|\bfals[ao]\b|\berróne[ao]\b|\bexcepción\b)/g;
+function markNegations(text) {
+  return esc(text).replace(NEG_RE, '<mark>$1</mark>');
 }
 
 // =====================================================================
@@ -875,6 +1018,15 @@ const App = {
       chkQ.addEventListener('change', e => { try { localStorage.setItem(STORAGE_KEY + '_pref_shuffleQ', e.target.checked ? '1' : '0'); } catch(err) {} });
       chkO.addEventListener('change', e => { try { localStorage.setItem(STORAGE_KEY + '_pref_shuffleOpts', e.target.checked ? '1' : '0'); } catch(err) {} });
     }
+    const chkC = document.getElementById('chk-conf');
+    try {
+      const pc = localStorage.getItem(STORAGE_KEY + '_pref_conf');
+      if (pc !== null) chkC.checked = pc === '1';
+    } catch(e) {}
+    chkC.addEventListener('change', e => {
+      try { localStorage.setItem(STORAGE_KEY + '_pref_conf', e.target.checked ? '1' : '0'); } catch(err) {}
+      if (State.session) this.renderConfRow();
+    });
     this.updateHomeStats();
     this.renderTopicsGrid();
     this.refreshResumeCard();
@@ -886,9 +1038,10 @@ const App = {
     let marked = 0, hard = 0;
     const studiedTopics = new Set();
 
-    let failedCount = 0;
+    let failedCount = 0, sureFailCount = 0;
     for (const [id, s] of Object.entries(qs)) {
       if (!s) continue;
+      if (isSureFail(s)) sureFailCount++;
       if (s.a > 0) {
         attempted++;
         totalAttempts += s.a;
@@ -926,6 +1079,11 @@ const App = {
     document.getElementById('btn-due').classList.toggle('disabled', due === 0);
 
     // Botones condicionales
+    document.getElementById('btn-surefail').classList.toggle('disabled', sureFailCount === 0);
+    document.getElementById('surefail-desc').textContent = sureFailCount
+      ? `${sureFailCount} falladas creyendo que las sabías`
+      : 'Las que fallaste creyendo que las sabías';
+    State.sureFail = sureFailCount;
     document.getElementById('btn-failed').classList.toggle('disabled', failedCount === 0);
     document.getElementById('btn-marked').classList.toggle('disabled', marked === 0);
     document.getElementById('btn-hard').classList.toggle('disabled', hard === 0);
@@ -966,6 +1124,7 @@ const App = {
         wrong: sess.wrong,
         mode: sess.mode,
         exam: sess.exam,
+        cards: sess.cards,
         penaliza: sess.penaliza,
         endsAt: sess.endsAt,
         t: Date.now(),
@@ -1007,6 +1166,9 @@ const App = {
       exam: !!s.exam,
       penaliza: !!s.penaliza,
       endsAt: s.endsAt || 0,
+      cards: !!s.cards,
+      conf: {},
+      revealed: {},
     };
     this.showScreen('quiz');
     this.renderQuizQuestion();
@@ -1111,6 +1273,8 @@ const App = {
       pool = ALL_QUESTIONS.filter(q => State.data.qs[q.id] && State.data.qs[q.id].m);
     } else if (mode === 'hard') {
       pool = ALL_QUESTIONS.filter(q => State.data.qs[q.id] && State.data.qs[q.id].d === 3);
+    } else if (mode === 'surefail') {
+      pool = ALL_QUESTIONS.filter(q => isSureFail(State.data.qs[q.id]));
     } else if (mode === 'spaced') {
       pool = this.buildSpacedPool(limit || 50);
       this.beginSession(pool, 'spaced');
@@ -1217,7 +1381,8 @@ const App = {
         w = 1;
         if (s.d === 3) w += 4;
         else if (s.d === 2) w += 2;
-        if (isFailed(s)) w += 3;
+        if (isSureFail(s)) w += 5;
+        else if (isFailed(s)) w += 3;
         else if (s.c < s.a) w += 1;
       }
       keyed.push({ q, k: Math.pow(Math.random(), 1 / w) });
@@ -1281,6 +1446,9 @@ const App = {
       exam: !!opts.exam,
       penaliza: !!opts.penaliza,
       endsAt: opts.endsAt || 0,
+      cards: !!opts.cards,
+      conf: {},
+      revealed: {},
     };
 
     this.saveSession();
@@ -1330,7 +1498,7 @@ const App = {
     document.getElementById('q-warn').classList.toggle('hidden', !q.dudosa);
 
     // Pregunta
-    document.getElementById('q-text').textContent = q.q;
+    document.getElementById('q-text').innerHTML = markNegations(q.q);
 
     // Imagen (si la pregunta tiene figura)
     const imgWrap = document.getElementById('q-image-wrap');
@@ -1387,6 +1555,12 @@ const App = {
     // Nota personal
     document.getElementById('q-note').value = qs.note || '';
 
+    // Confianza, tipo de error y tarjetas
+    sess.shownAt = Date.now();
+    this.renderConfRow();
+    this.renderErrRow();
+    this.renderCardRow();
+
     // Scroll to top
     document.getElementById('quiz-main').scrollTop = 0;
   },
@@ -1412,7 +1586,7 @@ const App = {
   answer(chosenIdx) {
     const sess = State.session;
     const q = sess.questions[sess.currentIdx];
-    if (sess.answers[q.id]) return;
+    if (sess.answers[q.id] || sess.cards) return;
 
     const dc = dispCorrect(q);
     if (dc < 0) {
@@ -1423,7 +1597,8 @@ const App = {
       return;
     }
     const wasCorrect = chosenIdx === dc;
-    sess.answers[q.id] = { chosen: chosenIdx, wasCorrect };
+    const conf = (sess.conf || {})[q.id] || 0;
+    sess.answers[q.id] = { chosen: chosenIdx, wasCorrect, conf };
     if (wasCorrect) sess.correct++; else sess.wrong++;
 
     // Actualizar stats persistentes
@@ -1431,6 +1606,8 @@ const App = {
     qs.a++;
     if (wasCorrect) qs.c++;
     qs.l = wasCorrect ? 1 : 0;
+    if (conf) qs.cf = conf;
+    recordAttempt(qs, wasCorrect, q.perm ? q.perm[chosenIdx] : chosenIdx, conf, this._elapsed());
     scheduleSM2(qs, wasCorrect);
     touchQS(qs);
     bumpDaily(wasCorrect);
@@ -1465,6 +1642,153 @@ const App = {
     // Actualizar topbar
     document.getElementById('q-score-live').textContent = '✓ ' + sess.correct;
     document.getElementById('q-fail-live').textContent = '✗ ' + sess.wrong;
+
+    // Confianza (ya no se puede cambiar) y tipificación del fallo
+    this.renderConfRow();
+    this.renderErrRow();
+  },
+
+  _elapsed() {
+    const sess = State.session;
+    return sess && sess.shownAt ? Math.round((Date.now() - sess.shownAt) / 1000) : 0;
+  },
+
+  // ----- Confianza declarada antes de responder -----
+  confEnabled() {
+    const c = document.getElementById('chk-conf');
+    return !!c && c.checked;
+  },
+
+  renderConfRow() {
+    const sess = State.session;
+    const row = document.getElementById('q-conf-row');
+    if (!sess || !row) return;
+    const q = sess.questions[sess.currentIdx];
+    const show = this.confEnabled() && !sess.cards && !sess.answers[q.id];
+    row.classList.toggle('hidden', !show);
+    const cur = (sess.conf || {})[q.id] || 0;
+    [1, 2, 3].forEach(i => document.getElementById('conf-' + i).classList.toggle('active', cur === i));
+  },
+
+  setConf(c) {
+    const sess = State.session;
+    if (!sess || sess.cards) return;
+    const q = sess.questions[sess.currentIdx];
+    if (sess.answers[q.id]) return;
+    if (!sess.conf) sess.conf = {};
+    sess.conf[q.id] = sess.conf[q.id] === c ? 0 : c;
+    this.renderConfRow();
+  },
+
+  // ----- Tipificar el error tras fallar -----
+  renderErrRow() {
+    const sess = State.session;
+    const row = document.getElementById('q-err-row');
+    if (!sess || !row) return;
+    const q = sess.questions[sess.currentIdx];
+    const ans = sess.answers[q.id];
+    const show = !!ans && !ans.wasCorrect && !sess.exam;
+    row.classList.toggle('hidden', !show);
+    if (!show) return;
+    const h = (State.data.qs[q.id] || {}).h;
+    const cur = (Array.isArray(h) && h.length) ? h[h.length - 1][5] : 0;
+    [1, 2, 3, 4, 5].forEach(i => document.getElementById('err-' + i).classList.toggle('active', cur === i));
+  },
+
+  setErr(k) {
+    const sess = State.session;
+    if (!sess) return;
+    const q = sess.questions[sess.currentIdx];
+    const ans = sess.answers[q.id];
+    if (!ans || ans.wasCorrect) return;
+    const qs = getQS(q.id);
+    if (Array.isArray(qs.h) && qs.h.length) {
+      const last = qs.h[qs.h.length - 1];
+      last[5] = last[5] === k ? 0 : k;
+      qs.er = last[5];
+    }
+    touchQS(qs);
+    saveData();
+    this.renderErrRow();
+  },
+
+  // ----- Tarjetas: recordar antes de ver la respuesta -----
+  renderCardRow() {
+    const sess = State.session;
+    const revealRow = document.getElementById('q-reveal-row');
+    const rate = document.getElementById('q-selfrate');
+    const opts = document.getElementById('q-options');
+    if (!revealRow || !rate || !opts) return;
+    if (!sess || !sess.cards) {
+      revealRow.classList.add('hidden');
+      rate.classList.add('hidden');
+      opts.classList.remove('hidden');
+      return;
+    }
+    const q = sess.questions[sess.currentIdx];
+    const answered = !!sess.answers[q.id];
+    const revealed = answered || !!(sess.revealed && sess.revealed[q.id]);
+    revealRow.classList.toggle('hidden', revealed);
+    opts.classList.toggle('hidden', !revealed);
+    rate.classList.toggle('hidden', !revealed || answered);
+    if (revealed) {
+      const dc = dispCorrect(q);
+      const btns = opts.querySelectorAll('.opt-btn');
+      btns.forEach((b, i) => { b.disabled = true; if (i === dc) b.classList.add('correct'); });
+      document.getElementById('q-explanation').classList.remove('hidden');
+      document.getElementById('q-exp-text').textContent = q.exp || 'Sin explicación disponible.';
+    }
+  },
+
+  revealCard() {
+    const sess = State.session;
+    if (!sess || !sess.cards) return;
+    const q = sess.questions[sess.currentIdx];
+    if (!sess.revealed) sess.revealed = {};
+    sess.revealed[q.id] = 1;
+    this.renderCardRow();
+  },
+
+  // Autoevaluación de la tarjeta: 0 no lo sabía · 1 con dudas · 2 lo sabía
+  selfRate(k) {
+    const sess = State.session;
+    if (!sess || !sess.cards) return;
+    const q = sess.questions[sess.currentIdx];
+    if (sess.answers[q.id]) return;
+    const ok = k > 0;
+    sess.answers[q.id] = { chosen: -1, wasCorrect: ok, self: k };
+    if (ok) sess.correct++; else sess.wrong++;
+    const qs = getQS(q.id);
+    qs.a++;
+    if (ok) qs.c++;
+    qs.l = ok ? 1 : 0;
+    qs.d = k === 0 ? 3 : k === 1 ? 2 : 1; // la autoevaluación es la dificultad que alimenta SM-2
+    recordAttempt(qs, ok, -1, 0, this._elapsed());
+    scheduleSM2(qs, ok);
+    touchQS(qs);
+    bumpDaily(ok);
+    saveData();
+    this.updateSidebarBtn(q.id, ok);
+    document.getElementById('q-score-live').textContent = '✓ ' + sess.correct;
+    document.getElementById('q-fail-live').textContent = '✗ ' + sess.wrong;
+    this.saveSession();
+    this.renderCardRow();
+    const idx = sess.currentIdx;
+    setTimeout(() => {
+      if (State.session !== sess || sess.currentIdx !== idx) return;
+      if (idx < sess.questions.length - 1) { sess.currentIdx++; this.renderQuizQuestion(); this.updateSidebarActiveBtn(); }
+    }, 260);
+  },
+
+  startCards() {
+    const qs = State.data.qs;
+    const limit = parseInt(document.getElementById('sel-limit').value) || 30;
+    const due = shuffle(ALL_QUESTIONS.filter(q => isDue(qs[q.id])));
+    const fresh = shuffle(ALL_QUESTIONS.filter(q => isNew(qs[q.id])));
+    const rest = shuffle(ALL_QUESTIONS.filter(q => { const s = qs[q.id]; return !isDue(s) && !isNew(s); }));
+    const pool = due.concat(fresh, rest).slice(0, limit);
+    if (!pool.length) { alert('No hay preguntas para las tarjetas.'); return; }
+    this.beginSession(shuffle(pool), 'cards', { cards: true });
   },
 
   // ----- Marcar / cambiar la respuesta correcta (FEATURES.answerKey) -----
@@ -1867,8 +2191,131 @@ const App = {
     this.renderTopicsGrid();
   },
 
+  // ----- Métricas derivadas del historial por intento -----
+  computeInsights() {
+    const qs = State.data.qs;
+    const WEEK = 7 * 86400;
+    let firstOk = 0, firstN = 0, repOk = 0, repN = 0, retOk = 0, retN = 0;
+    const conf = [[0, 0], [0, 0], [0, 0], [0, 0]]; // [intentos, aciertos] por confianza 0-3
+    const errs = [0, 0, 0, 0, 0, 0];
+    const worst = [];
+    for (const [id, s] of Object.entries(qs)) {
+      if (!s || !s.a) continue;
+      if (s.p1 !== undefined) { firstN++; if (s.p1) firstOk++; }
+      const h = Array.isArray(s.h) ? s.h : [];
+      for (let i = 0; i < h.length; i++) {
+        const x = h[i], ok = x[1] === 1;
+        if (i > 0) { repN++; if (ok) repOk++; }
+        const c = x[3] || 0;
+        if (conf[c]) { conf[c][0]++; if (ok) conf[c][1]++; }
+        const e = x[5] || 0;
+        if (e >= 1 && e <= 5) errs[e]++;
+        // Retención: acertada y vuelta a ver una semana o más después
+        if (i > 0 && h[i - 1][1] === 1 && (x[0] - h[i - 1][0]) >= WEEK) { retN++; if (ok) retOk++; }
+      }
+      if (s.a >= 2 && s.c < s.a) worst.push({ id: +id, fails: s.a - s.c, a: s.a, c: s.c });
+    }
+    worst.sort((a, b) => (b.fails - a.fails) || ((a.c / a.a) - (b.c / b.a)));
+    return { firstOk, firstN, repOk, repN, retOk, retN, conf, errs, worst: worst.slice(0, 5) };
+  },
+
+  // Panel "qué hacer hoy" + métricas del historial
+  renderInsights() {
+    const ins = this.computeInsights();
+    const qs = State.data.qs;
+
+    // --- Qué hacer hoy
+    let due = 0, fresh = 0;
+    for (const q of ALL_QUESTIONS) {
+      const s = qs[q.id];
+      if (isDue(s)) due++; else if (isNew(s)) fresh++;
+    }
+    let peorTema = null, peorPct = 101;
+    for (const t of TOPIC_NAMES) {
+      let c = 0, a = 0;
+      for (const q of (BY_TOPIC.get(t) || [])) { const s = qs[q.id]; if (s && s.a) { c += s.c; a += s.a; } }
+      if (a >= 10) { const p = pct(c, a); if (p < peorPct) { peorPct = p; peorTema = t; } }
+    }
+    const sureFail = ALL_QUESTIONS.filter(q => isSureFail(qs[q.id])).length;
+    const todo = [];
+    todo.push(due
+      ? `⏰ Tienes <strong>${due}</strong> preguntas vencidas: empieza por "Repaso vencido".`
+      : `⏰ Nada vencido hoy. Buen momento para ${fresh ? `<strong>${fresh.toLocaleString('es')}</strong> preguntas nuevas` : 'un simulacro'}.`);
+    todo.push(sureFail
+      ? `😰 <strong>${sureFail}</strong> las fallaste creyendo que las sabías: son las más rentables.`
+      : '😰 Ningún fallo con seguridad pendiente.');
+    todo.push(peorTema
+      ? `🔻 Tu tema más flojo es <strong>${esc(peorTema)}</strong> (${peorPct} % de aciertos).`
+      : '🔻 Aún no hay datos suficientes por tema (necesitas 10 intentos en alguno).');
+    document.getElementById('stats-todo').innerHTML = todo.map(x => `<li>${x}</li>`).join('');
+
+    // --- Métricas
+    const streak = streakDays();
+    const mini = [
+      { n: ins.firstN ? pct(ins.firstOk, ins.firstN) + ' %' : '—', l: 'Acierto a la primera', c: 'var(--accent2)' },
+      { n: ins.repN ? pct(ins.repOk, ins.repN) + ' %' : '—', l: 'Acierto en repasos', c: 'var(--success)' },
+      { n: ins.retN ? pct(ins.retOk, ins.retN) + ' %' : '—', l: `Retención a 7+ días${ins.retN ? ` (${ins.retN})` : ''}`, c: 'var(--warning)' },
+      { n: String(due), l: 'Vencidas ahora mismo', c: 'var(--text)' },
+      { n: streak + (streak === 1 ? ' día' : ' días'), l: 'Racha de estudio', c: 'var(--danger)' },
+    ];
+    document.getElementById('stats-mini').innerHTML = mini.map(m =>
+      `<div class="stat-mini"><span class="n" style="color:${m.c}">${m.n}</span><span class="l">${m.l}</span></div>`).join('');
+
+    // --- Tendencia de 7 días
+    const daily = State.data.daily || {};
+    const dias = [];
+    for (let i = 6; i >= 0; i--) {
+      const d = new Date(Date.now() - i * 86400000);
+      const k = d.toISOString().slice(0, 10);
+      dias.push({ k, dow: ['D', 'L', 'M', 'X', 'J', 'V', 'S'][d.getDay()], n: (daily[k] || {}).n || 0 });
+    }
+    const maxN = Math.max(1, ...dias.map(d => d.n));
+    document.getElementById('stats-trend').innerHTML = dias.map(d =>
+      `<div class="bar" style="height:${Math.max(2, Math.round((d.n / maxN) * 100))}%" title="${d.k}: ${d.n} preguntas"><b>${d.n || ''}</b><span>${d.dow}</span></div>`).join('');
+
+    // --- Calibración
+    const confBox = document.getElementById('stats-conf-box');
+    const confTotal = ins.conf[1][0] + ins.conf[2][0] + ins.conf[3][0];
+    confBox.classList.toggle('hidden', confTotal === 0);
+    if (confTotal) {
+      const filas = [[1, '😎 Seguro'], [2, '🤔 Dudo'], [3, '🎲 Adivino']].map(([i, nombre]) => {
+        const [n, ok] = ins.conf[i];
+        const p = n ? pct(ok, n) : 0;
+        const color = n ? colorForPct(p) : 'var(--text2)';
+        return `<tr><td>${nombre}</td><td>${n}</td><td style="color:${color};font-weight:700">${n ? p + ' %' : '—'}</td><td>${n - ok}</td></tr>`;
+      }).join('');
+      document.getElementById('stats-conf').innerHTML =
+        `<tr><th>Ibas…</th><th>Intentos</th><th>Aciertos</th><th>Fallos</th></tr>${filas}`;
+    }
+
+    // --- Tipos de error
+    const errBox = document.getElementById('stats-err-box');
+    const errTotal = ins.errs.reduce((a, b) => a + b, 0);
+    errBox.classList.toggle('hidden', errTotal === 0);
+    if (errTotal) {
+      const nombres = ['', 'No lo sabía', 'Confundí conceptos', 'Leí mal', 'Dudé entre dos', 'Todas/ninguna'];
+      document.getElementById('stats-err').innerHTML = [1, 2, 3, 4, 5].map(i => {
+        const p = Math.round((ins.errs[i] / errTotal) * 100);
+        return `<div class="err-bar-row"><span class="en">${nombres[i]}</span><span class="eb"><i style="width:${p}%"></i></span><span>${ins.errs[i]} · ${p} %</span></div>`;
+      }).join('');
+    }
+
+    // --- Las que más se resisten
+    const worstBox = document.getElementById('stats-worst-box');
+    worstBox.classList.toggle('hidden', ins.worst.length === 0);
+    if (ins.worst.length) {
+      document.getElementById('stats-worst').innerHTML = ins.worst.map(w => {
+        const q = BY_ID.get(w.id);
+        if (!q) return '';
+        const texto = q.q.length > 120 ? q.q.slice(0, 120) + '…' : q.q;
+        return `<div class="worst-row"><span class="wq">${esc(texto)}<br><span style="color:var(--text2);font-size:0.72rem">${esc(q.topicBase)}</span></span><span class="wp">${w.c}/${w.a} aciertos</span></div>`;
+      }).join('');
+    }
+  },
+
   // ----- Estadísticas globales -----
   showStats() {
+    this.renderInsights();
     const qs = State.data.qs;
     const topicNames = sortTopicNames(TOPIC_NAMES);
     const html = topicNames.map(topic => {
@@ -1905,6 +2352,71 @@ const App = {
       }).join('');
     }
     document.getElementById('stats-panel').classList.remove('hidden');
+  },
+
+  // ----- Mis apuntes -----
+  openNotes() {
+    const input = document.getElementById('notes-search');
+    input.value = '';
+    this.renderNotes('');
+    document.getElementById('notes-panel').classList.remove('hidden');
+  },
+
+  collectNotes(filter) {
+    const f = (filter || '').trim().toLowerCase();
+    const qs = State.data.qs;
+    const items = [];
+    for (const [id, s] of Object.entries(qs)) {
+      if (!s || !s.note) continue;
+      const q = BY_ID.get(+id);
+      if (!q) continue;
+      if (f && !(q.q.toLowerCase().includes(f) || s.note.toLowerCase().includes(f) || q.topicBase.toLowerCase().includes(f))) continue;
+      items.push({ q, note: s.note });
+    }
+    items.sort((a, b) => a.q.topicBase.localeCompare(b.q.topicBase, 'es') || a.q.id - b.q.id);
+    return items;
+  },
+
+  renderNotes(filter) {
+    const items = this.collectNotes(filter);
+    State.notesIds = items.map(x => x.q.id);
+    document.getElementById('notes-count').textContent = items.length
+      ? `${items.length} pregunta${items.length === 1 ? '' : 's'} con apuntes`
+      : 'No hay apuntes que mostrar. Escríbelos en el campo "Mis apuntes" de cada pregunta.';
+    document.getElementById('notes-list').innerHTML = items.map(x =>
+      `<div class="note-item">
+        <div class="nmeta">${esc(x.q.topicBase)}${x.q.n ? ' · nº ' + esc(String(x.q.n)) : ''}</div>
+        <div class="nq">${esc(x.q.q)}</div>
+        <div class="nt">${esc(x.note)}</div>
+      </div>`).join('');
+    document.getElementById('btn-notes-study').disabled = items.length === 0;
+  },
+
+  studyNotes() {
+    const ids = State.notesIds || [];
+    const pool = ids.map(id => BY_ID.get(id)).filter(Boolean);
+    if (!pool.length) return;
+    document.getElementById('notes-panel').classList.add('hidden');
+    this.beginSession(shuffle(pool), 'notes');
+  },
+
+  exportNotes() {
+    const items = this.collectNotes(document.getElementById('notes-search').value);
+    if (!items.length) { alert('No hay apuntes que exportar.'); return; }
+    let md = `# Mis apuntes · ${document.title.replace(' — Plataforma de Estudio', '')}\n\n`;
+    let tema = null;
+    for (const x of items) {
+      if (x.q.topicBase !== tema) { tema = x.q.topicBase; md += `\n## ${tema}\n\n`; }
+      md += `**${x.q.q}**\n\n`;
+      const dc = effCorrectOrig(x.q);
+      if (Number.isInteger(dc) && x.q.options[dc]) md += `- Respuesta: ${x.q.options[dc]}\n`;
+      md += `- Apunte: ${x.note.replace(/\n/g, '\n  ')}\n\n`;
+    }
+    const blob = new Blob([md], { type: 'text/markdown;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = APP_SLUG + '_apuntes.md';
+    a.click();
   },
 
   exportStats() {
@@ -2116,6 +2628,21 @@ function fbMerge(local, remote) {
       mq.m = r.m||l.m||0;
       var n = r.note || l.note; if (n) mq.note = n; else delete mq.note;
     }
+    // El historial de intentos se une siempre, gane quien gane por marca de tiempo
+    if (l && r) {
+      mq = Object.assign({}, mq);
+      var hs = (Array.isArray(l.h) ? l.h : []).concat(Array.isArray(r.h) ? r.h : []);
+      if (hs.length) {
+        hs.sort(function(a, b) { return a[0] - b[0]; });
+        var vistoTs = {}, uniq = [];
+        for (var i = 0; i < hs.length; i++) { if (vistoTs[hs[i][0]]) continue; vistoTs[hs[i][0]] = 1; uniq.push(hs[i]); }
+        mq.h = uniq.slice(-20);
+      }
+      if (mq.p1 === undefined) {
+        var p1 = (l.p1 !== undefined) ? l.p1 : r.p1;
+        if (p1 !== undefined) mq.p1 = p1;
+      }
+    }
     merged.qs[id] = mq;
   });
   var lf = local.topicFlags || {}, rf = remote.topicFlags || {};
@@ -2258,7 +2785,7 @@ document.addEventListener('keydown', e => {
   const fbModal = document.getElementById('fb-modal');
   if (fbModal && fbModal.style.display === 'flex') return;
   if (e.key === 'Escape') {
-    ['topic-selector', 'combo-selector', 'stats-panel', 'exam-setup'].forEach(id => document.getElementById(id).classList.add('hidden'));
+    ['topic-selector', 'combo-selector', 'stats-panel', 'exam-setup', 'notes-panel'].forEach(id => document.getElementById(id).classList.add('hidden'));
     const sb = document.getElementById('quiz-sidebar');
     if (sb && sb.classList.contains('open')) sb.classList.remove('open');
     return;
@@ -2270,12 +2797,26 @@ document.addEventListener('keydown', e => {
   const key = e.key.length === 1 ? e.key.toLowerCase() : e.key;
   if (key === 'ArrowRight' || key === 'n') { e.preventDefault(); App.nextQ(); return; }
   if (key === 'ArrowLeft' || key === 'p') { e.preventDefault(); App.prevQ(); return; }
-  if (key === 'Enter' || key === ' ') { if (sess.answers[q.id]) { e.preventDefault(); App.nextQ(); } return; }
+  if (key === 'Enter' || key === ' ') {
+    if (sess.cards && !sess.answers[q.id] && !(sess.revealed && sess.revealed[q.id])) { e.preventDefault(); App.revealCard(); return; }
+    if (sess.answers[q.id]) { e.preventDefault(); App.nextQ(); }
+    return;
+  }
   if (key === 'u') { App.nextUnanswered(); return; }
   if (key === 'm') { App.toggleMark(); return; }
-  if (key === '1') { App.setDiff(1); return; }
-  if (key === '2') { App.setDiff(2); return; }
-  if (key === '3') { App.setDiff(3); return; }
+  if (key === '1' || key === '2' || key === '3') {
+    const n = +key;
+    // En tarjetas: autoevaluación. Antes de responder: confianza. Después: dificultad.
+    if (sess.cards) {
+      if (!sess.answers[q.id] && sess.revealed && sess.revealed[q.id]) App.selfRate(n - 1);
+      return;
+    }
+    if (!sess.answers[q.id]) { if (App.confEnabled()) App.setConf(n); return; }
+    App.setDiff(n);
+    return;
+  }
+  if (key >= '4' && key <= '8' && sess.answers[q.id] && !sess.answers[q.id].wasCorrect) { App.setErr(+key - 3); return; }
+  if (sess.cards) return; // las opciones no se responden con el teclado en modo tarjeta
   const code = key.charCodeAt(0) - 97; // a=0 … h=7
   if (key.length === 1 && code >= 0 && code < 8 && code < (q.displayOptions || q.options).length) {
     if (!sess.answers[q.id]) { e.preventDefault(); App.answer(code); }
